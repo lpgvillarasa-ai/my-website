@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280">
+  <defs>
+    <linearGradient id="gradVillarasa" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <linearGradient id="gradRule" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="280" fill="#040412"/>
+
+  <!-- Wordmark group -->
+  <g id="wordmark">
+    <!-- LEE: large serif, light weight, wide letter-spacing -->
+    <!-- At 90px with letter-spacing ~20px, "LEE" (3 chars) needs tuning to match VILLARASA width -->
+    <!-- VILLARASA at 92px, letter-spacing 8px: 9 chars -->
+    <!-- To match widths, LEE uses very wide spacing -->
+    <text
+      x="400"
+      y="112"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="90"
+      font-weight="300"
+      fill="#E8ECFF"
+      text-anchor="middle"
+      letter-spacing="68"
+      textLength="420"
+      lengthAdjust="spacing"
+    >LEE</text>
+
+    <!-- VILLARASA: serif, gradient fill -->
+    <text
+      x="400"
+      y="206"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="92"
+      font-weight="400"
+      fill="url(#gradVillarasa)"
+      text-anchor="middle"
+      letter-spacing="8"
+      textLength="420"
+      lengthAdjust="spacing"
+    >VILLARASA</text>
+
+    <!-- Horizontal rule: exact width of VILLARASA text block -->
+    <rect
+      x="190"
+      y="218"
+      width="420"
+      height="2"
+      fill="url(#gradRule)"
+    />
+  </g>
+
+  <!-- Tagline group -->
+  <g id="tagline">
+    <text
+      x="400"
+      y="250"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="13"
+      font-weight="400"
+      fill="#7880AA"
+      text-anchor="middle"
+      letter-spacing="2.5"
+    >OPERATIONS ARCHITECT · SYSTEMS BUILDER</text>
+  </g>
+</svg>

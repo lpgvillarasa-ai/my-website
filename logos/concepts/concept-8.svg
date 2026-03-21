@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260">
+  <defs>
+    <!-- Primary accent gradient (horizontal) -->
+    <linearGradient id="grad-accent-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <!-- Primary accent gradient (vertical) -->
+    <linearGradient id="grad-accent-v" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <!-- Circle stroke gradient (angled) -->
+    <linearGradient id="grad-circle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <!-- LV monogram gradient -->
+    <linearGradient id="grad-lv" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <!-- Dot gradient -->
+    <linearGradient id="grad-dot" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+    <!-- Separator gradient (vertical) -->
+    <linearGradient id="grad-sep" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="260" fill="#040412"/>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ICON — centered at (130, 130)           -->
+  <!-- ═══════════════════════════════════════ -->
+  <g id="icon">
+
+    <!-- Outer circle, radius 90 -->
+    <circle cx="130" cy="130" r="90" fill="none" stroke="url(#grad-circle)" stroke-width="2"/>
+
+    <!-- Precision dot — 12 o'clock (top) -->
+    <circle cx="130" cy="40" r="4" fill="url(#grad-dot)"/>
+
+    <!-- Precision dot — 6 o'clock (bottom) -->
+    <circle cx="130" cy="220" r="4" fill="url(#grad-dot)"/>
+
+    <!--
+      LV Monogram — straight lines only, stroke-width 14
+      Icon center: (130, 130)
+      Total monogram width: ~84px  (L=38px wide, gap=8px, V=38px wide)
+      Monogram left edge: 130 - 42 = 88
+      L occupies x: 88..126
+      V occupies x: 126..164  (overlap at 126 for unity feel, adjusted below)
+
+      L:
+        Vertical stroke: (88, 88) → (88, 172)   height=84
+        Horizontal foot: (88, 172) → (126, 172)  width=38
+
+      V:
+        Left diagonal:  (130, 88) → (152, 172)
+        Right diagonal: (174, 88) → (152, 172)
+        (V left edge at 130, right edge at 174, apex at 152)
+
+      Slight overlap at x~128 gives unity feel.
+    -->
+
+    <!-- L — vertical stroke -->
+    <line x1="88" y1="88" x2="88" y2="172"
+          stroke="url(#grad-lv)" stroke-width="14" stroke-linecap="square"/>
+
+    <!-- L — horizontal foot -->
+    <line x1="88" y1="172" x2="128" y2="172"
+          stroke="url(#grad-lv)" stroke-width="14" stroke-linecap="square"/>
+
+    <!-- V — left diagonal (top-left to apex) -->
+    <line x1="134" y1="88" x2="156" y2="172"
+          stroke="url(#grad-lv)" stroke-width="14" stroke-linecap="square"/>
+
+    <!-- V — right diagonal (top-right to apex) -->
+    <line x1="178" y1="88" x2="156" y2="172"
+          stroke="url(#grad-lv)" stroke-width="14" stroke-linecap="square"/>
+
+  </g>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SEPARATOR — vertical line              -->
+  <!-- Text block spans roughly y=80..180     -->
+  <!-- Separator sits at x=265               -->
+  <!-- ═══════════════════════════════════════ -->
+  <g id="separator">
+    <line x1="265" y1="80" x2="265" y2="180"
+          stroke="url(#grad-sep)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- WORDMARK                               -->
+  <!-- Left edge of text: x=290              -->
+  <!-- Vertical center: y=130               -->
+  <!-- ═══════════════════════════════════════ -->
+  <g id="wordmark">
+
+    <!-- "LEE VILLARASA" — Georgia serif, 58px, letter-spacing 5px -->
+    <!-- Baseline ~y=138 keeps it visually centered between y=80..180 -->
+    <text
+      x="290"
+      y="138"
+      font-family="Georgia, 'Times New Roman', Times, serif"
+      font-size="58"
+      font-weight="normal"
+      letter-spacing="5"
+      fill="#E8ECFF"
+      dominant-baseline="auto"
+    >LEE VILLARASA</text>
+
+    <!-- "OPERATIONS ARCHITECT" — Arial tracked caps, 12px -->
+    <!-- Sits ~20px below the baseline of the name line -->
+    <text
+      x="292"
+      y="165"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="12"
+      font-weight="normal"
+      letter-spacing="4"
+      fill="#7880AA"
+      dominant-baseline="auto"
+    >OPERATIONS ARCHITECT</text>
+
+  </g>
+
+</svg>

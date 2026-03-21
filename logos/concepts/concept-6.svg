@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280">
+  <defs>
+    <!-- Gradient for LV strokes and circle border -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Gradient for circle border (diagonal) -->
+    <linearGradient id="circleBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Gradient for VILLARASA — userSpaceOnUse spans the text width -->
+    <linearGradient id="villarasaGrad" x1="296" y1="0" x2="616" y2="0"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Gradient for the LV monogram — userSpaceOnUse across the monogram width -->
+    <linearGradient id="lvGrad" x1="90" y1="0" x2="190" y2="0"
+                    gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="280" fill="#040412"/>
+
+  <!-- ============================================================
+       ICON — perfect circle badge, diameter ~240px
+       Center: cx=140, cy=140, r=119
+       ============================================================ -->
+  <g id="icon">
+    <!-- Dark interior -->
+    <circle cx="140" cy="140" r="119" fill="#06061A"/>
+    <!-- Thin gradient border -->
+    <circle cx="140" cy="140" r="119" fill="none"
+            stroke="url(#circleBorderGrad)" stroke-width="2.5"/>
+
+    <!--
+      LV Monogram inside circle:
+        Monogram top y=82, bottom y=198 (116px tall)
+        Join x=140 (center of circle, x=140)
+
+        L:
+          Vertical stroke: (90, 82) → (90, 198)
+          Horizontal bar:  (90, 198) → (140, 198)   ← ends exactly at join x
+
+        V:
+          Left diagonal:  (140, 82) → (165, 198)    ← starts exactly at join x
+          Right diagonal: (190, 82) → (165, 198)
+    -->
+
+    <!-- L — vertical -->
+    <line x1="90" y1="82" x2="90" y2="198"
+          stroke="url(#lvGrad)" stroke-width="16" stroke-linecap="square"/>
+    <!-- L — horizontal bar -->
+    <line x1="90" y1="198" x2="140" y2="198"
+          stroke="url(#lvGrad)" stroke-width="16" stroke-linecap="square"/>
+    <!-- V — left diagonal -->
+    <line x1="140" y1="82" x2="165" y2="198"
+          stroke="url(#lvGrad)" stroke-width="16" stroke-linecap="square"/>
+    <!-- V — right diagonal -->
+    <line x1="190" y1="82" x2="165" y2="198"
+          stroke="url(#lvGrad)" stroke-width="16" stroke-linecap="square"/>
+  </g>
+
+  <!-- ============================================================
+       WORDMARK — right of circle, vertically centered
+       Circle right edge: 140+119=259. Gap 37px → text starts x=296.
+
+       Vertical layout (centered in 280px height):
+         LEE baseline:           y=111
+         VILLARASA baseline:     y=167   (56px below LEE — tight leading)
+         Separator rule:         y=182
+         OPERATIONS ARCHITECT:   y=200
+       ============================================================ -->
+  <g id="wordmark">
+
+    <!-- LEE -->
+    <text
+      x="296" y="111"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="52"
+      font-weight="400"
+      fill="#E8ECFF"
+      letter-spacing="8">LEE</text>
+
+    <!-- VILLARASA — gradient fill -->
+    <text
+      x="296" y="167"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="52"
+      font-weight="700"
+      fill="url(#villarasaGrad)"
+      letter-spacing="4">VILLARASA</text>
+
+    <!-- Thin separator rule spanning name block width -->
+    <line x1="296" y1="182" x2="616" y2="182"
+          stroke="url(#accentGrad)" stroke-width="1" opacity="0.55"/>
+
+    <!-- OPERATIONS ARCHITECT -->
+    <text
+      x="296" y="200"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="12"
+      font-weight="400"
+      fill="#7880AA"
+      letter-spacing="3.5">OPERATIONS ARCHITECT</text>
+
+  </g>
+</svg>
