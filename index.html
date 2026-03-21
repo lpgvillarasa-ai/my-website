@@ -315,7 +315,7 @@
     .hero-title-line {
       display: block;
       overflow: visible;
-      padding-bottom: 0.08em;
+      padding-bottom: 0.18em;
     }
 
     .hero-title-line span {
@@ -1008,7 +1008,7 @@
 
     .skill-group {
       margin-bottom: 60px;
-      scroll-margin-top: calc(var(--nav-h) + 32px);
+      scroll-margin-top: calc(var(--nav-h) + 80px);
     }
 
     .skill-group-title {
@@ -1268,10 +1268,9 @@
       margin: 0 auto;
       padding: 0 48px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-      flex-wrap: wrap;
+      gap: 24px;
     }
 
     .trust-label {
@@ -1280,14 +1279,15 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--text-muted);
-      flex-shrink: 0;
     }
 
     .trust-items {
       display: flex;
       align-items: center;
-      gap: 40px;
+      justify-content: center;
+      gap: 0;
       flex-wrap: wrap;
+      width: 100%;
     }
 
     .trust-item {
@@ -1296,7 +1296,13 @@
       color: var(--text-secondary);
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      padding: 10px 24px;
+      border-right: 1px solid var(--border);
+    }
+    .trust-item:last-child {
+      border-right: none;
     }
 
     .trust-item-check {
@@ -1922,7 +1928,6 @@
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#stream">STREAM Code</a></li>
-      <li><a href="#cases">Case Studies</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact" class="nav-cta">Work with me</a></li>
     </ul>
@@ -2155,122 +2160,56 @@
     </div>
   </section>
 
-  <!-- ============ CASE STUDIES ============ -->
-  <section id="cases">
+  <!-- CASE STUDIES REMOVED -->
+  <section id="cases" style="display:none">
     <div class="section-inner">
-      <div class="section-header">
-        <div class="section-tag reveal">Real results</div>
-        <h2 class="section-title reveal reveal-delay-1">Problems solved.<br/><em>Proof attached.</em></h2>
-      </div>
-
       <div class="cases-grid">
 
         <div class="case-card featured reveal">
           <div class="case-industry">Insurance</div>
           <div class="case-title">Claims Processing Cut in Half</div>
-          <div class="case-problem">Analysts were processing hundreds of claims daily but drowning in repetitive keystrokes, manual page-switching, and bloated SOPs that added minutes to every single claim.</div>
+          <div class="case-problem">Hundreds of daily claims, buried in manual keystrokes and bloated SOPs. Rebuilt the entire workflow from scratch.</div>
           <div class="case-divider"></div>
           <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half across the entire department</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Completed 2 days of work in 1 day. Awarded Productivity Hero</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years while processing hundreds of claims daily</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Custom hotkey system (1–7) adopted department-wide</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half department-wide</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>2 days of work completed in 1. Awarded Productivity Hero</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years across hundreds of daily claims</div>
           </div>
         </div>
 
         <div class="case-card reveal reveal-delay-1">
-          <div class="case-industry">Healthcare / Dental</div>
-          <div class="case-title">Insurance Templates &amp; Appointment Flow</div>
-          <div class="case-problem">Staff built insurance forms from scratch for every patient, and appointment tracking was disorganized. Leading to delays and avoidable errors.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Processing time reduced by over 60%</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Zero forms built from scratch, all templated</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Color-coded appointment system adopted clinic-wide</div>
-          </div>
-        </div>
-
-        <div class="case-card reveal">
-          <div class="case-industry">Recruiting / HR</div>
-          <div class="case-title">Hiring Pipeline Automation</div>
-          <div class="case-problem">Hundreds of unqualified applicants were clogging the pipeline. Recruiters were manually reviewing every submission, burning hours on candidates who never should have passed step one.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Applicant review time cut by over 70%</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Custom GPT handles all repetitive candidate inquiries</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Recruiters now only see fully qualified profiles</div>
-          </div>
-        </div>
-
-        <div class="case-card reveal reveal-delay-1">
-          <div class="case-industry">Operations / Reporting</div>
-          <div class="case-title">Automated Reporting &amp; Analytics</div>
-          <div class="case-problem">Teams were spending hours manually encoding data and producing reports. By the time the report was ready, the data was already stale.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics visible across all teams</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Built using Google Colab + AI integration</div>
-          </div>
-        </div>
-
-        <div class="case-card reveal reveal-delay-2">
           <div class="case-industry">Customer Success</div>
           <div class="case-title">AI-Powered Support Response System</div>
-          <div class="case-problem">Support agents were manually typing answers to the same questions hundreds of times a day. Inconsistent responses, wasted hours, and no bandwidth for complex cases.</div>
+          <div class="case-problem">Agents typed the same answers hundreds of times a day. No consistency, no bandwidth, no system.</div>
           <div class="case-divider"></div>
           <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on standard inquiries</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Agents paste a screenshot; GPT drafts the reply instantly</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Team refocused entirely on complex, high-value cases</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on all standard inquiries</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Screenshot in, GPT-drafted reply out instantly</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Team fully refocused on complex, high-value cases</div>
           </div>
         </div>
 
         <div class="case-card reveal">
           <div class="case-industry">Team Management</div>
           <div class="case-title">Onboarding Bookings Doubled</div>
-          <div class="case-problem">Low onboarding call bookings due to scheduling mismatches. The team's availability didn't overlap with when clients were actually online and responsive.</div>
+          <div class="case-problem">Scheduling mismatches meant the team was available when clients weren't. Bookings were bleeding out silently.</div>
           <div class="case-divider"></div>
           <div class="case-results">
             <div class="case-result-item"><div class="case-result-check">✓</div>Call bookings doubled within two weeks</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Team achieved fully booked schedules consistently</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP created and documented</div>
-          </div>
-        </div>
-
-        <div class="case-card reveal">
-          <div class="case-industry">Call Center / Analytics</div>
-          <div class="case-title">Call Analytics Dashboard Automation</div>
-          <div class="case-problem">Managers were manually tracking daily calls causing delays in performance visibility. By the time data was compiled, the day was already over.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy in daily performance reporting</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Automated dashboards available instantly each morning</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Zero manual computation required from managers</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Team hit fully booked schedules consistently</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP built and documented</div>
           </div>
         </div>
 
         <div class="case-card reveal reveal-delay-1">
-          <div class="case-industry">HR / Operations</div>
-          <div class="case-title">Attendance &amp; Performance Tracking</div>
-          <div class="case-problem">Attendance, overtime, and leave tracking were all manual, meaning managers had no real-time visibility into team activity and errors were constant.</div>
+          <div class="case-industry">Operations / Reporting</div>
+          <div class="case-title">Automated Reporting &amp; Analytics</div>
+          <div class="case-problem">Reports took hours to build manually. By the time they were ready, the data was already outdated.</div>
           <div class="case-divider"></div>
           <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Real-time updates on all employee activities</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Eliminated manual tracking errors entirely</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Notion + Zapier automation runs without intervention</div>
-          </div>
-        </div>
-
-        <div class="case-card reveal reveal-delay-2">
-          <div class="case-industry">AI Agents</div>
-          <div class="case-title">Custom AI Agents for Workflow Efficiency</div>
-          <div class="case-problem">Teams were losing hours to manual research, repetitive communication follow-ups, and inconsistent email handling across long client threads.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Background check agent: input a name → auto-searches web records</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Email agent: scans Gmail threads → suggests replies via AI</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Hours of manual research eliminated per week</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics live across all teams</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Built on Google Colab with full AI integration</div>
           </div>
         </div>
 
