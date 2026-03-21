@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lee Villarasa — Operations Architect & Systems Builder</title>
   <meta name="description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure. Helping CEOs move faster, think clearer, and scale without friction." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='fg' x1='0' y1='0' x2='40' y2='40' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%237B9EFF'/%3E%3Cstop offset='100%25' stop-color='%23B06EFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0.75' y='0.75' width='38.5' height='38.5' rx='9' stroke='url(%23fg)' stroke-width='1.5' fill='%23040412' opacity='1'/%3E%3Cpath d='M9 10 L9 28 L17.5 28' stroke='url(%23fg)' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21 10 L27.5 28 L34 10' stroke='url(%23fg)' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -150,15 +151,28 @@
     }
 
     .nav-logo {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--text-primary);
-      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
       text-decoration: none;
+      gap: 10px;
     }
 
-    .nav-logo span {
+    .nav-logo svg {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-wordmark {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-wordmark span {
       color: var(--gold);
     }
 
@@ -1898,7 +1912,23 @@
 
   <!-- ============ NAVIGATION ============ -->
   <nav id="navbar">
-    <a href="#" class="nav-logo">Lee<span>.</span></a>
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lgNav" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7B9EFF"/>
+            <stop offset="100%" stop-color="#B06EFF"/>
+          </linearGradient>
+        </defs>
+        <!-- Outer frame -->
+        <rect x="0.75" y="0.75" width="38.5" height="38.5" rx="9" stroke="url(#lgNav)" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <!-- L stroke -->
+        <path d="M9 10 L9 28 L17.5 28" stroke="url(#lgNav)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- V stroke -->
+        <path d="M21 10 L27.5 28 L34 10" stroke="url(#lgNav)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="nav-logo-wordmark">Lee <span>Villarasa</span></span>
+    </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#stream">STREAM Code</a></li>
