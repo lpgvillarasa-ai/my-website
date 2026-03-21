@@ -1446,6 +1446,24 @@
       border-color: var(--gold-border);
     }
 
+    .form-input:-webkit-autofill,
+    .form-input:-webkit-autofill:hover,
+    .form-input:-webkit-autofill:focus,
+    .form-textarea:-webkit-autofill,
+    .form-textarea:-webkit-autofill:hover,
+    .form-textarea:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px var(--bg-secondary) inset !important;
+      -webkit-text-fill-color: var(--text-primary) !important;
+      caret-color: var(--text-primary);
+      border-color: var(--border);
+    }
+
+    .form-input:not(:placeholder-shown),
+    .form-textarea:not(:placeholder-shown) {
+      background: var(--bg-secondary) !important;
+      color: var(--text-primary) !important;
+    }
+
     .form-textarea {
       resize: vertical;
       min-height: 120px;
