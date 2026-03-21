@@ -1678,8 +1678,123 @@
       background: var(--bg-card);
       padding: 44px 36px;
       position: relative;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
       overflow: hidden;
+      cursor: pointer;
+    }
+
+    .stream-card:active { transform: scale(0.98); }
+
+    /* ── STREAM FOCUS MODAL ── */
+    #stream-focus-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(4, 4, 18, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #stream-focus-backdrop.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #stream-focus-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius-lg);
+      padding: 64px 72px;
+      max-width: 680px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      transform: scale(0.88) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+      opacity: 0;
+      box-shadow: 0 0 80px rgba(123,158,255,0.12), 0 0 160px rgba(176,110,255,0.06);
+    }
+
+    #stream-focus-backdrop.active #stream-focus-card {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    #stream-focus-card .focus-letter {
+      font-family: var(--font-display);
+      font-size: 180px;
+      font-weight: 300;
+      line-height: 1;
+      background: linear-gradient(135deg, rgba(123,158,255,0.25), rgba(176,110,255,0.12));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: absolute;
+      top: 16px;
+      right: 32px;
+      user-select: none;
+    }
+
+    #stream-focus-card .focus-abbr {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #stream-focus-card .focus-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 52px);
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      line-height: 1.15;
+      position: relative;
+      z-index: 1;
+    }
+
+    #stream-focus-card .focus-desc {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+
+    #stream-focus-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+      z-index: 2;
+    }
+
+    #stream-focus-close:hover {
+      border-color: var(--gold);
+      color: var(--text-primary);
     }
 
     .stream-card::after {
@@ -2938,6 +3053,49 @@
     }, { threshold: 0.5 });
 
     resultBigs.forEach(el => counterObserver.observe(el));
+
+    // ── STREAM CARD FOCUS ZOOM ──
+    const backdrop = document.createElement('div');
+    backdrop.id = 'stream-focus-backdrop';
+    backdrop.innerHTML = `
+      <div id="stream-focus-card">
+        <button id="stream-focus-close" aria-label="Close">✕</button>
+        <div class="focus-letter"></div>
+        <div class="focus-abbr"></div>
+        <div class="focus-title"></div>
+        <div class="focus-desc"></div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+
+    const focusCard    = backdrop.querySelector('#stream-focus-card');
+    const focusClose   = backdrop.querySelector('#stream-focus-close');
+    const focusLetter  = backdrop.querySelector('.focus-letter');
+    const focusAbbr    = backdrop.querySelector('.focus-abbr');
+    const focusTitle   = backdrop.querySelector('.focus-title');
+    const focusDesc    = backdrop.querySelector('.focus-desc');
+
+    function openFocus(card) {
+      focusLetter.textContent = card.querySelector('.stream-letter').textContent;
+      focusAbbr.textContent   = card.querySelector('.stream-abbr').textContent;
+      focusTitle.textContent  = card.querySelector('.stream-step-title').textContent;
+      focusDesc.textContent   = card.querySelector('.stream-step-desc').textContent;
+      backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFocus() {
+      backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.stream-card').forEach(card => {
+      card.addEventListener('click', () => openFocus(card));
+    });
+
+    focusClose.addEventListener('click', closeFocus);
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeFocus(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFocus(); });
   </script>
 </body>
 </html>
