@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512">
+  <defs>
+    <!-- Blue to violet gradient for primary accent elements -->
+    <linearGradient id="grad-blue-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7B9EFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B06EFF;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Subtle glow gradient for badge background -->
+    <radialGradient id="grad-badge-bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#0D0F2A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#040412;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Stroke gradient for the badge border -->
+    <linearGradient id="grad-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7B9EFF;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#B06EFF;stop-opacity:0.7" />
+    </linearGradient>
+
+    <!-- Muted fill for secondary structural lines -->
+    <linearGradient id="grad-secondary" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7B9EFF;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#B06EFF;stop-opacity:0.4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Canvas background -->
+  <rect width="1024" height="512" fill="#040412" />
+
+  <!-- ═══════════════════════════════════════════
+       ICON — Square badge with architectural mark
+       Badge is centered vertically, left-positioned
+       Badge: 280×280, positioned at x=116, y=116
+       ═══════════════════════════════════════════ -->
+  <g id="icon">
+
+    <!-- Square badge background -->
+    <rect x="116" y="116" width="280" height="280" rx="8" ry="8"
+          fill="url(#grad-badge-bg)" />
+
+    <!-- Badge border — gradient stroke, slightly inset -->
+    <rect x="117.5" y="117.5" width="277" height="277" rx="7" ry="7"
+          fill="none"
+          stroke="url(#grad-border)"
+          stroke-width="1.5" />
+
+    <!-- Corner registration marks — subtle, architectural detail -->
+    <!-- Top-left -->
+    <polyline points="130,142 130,130 142,130"
+              fill="none" stroke="url(#grad-border)" stroke-width="1" opacity="0.5" />
+    <!-- Top-right -->
+    <polyline points="370,142 370,130 358,130"
+              fill="none" stroke="url(#grad-border)" stroke-width="1" opacity="0.5" />
+    <!-- Bottom-left -->
+    <polyline points="130,370 130,382 142,382"
+              fill="none" stroke="url(#grad-border)" stroke-width="1" opacity="0.5" />
+    <!-- Bottom-right -->
+    <polyline points="370,370 370,382 358,382"
+              fill="none" stroke="url(#grad-border)" stroke-width="1" opacity="0.5" />
+
+    <!--
+      ARCHITECTURAL MARK — three shapes:
+      1. Horizontal base beam  (L-bracket base)
+      2. Vertical rising pier  (L-bracket upright)
+      3. Floating elevated platform / cap element
+
+      Together they read as:
+        — a structural bracket / foundation detail
+        — or a building cross-section (base + tower + roof cap)
+      Centered in the badge: badge center = (256, 256)
+    -->
+
+    <!-- Shape 1: Horizontal base beam — thick, grounded -->
+    <!-- Spans full-ish width of mark area, sits at bottom -->
+    <!-- x: 170–342, y: 298–316  (18px tall) -->
+    <rect x="170" y="300" width="172" height="16" rx="2" ry="2"
+          fill="url(#grad-blue-violet)" opacity="0.9" />
+
+    <!-- Shape 2: Vertical rising pier — left-anchored to base, rises upward -->
+    <!-- x: 170–194, y: 184–300  (24px wide, 116px tall) -->
+    <rect x="170" y="184" width="24" height="116" rx="2" ry="2"
+          fill="url(#grad-blue-violet)" opacity="0.9" />
+
+    <!-- Shape 3: Elevated cap / platform — sits atop the pier, wider than pier -->
+    <!-- Suggests a capital, lintel, or roofline —  premium architectural detail -->
+    <!-- x: 148–218, y: 172–184  (70px wide, 12px tall) -->
+    <rect x="148" y="172" width="70" height="14" rx="2" ry="2"
+          fill="url(#grad-blue-violet)" opacity="0.85" />
+
+    <!--
+      Secondary detail lines — engineering/blueprint feel
+      Fine horizontal rule extending right from the pier top,
+      suggesting a floor plate or datum line
+    -->
+    <!-- Datum line at pier-top level, running right -->
+    <line x1="194" y1="179" x2="342" y2="179"
+          stroke="url(#grad-secondary)" stroke-width="1.5" />
+
+    <!-- Sub-datum: lighter rule at mid-height -->
+    <line x1="220" y1="240" x2="342" y2="240"
+          stroke="url(#grad-secondary)" stroke-width="1" opacity="0.6" />
+
+    <!-- Tick marks on datum line — blueprint measurement detail -->
+    <line x1="260" y1="174" x2="260" y2="184"
+          stroke="url(#grad-secondary)" stroke-width="1" opacity="0.5" />
+    <line x1="300" y1="174" x2="300" y2="184"
+          stroke="url(#grad-secondary)" stroke-width="1" opacity="0.5" />
+    <line x1="342" y1="174" x2="342" y2="184"
+          stroke="url(#grad-secondary)" stroke-width="1" opacity="0.5" />
+
+    <!-- Small square node at datum/pier intersection — structural joint -->
+    <rect x="188" y="173" width="12" height="12" rx="1" ry="1"
+          fill="none" stroke="url(#grad-blue-violet)" stroke-width="1.5" opacity="0.8" />
+
+  </g>
+
+  <!-- ═══════════════════════════════════════════
+       WORDMARK — "LEE VILLARASA"
+       Right of the badge, vertically centered
+       Badge right edge: x=396
+       Wordmark area: x=448 onward
+       Vertical center: y=256
+       ═══════════════════════════════════════════ -->
+  <g id="wordmark">
+
+    <!-- Primary name: LEE VILLARASA -->
+    <!-- Large, authoritative, spaced uppercase serif -->
+    <text
+      x="448"
+      y="240"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="68"
+      font-weight="normal"
+      letter-spacing="10"
+      fill="url(#grad-blue-violet)"
+      dominant-baseline="auto"
+    >LEE</text>
+
+    <text
+      x="448"
+      y="318"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="68"
+      font-weight="normal"
+      letter-spacing="6"
+      fill="#E8ECFF"
+      dominant-baseline="auto"
+    >VILLARASA</text>
+
+    <!-- Thin rule beneath the name block — grounds the wordmark -->
+    <line x1="448" y1="338" x2="900" y2="338"
+          stroke="url(#grad-border)" stroke-width="1" opacity="0.5" />
+
+    <!-- Subtitle / role descriptor — small caps style, wide tracking -->
+    <text
+      x="450"
+      y="362"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="16"
+      font-weight="normal"
+      letter-spacing="5"
+      fill="#7B9EFF"
+      opacity="0.8"
+      dominant-baseline="auto"
+    >OPERATIONS ARCHITECT  ·  SYSTEMS BUILDER</text>
+
+  </g>
+
+</svg>

@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512">
+  <defs>
+
+    <!-- Badge border: blue-to-violet diagonal -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Monogram fill: blue-to-violet -->
+    <linearGradient id="monogramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Wordmark "VILLARASA" gradient: left-to-right -->
+    <linearGradient id="wordmarkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </linearGradient>
+
+    <!-- Rule gradient -->
+    <linearGradient id="ruleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B9EFF" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#B06EFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Badge background: very subtle lighter center -->
+    <radialGradient id="badgeBg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0E0E28"/>
+      <stop offset="100%" stop-color="#040412"/>
+    </radialGradient>
+
+  </defs>
+
+  <!-- Canvas background -->
+  <rect width="1024" height="512" fill="#040412"/>
+
+  <!-- ═══════════════════════════════════════════════
+       ICON  —  Rounded-square badge + LV ligature
+  ═══════════════════════════════════════════════ -->
+  <g id="icon">
+
+    <!-- Outer glow halo (very faint, large blur simulation via opacity layers) -->
+    <rect x="44" y="44" width="424" height="424" rx="80" ry="80"
+          fill="none" stroke="url(#borderGrad)" stroke-width="1.5" opacity="0.25"/>
+
+    <!-- Primary border ring -->
+    <rect x="54" y="54" width="404" height="404" rx="72" ry="72"
+          fill="none" stroke="url(#borderGrad)" stroke-width="2.5" opacity="0.95"/>
+
+    <!-- Badge fill -->
+    <rect x="62" y="62" width="388" height="388" rx="66" ry="66"
+          fill="url(#badgeBg)"/>
+
+    <!--
+      LV MONOGRAM — architectural ligature
+      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      Design grid (within 388×388 badge, origin at badge top-left = 62,62):
+        Badge interior useful area: ~88px inset on each side → working area x: 110–402, y: 110–402
+        We'll use absolute coordinates.
+
+      Key measurements:
+        Stroke weight (arm thickness): 46px
+        Top of letterforms:   y = 136
+        Bottom baseline:       y = 376
+        Total height:          240px
+
+      L geometry:
+        Vertical stem:   x = 112 → 158,  y = 136 → 376   (46×240 rect)
+        Horizontal foot: x = 112 → 266,  y = 330 → 376   (154×46 rect)
+          Foot right edge at x=266 aligns with V vertex center
+
+      V geometry:
+        V vertex (bottom point):  cx = 256, y = 376  (same baseline as L foot bottom)
+        V mouth top-left:         x = 214, y = 136
+        V mouth top-right:        x = 400, y = 136
+
+        Left arm of V  (slants from top-left down to vertex):
+          Outer-left edge:  top (214, 136) → bottom-vertex-left  (233, 376)
+          Inner-right edge: top (260, 136) → bottom-vertex-right (256, 330)
+          NOTE: The left arm's inner bottom corner merges with the L foot's right edge.
+          So the left arm polygon:
+            (214, 136) → (260, 136) → (256, 330) → (112, 330) ... wait, no —
+            the foot is a separate rect; the left arm just needs to reach x=256,y=330 at inner bottom.
+
+        Let's be precise. The V is drawn as two slanted arms meeting at a vertex.
+        Arm thickness = 46px measured PERPENDICULAR to the arm slope, but for
+        geometric simplicity we keep a consistent 46px horizontal width at the top.
+
+        Left arm of V:
+          Top-left:     (214, 136)
+          Top-right:    (260, 136)
+          Bot-right:    (256, 330)   ← inner corner, sits at top of foot zone
+          Bot-left:     (210, 376)   ← outer corner, at baseline
+          (The outer edge of left arm falls at the V vertex tip)
+
+        Right arm of V:
+          Top-left:     (354, 136)
+          Top-right:    (400, 136)
+          Bot-left:     (256, 330)   ← inner corner, mirrors left arm
+          Bot-right:    (302, 376)   ← outer corner, baseline
+
+        Vertex fill triangle (fills the gap at the bottom point between the two arms):
+          (210, 376) → (302, 376) → (256, 330)
+
+      The L foot rect: x=112, y=330, width=144, height=46
+      This foot rect overlaps with the V left arm's lower region intentionally —
+      that overlap IS the ligature connection.
+    -->
+
+    <!-- L — vertical stem -->
+    <rect x="112" y="136" width="46" height="240"
+          fill="url(#monogramGrad)"/>
+
+    <!-- L — horizontal foot (extends right to meet V vertex zone) -->
+    <rect x="112" y="330" width="144" height="46"
+          fill="url(#monogramGrad)"/>
+
+    <!-- V — left arm -->
+    <polygon points="214,136 260,136 256,330 210,376"
+             fill="url(#monogramGrad)"/>
+
+    <!-- V — right arm -->
+    <polygon points="354,136 400,136 302,376 256,330"
+             fill="url(#monogramGrad)"/>
+
+    <!-- V — vertex triangle cap (closes the bottom point cleanly) -->
+    <polygon points="210,376 302,376 256,330"
+             fill="url(#monogramGrad)"/>
+
+  </g>
+
+  <!-- ═══════════════════════════════════════════════
+       WORDMARK  —  LEE + VILLARASA + role
+  ═══════════════════════════════════════════════ -->
+  <g id="wordmark">
+
+    <!-- Top rule -->
+    <rect x="492" y="176" width="500" height="1"
+          fill="url(#ruleGrad)"/>
+
+    <!-- "LEE" — regular weight, soft white -->
+    <text
+      x="494"
+      y="266"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="76"
+      font-weight="400"
+      letter-spacing="20"
+      fill="#E8ECFF"
+      opacity="0.80"
+    >LEE</text>
+
+    <!-- "VILLARASA" — bold, gradient fill -->
+    <text
+      x="494"
+      y="356"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="76"
+      font-weight="700"
+      letter-spacing="8"
+      fill="url(#wordmarkGrad)"
+    >VILLARASA</text>
+
+    <!-- Bottom rule -->
+    <rect x="492" y="374" width="500" height="1"
+          fill="url(#ruleGrad)"/>
+
+    <!-- Role tagline -->
+    <text
+      x="496"
+      y="412"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="18"
+      font-weight="400"
+      letter-spacing="6"
+      fill="#7B9EFF"
+      opacity="0.65"
+    >OPERATIONS ARCHITECT</text>
+
+  </g>
+
+</svg>

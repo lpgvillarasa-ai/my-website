@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512">
+  <defs>
+    <!-- Badge background gradient -->
+    <linearGradient id="badgeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A0A2A"/>
+      <stop offset="100%" stop-color="#06061A"/>
+    </linearGradient>
+
+    <!-- Border gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#B06EFF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#7B9EFF" stop-opacity="0.2"/>
+    </linearGradient>
+
+    <!-- Node glow gradient — blue -->
+    <radialGradient id="nodeBlue" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#A8C4FF"/>
+      <stop offset="100%" stop-color="#7B9EFF"/>
+    </radialGradient>
+
+    <!-- Node glow gradient — violet -->
+    <radialGradient id="nodeViolet" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D0A8FF"/>
+      <stop offset="100%" stop-color="#B06EFF"/>
+    </radialGradient>
+
+    <!-- Node glow gradient — top (apex) -->
+    <radialGradient id="nodeApex" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C4B4FF"/>
+      <stop offset="100%" stop-color="#9480FF"/>
+    </radialGradient>
+
+    <!-- Outer glow filter for nodes -->
+    <filter id="glowBlue" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowViolet" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle drop shadow for badge -->
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#7B9EFF" flood-opacity="0.15"/>
+    </filter>
+
+    <!-- Line gradient -->
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B9EFF" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#B06EFF" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="1024" height="512" fill="#040412"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ICON — square badge with network graph      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <g id="icon" transform="translate(80, 96)">
+
+    <!-- Badge shadow layer -->
+    <rect x="4" y="4" width="320" height="320" rx="36" ry="36"
+          fill="#7B9EFF" fill-opacity="0.06" filter="url(#badgeShadow)"/>
+
+    <!-- Badge body -->
+    <rect x="0" y="0" width="320" height="320" rx="32" ry="32"
+          fill="url(#badgeBg)"/>
+
+    <!-- Badge border (subtle gradient stroke via two rects) -->
+    <rect x="0.5" y="0.5" width="319" height="319" rx="31.5" ry="31.5"
+          fill="none" stroke="url(#borderGrad)" stroke-width="1.5"/>
+
+    <!-- ─── Network graph — 5-node diamond topology ─── -->
+    <!--
+         Node layout (local coords, badge 320×320, graph centered ~160,160):
+
+                  TOP  (160, 72)         ← apex
+
+         LEFT (72, 160)    RIGHT (248, 160)   ← mid-tier
+
+                  BOT-L (108, 252)   BOT-R (212, 252)  ← base tier
+    -->
+
+    <!-- Connection lines (drawn before nodes so nodes sit on top) -->
+    <!-- TOP → LEFT -->
+    <line x1="160" y1="72" x2="72" y2="160"
+          stroke="url(#lineGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+    <!-- TOP → RIGHT -->
+    <line x1="160" y1="72" x2="248" y2="160"
+          stroke="url(#lineGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+    <!-- LEFT → BOT-L -->
+    <line x1="72" y1="160" x2="108" y2="252"
+          stroke="url(#lineGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- RIGHT → BOT-R -->
+    <line x1="248" y1="160" x2="212" y2="252"
+          stroke="url(#lineGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- LEFT → RIGHT (horizontal spine) -->
+    <line x1="72" y1="160" x2="248" y2="160"
+          stroke="url(#lineGrad)" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+    <!-- BOT-L → BOT-R (base) -->
+    <line x1="108" y1="252" x2="212" y2="252"
+          stroke="url(#lineGrad)" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+    <!-- LEFT → BOT-R (cross brace) -->
+    <line x1="72" y1="160" x2="212" y2="252"
+          stroke="url(#lineGrad)" stroke-width="0.75" stroke-linecap="round" opacity="0.25"/>
+    <!-- RIGHT → BOT-L (cross brace) -->
+    <line x1="248" y1="160" x2="108" y2="252"
+          stroke="url(#lineGrad)" stroke-width="0.75" stroke-linecap="round" opacity="0.25"/>
+
+    <!-- Node outer glow halos (large, very soft) -->
+    <circle cx="160" cy="72"  r="18" fill="#9480FF" fill-opacity="0.18"/>
+    <circle cx="72"  cy="160" r="14" fill="#7B9EFF" fill-opacity="0.16"/>
+    <circle cx="248" cy="160" r="14" fill="#7B9EFF" fill-opacity="0.16"/>
+    <circle cx="108" cy="252" r="12" fill="#B06EFF" fill-opacity="0.14"/>
+    <circle cx="212" cy="252" r="12" fill="#B06EFF" fill-opacity="0.14"/>
+
+    <!-- APEX node (top — larger, violet-blue blend) -->
+    <circle cx="160" cy="72" r="9" fill="url(#nodeApex)" filter="url(#glowViolet)"/>
+    <circle cx="160" cy="72" r="4" fill="#E0D8FF"/>
+
+    <!-- LEFT mid node (blue) -->
+    <circle cx="72" cy="160" r="7" fill="url(#nodeBlue)" filter="url(#glowBlue)"/>
+    <circle cx="72" cy="160" r="3" fill="#D0E4FF"/>
+
+    <!-- RIGHT mid node (blue) -->
+    <circle cx="248" cy="160" r="7" fill="url(#nodeBlue)" filter="url(#glowBlue)"/>
+    <circle cx="248" cy="160" r="3" fill="#D0E4FF"/>
+
+    <!-- BOT-LEFT node (violet) -->
+    <circle cx="108" cy="252" r="6" fill="url(#nodeViolet)" filter="url(#glowViolet)"/>
+    <circle cx="108" cy="252" r="2.5" fill="#EAD8FF"/>
+
+    <!-- BOT-RIGHT node (violet) -->
+    <circle cx="212" cy="252" r="6" fill="url(#nodeViolet)" filter="url(#glowViolet)"/>
+    <circle cx="212" cy="252" r="2.5" fill="#EAD8FF"/>
+
+  </g>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- WORDMARK                                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <g id="wordmark" transform="translate(450, 0)">
+
+    <!-- Name: LEE VILLARASA -->
+    <text
+      x="0" y="292"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="72"
+      font-weight="400"
+      letter-spacing="8"
+      fill="#E8ECFF"
+    >LEE</text>
+
+    <text
+      x="0" y="374"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="72"
+      font-weight="400"
+      letter-spacing="4"
+      fill="#E8ECFF"
+    >VILLARASA</text>
+
+    <!-- Divider line -->
+    <line x1="2" y1="396" x2="520" y2="396"
+          stroke="#7B9EFF" stroke-width="1" stroke-opacity="0.35"/>
+
+    <!-- Subtitle: OPERATIONS ARCHITECT -->
+    <text
+      x="3" y="424"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="18"
+      font-weight="400"
+      letter-spacing="6"
+      fill="#7B9EFF"
+      fill-opacity="0.85"
+    >OPERATIONS ARCHITECT</text>
+
+  </g>
+
+</svg>
