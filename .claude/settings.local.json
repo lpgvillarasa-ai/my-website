@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(pdftotext \"C:\\\\Users\\\\lpgvi\\\\Downloads\\\\STREAM.pdf\" -)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python3:*)"
+    ]
+  }
+}
