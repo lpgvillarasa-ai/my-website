@@ -11,9 +11,6 @@
     (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
   </script>
 
-  <!-- COBE 3D Globe -->
-  <script src="https://cdn.jsdelivr.net/npm/cobe@0.6.3/dist/index.umd.js"></script>
-
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1443,7 +1440,7 @@
 
     .globe-canvas-container {
       position: relative;
-      width: min(560px, 90vw);
+      width: min(560px, 100%);
       aspect-ratio: 1;
       border-radius: 50%;
       box-shadow: 0 0 80px rgba(123,158,255,0.12), 0 0 160px rgba(176,110,255,0.06);
@@ -1464,9 +1461,24 @@
     /* Location tag row */
     .location-tags {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-direction: column;
+      gap: 14px;
       margin-top: 36px;
+    }
+    .location-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .location-region {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      opacity: 0.5;
+      padding-right: 4px;
+      white-space: nowrap;
     }
 
     .location-tag {
@@ -2960,15 +2972,24 @@
       </div>
 
       <div class="location-tags reveal reveal-delay-4">
-        <span class="location-tag"><span class="location-dot-sm"></span>Brooklyn, New York</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Arizona</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Chicago, Illinois</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Florida</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Ontario, Canada</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Barcelona, Spain</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Monaco</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Italy</span>
-        <span class="location-tag"><span class="location-dot-sm"></span>Cebu, Philippines</span>
+        <div class="location-group">
+          <span class="location-region">North America</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Brooklyn, New York</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Chicago, Illinois</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Florida</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Arizona</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Ontario, Canada</span>
+        </div>
+        <div class="location-group">
+          <span class="location-region">Europe</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Barcelona, Spain</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Monaco</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Italy</span>
+        </div>
+        <div class="location-group">
+          <span class="location-region">Asia</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Cebu, Philippines</span>
+        </div>
       </div>
     </div>
   </section>
@@ -3362,99 +3383,151 @@
     });
 
     // ============================================
-    // COBE 3D GLOBE
+    // CUSTOM WEBGL 3D GLOBE (no dependencies)
     // ============================================
     (function() {
       const canvas = document.getElementById('globe-canvas');
-      if (!canvas || typeof createGlobe === 'undefined') return;
+      if (!canvas) return;
+      const gl = canvas.getContext('webgl', { alpha: true, antialias: true });
+      if (!gl) return;
 
-      const locations = [
-        { location: [40.68, -73.94], size: 0.06 },  // Brooklyn, NY
-        { location: [33.45, -112.07], size: 0.06 }, // Arizona
-        { location: [43.65, -79.38], size: 0.06 },  // Ontario, Canada
-        { location: [41.85, -87.65], size: 0.06 },  // Chicago
-        { location: [27.99, -81.76], size: 0.06 },  // Florida
-        { location: [41.38, 2.17],   size: 0.06 },  // Barcelona
-        { location: [43.73, 7.42],   size: 0.05 },  // Monaco
-        { location: [41.90, 12.50],  size: 0.06 },  // Italy
-        { location: [10.32, 123.90], size: 0.06 },  // Cebu, Philippines
-      ];
+      const VS = `attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*.5+.5;gl_Position=vec4(a_pos,0.,1.);}`;
+      const FS = `precision highp float;
+varying vec2 v_uv;
+uniform float u_phi,u_theta,u_ratio,u_time;
+uniform sampler2D u_map;
+uniform vec4 u_markers[9];
+const float PI=3.14159265358979;
+mat3 rY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,s,0.,1.,0.,-s,0.,c);}
+mat3 rX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,-s,0.,s,c);}
+void main(){
+  vec2 p=(v_uv*2.-1.)*vec2(u_ratio,1.);
+  float r2=dot(p,p);
+  if(r2>1.){
+    float d=sqrt(r2);float g=smoothstep(1.5,1.,d);g=g*g*g;
+    gl_FragColor=vec4(.3,.4,1.,g*.5);return;
+  }
+  vec3 hit=vec3(p,sqrt(1.-r2));
+  mat3 rot=rX(-u_theta)*rY(-u_phi);
+  vec3 g3=rot*hit;
+  float lat=asin(clamp(g3.y,-1.,1.));
+  float lon=atan(g3.z,g3.x);
+  vec2 uv=vec2(.5+lon/(2.*PI),.5-lat/PI);
+  float land=texture2D(u_map,uv).r;
+  vec3 ld=normalize(vec3(1.,.8,2.));
+  float diff=max(.2,dot(hit,ld));
+  float sp=pow(max(0.,dot(reflect(-ld,hit),vec3(0.,0.,1.))),32.)*.3*step(.1,land);
+  vec3 ocean=vec3(.04,.06,.22)*diff;
+  vec3 lc=vec3(.25,.35,.78)*diff*1.5+sp;
+  float il=smoothstep(.15,.55,land);
+  vec3 col=mix(ocean,lc,il);
+  float rim=1.-sqrt(r2);
+  col+=vec3(.1,.15,.5)*pow(1.-rim,6.)*.8;
+  float pulse=.5+.5*sin(u_time*2.5);
+  float mk=0.;
+  for(int i=0;i<9;i++){
+    float d=length(g3-u_markers[i].xyz);
+    float sz=u_markers[i].w;
+    mk+=smoothstep(sz*1.2,0.,d);
+    mk+=smoothstep(sz*2.4,sz*1.5,d)*smoothstep(sz*1.5,sz*2.4,d)*pulse*.6;
+  }
+  mk=min(1.,mk);
+  vec3 mc=vec3(.55,.7,1.)+vec3(.15,.15,.3)*pulse;
+  col=mix(col,mc,mk);col+=mc*mk*.6*pulse;
+  gl_FragColor=vec4(col,1.);
+}`;
 
-      let phi = 0.6;
-      let isDragging = false;
-      let pointerStart = null;
-      let phiOffset = 0, thetaOffset = 0;
-      let dragPhi = 0, dragTheta = 0;
-      let globeInstance = null;
+      function compile(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.error(gl.getShaderInfoLog(s));return null;}return s;}
+      const prog=gl.createProgram();
+      gl.attachShader(prog,compile(gl.VERTEX_SHADER,VS));
+      gl.attachShader(prog,compile(gl.FRAGMENT_SHADER,FS));
+      gl.linkProgram(prog);
+      if(!gl.getProgramParameter(prog,gl.LINK_STATUS))return;
+      gl.useProgram(prog);
+      gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
 
-      function initGlobe() {
-        const w = canvas.offsetWidth;
-        if (w === 0 || globeInstance) return;
+      const buf=gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+      const aPos=gl.getAttribLocation(prog,'a_pos');
+      gl.enableVertexAttribArray(aPos);gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        globeInstance = createGlobe(canvas, {
-          devicePixelRatio: dpr,
-          width: w * dpr,
-          height: w * dpr,
-          phi: 0.6,
-          theta: 0.25,
-          dark: 1,
-          diffuse: 2.0,
-          mapSamples: 16000,
-          mapBrightness: 12,
-          baseColor: [0.22, 0.28, 0.65],
-          markerColor: [0.48, 0.62, 1.0],
-          glowColor: [0.22, 0.28, 0.65],
-          markers: locations,
-          onRender(state) {
-            if (!isDragging) phi += 0.003;
-            state.phi = phi + phiOffset + dragPhi;
-            state.theta = 0.25 + thetaOffset + dragTheta;
-            const cw = canvas.offsetWidth * dpr;
-            state.width = cw;
-            state.height = cw;
-          },
-        });
+      const uPhi=gl.getUniformLocation(prog,'u_phi'),uTheta=gl.getUniformLocation(prog,'u_theta');
+      const uRatio=gl.getUniformLocation(prog,'u_ratio'),uTime=gl.getUniformLocation(prog,'u_time');
 
-        setTimeout(() => { canvas.style.opacity = '1'; }, 200);
+      // Marker lat/lon → XYZ on unit sphere
+      [[40.68,-73.94],[33.45,-112.07],[43.65,-79.38],[41.85,-87.65],[27.99,-81.76],[41.38,2.17],[43.73,7.42],[41.90,12.50],[10.32,123.90]]
+        .forEach(([la,lo],i)=>{const lr=la*Math.PI/180,lo2=lo*Math.PI/180;gl.uniform4f(gl.getUniformLocation(prog,`u_markers[${i}]`),Math.cos(lr)*Math.cos(lo2),Math.sin(lr),Math.cos(lr)*Math.sin(lo2),.06);});
+
+      // Build world map texture programmatically (no external file needed)
+      function buildWorldMap(w,h){
+        const oc=document.createElement('canvas');oc.width=w;oc.height=h;
+        const ctx=oc.getContext('2d');
+        ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+        ctx.fillStyle='#fff';
+        const px=(lo,la)=>[(lo+180)/360*w,(90-la)/180*h];
+        function poly(pts){ctx.beginPath();pts.forEach(([lo,la],i)=>{const[x,y]=px(lo,la);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.closePath();ctx.fill();}
+        // North America
+        poly([[-168,71],[-141,71],[-100,71],[-80,71],[-62,71],[-52,65],[-52,50],[-64,44],[-70,43],[-76,35],[-80,25],[-83,10],[-77,8],[-60,9],[-50,5],[-73,10],[-82,10],[-87,16],[-97,26],[-110,23],[-117,32],[-124,45],[-130,55],[-141,60],[-168,60]]);
+        // Greenland
+        poly([[-73,76],[-52,82],[-18,77],[-18,72],[-30,68],[-45,60],[-55,62]]);
+        // South America
+        poly([[-82,10],[-77,8],[-60,9],[-50,5],[-35,-5],[-35,-20],[-40,-35],[-52,-55],[-65,-55],[-75,-45],[-75,-35],[-68,-20],[-60,-3],[-50,5],[-60,10],[-73,10]]);
+        // Europe
+        poly([[-9,36],[-9,44],[-2,43],[3,52],[5,53],[14,55],[18,57],[25,60],[30,65],[28,71],[20,71],[15,69],[10,55],[5,53],[2,51],[-2,48],[-5,44],[-9,44]]);
+        // Scandinavia
+        poly([[5,58],[14,55],[18,57],[25,60],[30,65],[28,71],[20,71],[15,69],[5,62]]);
+        // Africa
+        poly([[-18,15],[-18,28],[-5,36],[10,38],[25,38],[37,30],[42,12],[50,12],[44,12],[40,10],[20,5],[10,0],[5,-5],[-5,-15],[-15,-25],[-20,-35],[-15,-22]]);
+        // Asia (main body)
+        poly([[26,36],[36,38],[36,30],[42,12],[50,12],[60,22],[80,22],[100,22],[120,22],[130,28],[140,35],[140,50],[168,56],[168,64],[140,72],[100,75],[60,70],[55,52],[42,52],[42,46],[50,42],[60,38],[55,22],[50,12],[42,12],[36,30],[36,38],[26,36]]);
+        // Indian subcontinent
+        poly([[65,22],[80,8],[90,22],[88,28],[80,22]]);
+        // Southeast Asia peninsula
+        poly([[98,6],[100,4],[103,1],[108,2],[104,10],[100,14]]);
+        // Japan (Honshu)
+        poly([[130,31],[140,40],[145,43],[142,44],[135,40],[130,33]]);
+        // Australia
+        poly([[114,-22],[114,-35],[122,-34],[130,-32],[140,-36],[150,-38],[155,-28],[150,-23],[145,-18],[140,-17],[130,-12],[122,-18]]);
+        // British Isles
+        poly([[-5,50],[2,51],[2,55],[-1,58],[-5,58],[-5,55]]);
+        // Iceland
+        poly([[-25,63],[-13,63],[-13,65],[-20,66],[-25,64]]);
+        // Philippines
+        poly([[118,8],[122,8],[125,18],[120,18],[118,14]]);
+        // Madagascar
+        poly([[44,-13],[50,-16],[48,-25],[44,-25]]);
+        // New Zealand
+        poly([[170,-34],[178,-37],[174,-41],[170,-40]]);
+        return oc;
       }
+      const tex=gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D,tex);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,buildWorldMap(512,256));
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(gl.getUniformLocation(prog,'u_map'),0);
 
-      // Init when visible (handles reveal animation + lazy load)
-      if (canvas.offsetWidth > 0) {
-        initGlobe();
-      } else {
-        const ro = new ResizeObserver(() => {
-          if (canvas.offsetWidth > 0) { ro.disconnect(); initGlobe(); }
-        });
-        ro.observe(canvas);
-      }
+      let phi=0.6,isDragging=false,pointerStart=null,phiOffset=0,thetaOffset=0,dragPhi=0,dragTheta=0,running=false;
 
-      // Also init when scrolled into view
-      const io = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) { io.disconnect(); initGlobe(); }
-      }, { threshold: 0.1 });
-      io.observe(canvas);
+      function getWidth(){return canvas.offsetWidth||canvas.closest('.globe-canvas-container')?.offsetWidth||canvas.closest('.globe-wrap')?.offsetWidth||0;}
 
-      // Drag to rotate
-      canvas.addEventListener('pointerdown', e => {
-        isDragging = true;
-        pointerStart = { x: e.clientX, y: e.clientY };
-        canvas.style.cursor = 'grabbing';
-      });
-      window.addEventListener('pointermove', e => {
-        if (!isDragging || !pointerStart) return;
-        dragPhi   = (e.clientX - pointerStart.x) / 200;
-        dragTheta = (e.clientY - pointerStart.y) / 600;
-      });
-      window.addEventListener('pointerup', () => {
-        if (!isDragging) return;
-        phiOffset   += dragPhi;
-        thetaOffset += dragTheta;
-        dragPhi = dragTheta = 0;
-        isDragging = false;
-        pointerStart = null;
-        canvas.style.cursor = 'grab';
-      });
+      function resize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=getWidth();if(!w)return;canvas.width=w*dpr;canvas.height=w*dpr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform1f(uRatio,1.);}
+
+      function render(){if(!isDragging)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
+
+      function initGlobe(){if(running)return;if(!getWidth())return;running=true;resize();window.addEventListener('resize',resize);
+        canvas.addEventListener('pointerdown',e=>{isDragging=true;pointerStart={x:e.clientX,y:e.clientY};canvas.style.cursor='grabbing';});
+        window.addEventListener('pointermove',e=>{if(!isDragging||!pointerStart)return;dragPhi=(e.clientX-pointerStart.x)/200;dragTheta=(e.clientY-pointerStart.y)/600;});
+        window.addEventListener('pointerup',()=>{if(!isDragging)return;phiOffset+=dragPhi;thetaOffset+=dragTheta;dragPhi=dragTheta=0;isDragging=false;pointerStart=null;canvas.style.cursor='grab';});
+        canvas.style.opacity='1';render();}
+
+      const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){io.disconnect();setTimeout(()=>{if(!running)initGlobe();},100);setTimeout(()=>{if(!running)initGlobe();},600);}},{threshold:.05});
+      io.observe(canvas.closest('.globe-wrap')||canvas);
+      if(getWidth())initGlobe();
     })();
 
     // ============================================
