@@ -2951,7 +2951,7 @@
     <div class="section-inner">
       <div class="section-tag reveal">Global Reach</div>
       <h2 class="section-title reveal reveal-delay-1">Teams I've supported<br/><em>around the world.</em></h2>
-      <p class="section-sub reveal reveal-delay-2">Remote-first partnerships across 4 continents — from Brooklyn boardrooms to Cebu operations floors.</p>
+      <p class="section-sub reveal reveal-delay-2">Remote-first partnerships across 4 continents. US, Europe, Canada, and Southeast Asia.</p>
 
       <div class="globe-wrap reveal reveal-delay-3">
         <div class="globe-canvas-container">
@@ -3369,15 +3369,15 @@
       if (!canvas || typeof createGlobe === 'undefined') return;
 
       const locations = [
-        { location: [40.68, -73.94], size: 0.05 },  // Brooklyn, NY
-        { location: [33.45, -112.07], size: 0.05 }, // Arizona
-        { location: [43.65, -79.38], size: 0.05 },  // Ontario, Canada
-        { location: [41.85, -87.65], size: 0.05 },  // Chicago
-        { location: [27.99, -81.76], size: 0.05 },  // Florida
-        { location: [41.38, 2.17],   size: 0.05 },  // Barcelona
-        { location: [43.73, 7.42],   size: 0.04 },  // Monaco
-        { location: [41.90, 12.50],  size: 0.05 },  // Italy
-        { location: [10.32, 123.90], size: 0.05 },  // Cebu, Philippines
+        { location: [40.68, -73.94], size: 0.06 },  // Brooklyn, NY
+        { location: [33.45, -112.07], size: 0.06 }, // Arizona
+        { location: [43.65, -79.38], size: 0.06 },  // Ontario, Canada
+        { location: [41.85, -87.65], size: 0.06 },  // Chicago
+        { location: [27.99, -81.76], size: 0.06 },  // Florida
+        { location: [41.38, 2.17],   size: 0.06 },  // Barcelona
+        { location: [43.73, 7.42],   size: 0.05 },  // Monaco
+        { location: [41.90, 12.50],  size: 0.06 },  // Italy
+        { location: [10.32, 123.90], size: 0.06 },  // Cebu, Philippines
       ];
 
       let phi = 0.6;
@@ -3385,33 +3385,55 @@
       let pointerStart = null;
       let phiOffset = 0, thetaOffset = 0;
       let dragPhi = 0, dragTheta = 0;
+      let globeInstance = null;
 
-      const size = canvas.offsetWidth;
+      function initGlobe() {
+        const w = canvas.offsetWidth;
+        if (w === 0 || globeInstance) return;
 
-      const globe = createGlobe(canvas, {
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-        width: size * 2,
-        height: size * 2,
-        phi: 0.6,
-        theta: 0.25,
-        dark: 1,
-        diffuse: 1.6,
-        mapSamples: 20000,
-        mapBrightness: 7,
-        baseColor: [0.13, 0.16, 0.42],
-        markerColor: [0.48, 0.62, 1.0],
-        glowColor: [0.18, 0.22, 0.55],
-        markers: locations,
-        onRender(state) {
-          if (!isDragging) phi += 0.003;
-          state.phi = phi + phiOffset + dragPhi;
-          state.theta = 0.25 + thetaOffset + dragTheta;
-          state.width = canvas.offsetWidth * 2;
-          state.height = canvas.offsetWidth * 2;
-        },
-      });
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        globeInstance = createGlobe(canvas, {
+          devicePixelRatio: dpr,
+          width: w * dpr,
+          height: w * dpr,
+          phi: 0.6,
+          theta: 0.25,
+          dark: 1,
+          diffuse: 2.0,
+          mapSamples: 16000,
+          mapBrightness: 12,
+          baseColor: [0.22, 0.28, 0.65],
+          markerColor: [0.48, 0.62, 1.0],
+          glowColor: [0.22, 0.28, 0.65],
+          markers: locations,
+          onRender(state) {
+            if (!isDragging) phi += 0.003;
+            state.phi = phi + phiOffset + dragPhi;
+            state.theta = 0.25 + thetaOffset + dragTheta;
+            const cw = canvas.offsetWidth * dpr;
+            state.width = cw;
+            state.height = cw;
+          },
+        });
 
-      setTimeout(() => { canvas.style.opacity = '1'; }, 100);
+        setTimeout(() => { canvas.style.opacity = '1'; }, 200);
+      }
+
+      // Init when visible (handles reveal animation + lazy load)
+      if (canvas.offsetWidth > 0) {
+        initGlobe();
+      } else {
+        const ro = new ResizeObserver(() => {
+          if (canvas.offsetWidth > 0) { ro.disconnect(); initGlobe(); }
+        });
+        ro.observe(canvas);
+      }
+
+      // Also init when scrolled into view
+      const io = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) { io.disconnect(); initGlobe(); }
+      }, { threshold: 0.1 });
+      io.observe(canvas);
 
       // Drag to rotate
       canvas.addEventListener('pointerdown', e => {
@@ -3432,10 +3454,6 @@
         isDragging = false;
         pointerStart = null;
         canvas.style.cursor = 'grab';
-      });
-
-      window.addEventListener('resize', () => {
-        globe.destroy();
       });
     })();
 
