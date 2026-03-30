@@ -1424,6 +1424,152 @@
     }
 
     /* ============================================
+       GLOBAL REACH MAP
+    ============================================ */
+    #global {
+      padding: 120px 0 80px;
+    }
+
+    .world-map-wrap {
+      position: relative;
+      margin-top: 56px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    }
+
+    .world-map-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 60% at 25% 50%, rgba(123,158,255,0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 75% 50%, rgba(176,110,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .world-map-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .world-map-svg .continent {
+      fill: var(--bg-card);
+      stroke: var(--border-strong);
+      stroke-width: 0.8;
+      stroke-linejoin: round;
+    }
+
+    [data-theme="light"] .world-map-svg .continent {
+      fill: rgba(75,111,212,0.08);
+      stroke: rgba(75,111,212,0.2);
+    }
+
+    .pin-pulse {
+      fill: var(--gold);
+      opacity: 0;
+      transform-origin: center;
+      animation: mapPulse 2.8s ease-out infinite;
+    }
+
+    .pin-core {
+      fill: var(--gold);
+      filter: drop-shadow(0 0 4px var(--gold));
+    }
+
+    .map-pin:nth-child(1) .pin-pulse  { animation-delay: 0s; }
+    .map-pin:nth-child(2) .pin-pulse  { animation-delay: 0.3s; }
+    .map-pin:nth-child(3) .pin-pulse  { animation-delay: 0.6s; }
+    .map-pin:nth-child(4) .pin-pulse  { animation-delay: 0.9s; }
+    .map-pin:nth-child(5) .pin-pulse  { animation-delay: 1.2s; }
+    .map-pin:nth-child(6) .pin-pulse  { animation-delay: 1.5s; }
+    .map-pin:nth-child(7) .pin-pulse  { animation-delay: 1.8s; }
+    .map-pin:nth-child(8) .pin-pulse  { animation-delay: 2.1s; }
+    .map-pin:nth-child(9) .pin-pulse  { animation-delay: 2.4s; }
+
+    @keyframes mapPulse {
+      0%   { r: 5; opacity: 0.6; }
+      80%  { r: 18; opacity: 0; }
+      100% { r: 5; opacity: 0; }
+    }
+
+    .map-pin { cursor: default; }
+    .map-pin:hover .pin-core { fill: var(--gold-light); }
+
+    /* Tooltip */
+    .map-tooltip {
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .map-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .map-tooltip-city {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .map-tooltip-country {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Location tag row */
+    .location-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 36px;
+    }
+
+    .location-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .location-tag:hover {
+      border-color: var(--gold-border);
+      color: var(--text-primary);
+    }
+
+    .location-dot-sm {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ============================================
        CONTACT / CTA
     ============================================ */
     #contact {
@@ -2135,7 +2281,7 @@
       .hamburger { display: flex; }
       #hero { padding: var(--nav-h) 24px 0; }
       .section-inner { padding: 0 24px; }
-      #about, #stream, #cases, #results, #skills, #process, #industries, #contact { padding: 80px 0; }
+      #about, #stream, #cases, #results, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
       .stream-grid { grid-template-columns: 1fr; }
       .cases-grid { grid-template-columns: 1fr; }
       .case-card.featured { grid-column: span 1; }
@@ -2874,6 +3020,115 @@
     </div>
   </section>
 
+  <!-- ============ GLOBAL REACH ============ -->
+  <section id="global">
+    <div class="section-inner">
+      <div class="section-tag reveal">Global Reach</div>
+      <h2 class="section-title reveal reveal-delay-1">Teams I've supported<br/><em>around the world.</em></h2>
+      <p class="section-sub reveal reveal-delay-2">Remote-first partnerships across 4 continents — from Brooklyn boardrooms to Cebu operations floors.</p>
+
+      <div class="world-map-wrap reveal reveal-delay-3">
+        <svg class="world-map-svg" viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg">
+          <g class="continents">
+            <!-- North America -->
+            <path class="continent" d="M68,52 L110,42 L160,40 L205,46 L250,50 L295,58 L322,72 L338,92 L342,116 L334,144 L312,168 L288,196 L258,218 L224,220 L196,208 L172,192 L148,174 L118,152 L92,124 L70,94 Z"/>
+            <!-- Greenland -->
+            <path class="continent" d="M268,20 L318,14 L336,28 L326,48 L294,54 L270,42 Z"/>
+            <!-- South America -->
+            <path class="continent" d="M210,220 L288,214 L314,248 L310,294 L294,342 L268,376 L240,382 L210,356 L196,312 L196,260 L202,236 Z"/>
+            <!-- Europe -->
+            <path class="continent" d="M420,58 L476,50 L530,50 L548,68 L542,90 L524,110 L506,130 L474,142 L446,130 L424,112 L418,86 Z"/>
+            <!-- Africa -->
+            <path class="continent" d="M426,140 L558,134 L574,170 L568,248 L534,308 L498,320 L460,304 L436,258 L424,194 Z"/>
+            <!-- Russia / N.Asia -->
+            <path class="continent" d="M548,24 L852,18 L870,48 L856,86 L800,96 L748,80 L694,64 L634,54 L580,46 Z"/>
+            <!-- Main Asia -->
+            <path class="continent" d="M548,46 L634,54 L694,64 L748,80 L800,96 L856,86 L868,130 L852,174 L818,210 L776,230 L730,228 L688,212 L646,196 L604,178 L572,152 L548,120 Z"/>
+            <!-- India -->
+            <path class="continent" d="M592,128 L644,124 L652,172 L628,204 L596,198 Z"/>
+            <!-- SE Asia -->
+            <path class="continent" d="M688,188 L786,192 L808,208 L800,222 L766,230 L728,228 L700,212 Z"/>
+            <!-- Australia -->
+            <path class="continent" d="M714,262 L824,256 L844,292 L834,346 L792,366 L748,362 L714,326 Z"/>
+            <!-- Japan -->
+            <path class="continent" d="M794,90 L824,84 L830,104 L812,114 Z"/>
+          </g>
+
+          <!-- Connecting arc lines (subtle) -->
+          <g stroke="var(--gold)" stroke-width="0.4" fill="none" opacity="0.18">
+            <path d="M 246,118 Q 360,60 455,107"/>
+            <path d="M 265,122 Q 400,50 469,103"/>
+            <path d="M 469,103 Q 600,80 759,190"/>
+          </g>
+
+          <!-- PINS -->
+          <!-- Brooklyn, NY -->
+          <g class="map-pin" data-city="Brooklyn, New York" data-country="USA">
+            <circle class="pin-pulse" cx="265" cy="122" r="5"/>
+            <circle class="pin-core" cx="265" cy="122" r="4"/>
+          </g>
+          <!-- Arizona -->
+          <g class="map-pin" data-city="Arizona" data-country="USA">
+            <circle class="pin-pulse" cx="172" cy="140" r="5"/>
+            <circle class="pin-core" cx="172" cy="140" r="4"/>
+          </g>
+          <!-- Ontario, Canada -->
+          <g class="map-pin" data-city="Ontario" data-country="Canada">
+            <circle class="pin-pulse" cx="248" cy="112" r="5"/>
+            <circle class="pin-core" cx="248" cy="112" r="4"/>
+          </g>
+          <!-- Chicago -->
+          <g class="map-pin" data-city="Chicago, Illinois" data-country="USA">
+            <circle class="pin-pulse" cx="230" cy="118" r="5"/>
+            <circle class="pin-core" cx="230" cy="118" r="4"/>
+          </g>
+          <!-- Florida -->
+          <g class="map-pin" data-city="Florida" data-country="USA">
+            <circle class="pin-pulse" cx="244" cy="155" r="5"/>
+            <circle class="pin-core" cx="244" cy="155" r="4"/>
+          </g>
+          <!-- Barcelona -->
+          <g class="map-pin" data-city="Barcelona" data-country="Spain">
+            <circle class="pin-pulse" cx="452" cy="107" r="5"/>
+            <circle class="pin-core" cx="452" cy="107" r="4"/>
+          </g>
+          <!-- Monaco -->
+          <g class="map-pin" data-city="Monaco" data-country="Monaco">
+            <circle class="pin-pulse" cx="468" cy="103" r="5"/>
+            <circle class="pin-core" cx="468" cy="103" r="4"/>
+          </g>
+          <!-- Italy -->
+          <g class="map-pin" data-city="Italy" data-country="Italy">
+            <circle class="pin-pulse" cx="482" cy="108" r="5"/>
+            <circle class="pin-core" cx="482" cy="108" r="4"/>
+          </g>
+          <!-- Cebu, Philippines -->
+          <g class="map-pin" data-city="Cebu" data-country="Philippines">
+            <circle class="pin-pulse" cx="759" cy="190" r="5"/>
+            <circle class="pin-core" cx="759" cy="190" r="4"/>
+          </g>
+        </svg>
+
+        <div class="map-tooltip" id="mapTooltip">
+          <div class="map-tooltip-city"></div>
+          <div class="map-tooltip-country"></div>
+        </div>
+      </div>
+
+      <div class="location-tags reveal reveal-delay-4">
+        <span class="location-tag"><span class="location-dot-sm"></span>Brooklyn, New York</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Arizona</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Chicago, Illinois</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Florida</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Ontario, Canada</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Barcelona, Spain</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Monaco</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Italy</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Cebu, Philippines</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ CONTACT ============ -->
   <section id="contact">
     <div class="section-inner">
@@ -3261,6 +3516,34 @@
         }
       });
     });
+
+    // ============================================
+    // MAP TOOLTIPS
+    // ============================================
+    (function() {
+      const tooltip = document.getElementById('mapTooltip');
+      if (!tooltip) return;
+      const pins = document.querySelectorAll('.map-pin');
+      pins.forEach(pin => {
+        pin.addEventListener('mouseenter', (e) => {
+          tooltip.querySelector('.map-tooltip-city').textContent = pin.dataset.city;
+          tooltip.querySelector('.map-tooltip-country').textContent = pin.dataset.country;
+          tooltip.classList.add('visible');
+        });
+        pin.addEventListener('mousemove', (e) => {
+          const wrap = document.querySelector('.world-map-wrap');
+          const rect = wrap.getBoundingClientRect();
+          let x = e.clientX - rect.left + 14;
+          let y = e.clientY - rect.top - 44;
+          if (x + 160 > rect.width) x = e.clientX - rect.left - 160;
+          tooltip.style.left = x + 'px';
+          tooltip.style.top = y + 'px';
+        });
+        pin.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('visible');
+        });
+      });
+    })();
 
     // ============================================
     // THEME TOGGLE
