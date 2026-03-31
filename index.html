@@ -2974,17 +2974,17 @@
       <div class="location-tags reveal reveal-delay-4">
         <div class="location-group">
           <span class="location-region">North America</span>
-          <span class="location-tag"><span class="location-dot-sm"></span>Brooklyn, New York</span>
-          <span class="location-tag"><span class="location-dot-sm"></span>Chicago, Illinois</span>
-          <span class="location-tag"><span class="location-dot-sm"></span>Florida</span>
-          <span class="location-tag"><span class="location-dot-sm"></span>Arizona</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Brooklyn, New York, USA</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Chicago, Illinois, USA</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Florida, USA</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Arizona, USA</span>
           <span class="location-tag"><span class="location-dot-sm"></span>Ontario, Canada</span>
         </div>
         <div class="location-group">
           <span class="location-region">Europe</span>
           <span class="location-tag"><span class="location-dot-sm"></span>Barcelona, Spain</span>
           <span class="location-tag"><span class="location-dot-sm"></span>Monaco</span>
-          <span class="location-tag"><span class="location-dot-sm"></span>Italy</span>
+          <span class="location-tag"><span class="location-dot-sm"></span>Rome, Italy</span>
         </div>
         <div class="location-group">
           <span class="location-region">Asia</span>
@@ -3404,8 +3404,9 @@ void main(){
   vec2 p=(v_uv*2.-1.)*vec2(u_ratio,1.);
   float r2=dot(p,p);
   if(r2>1.){
-    float d=sqrt(r2);float g=smoothstep(1.5,1.,d);g=g*g*g;
-    gl_FragColor=vec4(.3,.4,1.,g*.5);return;
+    float d=sqrt(r2);
+    float g=pow(smoothstep(1.7,1.0,d),2.0);
+    gl_FragColor=vec4(0.12,0.22,0.75,g*0.38);return;
   }
   vec3 hit=vec3(p,sqrt(1.-r2));
   mat3 rot=rX(-u_theta)*rY(-u_phi);
@@ -3414,26 +3415,57 @@ void main(){
   float lon=atan(g3.z,g3.x);
   vec2 uv=vec2(.5+lon/(2.*PI),.5-lat/PI);
   float land=texture2D(u_map,uv).r;
-  vec3 ld=normalize(vec3(1.,.8,2.));
-  float diff=max(.2,dot(hit,ld));
-  float sp=pow(max(0.,dot(reflect(-ld,hit),vec3(0.,0.,1.))),32.)*.3*step(.1,land);
-  vec3 ocean=vec3(.04,.06,.22)*diff;
-  vec3 lc=vec3(.25,.35,.78)*diff*1.5+sp;
-  float il=smoothstep(.15,.55,land);
-  vec3 col=mix(ocean,lc,il);
-  float rim=1.-sqrt(r2);
-  col+=vec3(.1,.15,.5)*pow(1.-rim,6.)*.8;
-  float pulse=.5+.5*sin(u_time*2.5);
+
+  /* --- dot grid (land rendered as evenly-spaced dots) --- */
+  float latD=lat*180./PI;
+  float lonD=lon*180./PI;
+  float gs=3.8;
+  float cl=max(cos(lat),0.08);
+  float gu=fract((lonD+3600.)/(gs/cl));
+  float gv=fract((latD+900.)/gs);
+  float du=(gu-0.5)*gs;
+  float dv=(gv-0.5)*gs;
+  float dd=sqrt(du*du+dv*dv);
+  float dotR=1.1;
+  float dotMask=1.-smoothstep(dotR*0.55,dotR,dd);
+  float isLand=step(0.3,land);
+  float dot_=isLand*dotMask;
+
+  /* --- lighting --- */
+  vec3 ld=normalize(vec3(1.4,0.9,2.0));
+  float diff=max(0.08,dot(hit,ld));
+  float rimD=sqrt(r2);
+
+  /* --- ocean --- */
+  vec3 ocean=vec3(0.018,0.032,0.13)*(0.4+diff*0.6);
+  ocean+=vec3(0.06,0.12,0.4)*pow(rimD,4.5)*0.5;
+
+  /* --- land dots --- */
+  float bright=0.45+diff*0.75;
+  vec3 dotCol=vec3(0.28,0.42,0.88)*bright;
+  dotCol+=vec3(0.12,0.18,0.4)*pow(max(0.,dot(reflect(-ld,hit),vec3(0.,0.,1.))),40.)*dot_*0.5;
+
+  /* --- subtle latitude lines on ocean --- */
+  float latLine=(1.-isLand)*smoothstep(0.96,1.0,abs(sin(latD*PI/30.)))*0.025;
+  ocean+=vec3(0.08,0.15,0.45)*latLine;
+
+  vec3 col=mix(ocean,dotCol,dot_);
+
+  /* --- rim glow --- */
+  col+=vec3(0.07,0.13,0.48)*pow(rimD,5.0)*0.9;
+
+  /* --- markers --- */
+  float pulse=0.5+0.5*sin(u_time*2.5);
   float mk=0.;
   for(int i=0;i<9;i++){
     float d=length(g3-u_markers[i].xyz);
     float sz=u_markers[i].w;
-    mk+=smoothstep(sz*1.2,0.,d);
-    mk+=smoothstep(sz*2.4,sz*1.5,d)*smoothstep(sz*1.5,sz*2.4,d)*pulse*.6;
+    mk+=smoothstep(sz*1.1,0.,d);
+    mk+=smoothstep(sz*2.6,sz*1.6,d)*smoothstep(sz*1.6,sz*2.6,d)*pulse*0.65;
   }
   mk=min(1.,mk);
-  vec3 mc=vec3(.55,.7,1.)+vec3(.15,.15,.3)*pulse;
-  col=mix(col,mc,mk);col+=mc*mk*.6*pulse;
+  vec3 mc=vec3(0.62,0.82,1.0)+vec3(0.18,0.18,0.4)*pulse;
+  col=mix(col,mc,mk);col+=mc*mk*0.7*pulse;
   gl_FragColor=vec4(col,1.);
 }`;
 
