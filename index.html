@@ -3281,13 +3281,37 @@
     // ============================================
     // ACTIVE NAV LINK (skill nav)
     // ============================================
-    const skillNavItems = document.querySelectorAll('.skill-nav-item');
-    skillNavItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        skillNavItems.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
+    // ============================================
+    // SKILLS NAV — SCROLL SPY
+    // ============================================
+    (function() {
+      const navItems = document.querySelectorAll('.skill-nav-item');
+      const groups = ['exec-skills','ops-skills','tech-skills','data-skills','tools-section']
+        .map(id => document.getElementById(id)).filter(Boolean);
+
+      function setActive(id) {
+        navItems.forEach(item =>
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id)
+        );
+      }
+
+      // IntersectionObserver: fires when a section enters the upper-middle viewport zone
+      const spy = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      }, { rootMargin: '-15% 0px -65% 0px', threshold: 0 });
+
+      groups.forEach(g => spy.observe(g));
+
+      // Clicking still scrolls & sets active immediately
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          navItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+        });
       });
-    });
+    })();
 
     // ============================================
     // CONTACT FORM
