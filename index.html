@@ -168,8 +168,9 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(123,158,255,0.04) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 50% at 10% 90%, rgba(176,110,255,0.03) 0%, transparent 65%);
+        radial-gradient(ellipse 60% 40% at 78% 8%,  rgba(123,158,255,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 55% at 12% 88%, rgba(176,110,255,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 30% at 50% 50%, rgba(100,130,255,0.03) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -342,15 +343,54 @@
       100% { opacity: 1; filter: hue-rotate(-10deg); }
     }
 
-    /* Neural vortex WebGL canvas — deepest layer */
+    /* Ambient background blobs — GPU-accelerated CSS, replaces WebGL neural vortex */
     #neural-vortex {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.22;
+      overflow: hidden;
+    }
+    #neural-vortex::before {
+      content: '';
+      position: absolute;
+      width: 110vh;
+      height: 110vh;
+      top: -25vh;
+      left: -15vw;
+      background: radial-gradient(circle at center, rgba(72,40,210,0.22) 0%, rgba(50,80,240,0.1) 35%, transparent 68%);
+      border-radius: 50%;
+      animation: nvBlob1 16s ease-in-out infinite;
+      will-change: transform;
+    }
+    #neural-vortex::after {
+      content: '';
+      position: absolute;
+      width: 90vh;
+      height: 90vh;
+      bottom: -20vh;
+      right: -10vw;
+      background: radial-gradient(circle at center, rgba(110,45,255,0.18) 0%, rgba(60,110,255,0.08) 40%, transparent 68%);
+      border-radius: 50%;
+      animation: nvBlob2 20s ease-in-out infinite;
+      will-change: transform;
+    }
+    @keyframes nvBlob1 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      25%      { transform: translate(8vw,14vh) scale(1.07); }
+      50%      { transform: translate(18vw,-4vh) scale(0.94); }
+      75%      { transform: translate(-4vw,9vh) scale(1.04); }
+    }
+    @keyframes nvBlob2 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%      { transform: translate(-14vw,-9vh) scale(1.1); }
+      66%      { transform: translate(6vw,16vh) scale(0.91); }
+    }
+    [data-theme="light"] #neural-vortex::before {
+      background: radial-gradient(circle at center, rgba(72,40,210,0.07) 0%, transparent 68%);
+    }
+    [data-theme="light"] #neural-vortex::after {
+      background: radial-gradient(circle at center, rgba(110,45,255,0.06) 0%, transparent 68%);
     }
 
     /* Particle canvas — fixed across entire page */
@@ -476,7 +516,7 @@
     .btn-primary:hover {
       background: var(--gold-light);
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(200, 169, 110, 0.25);
+      box-shadow: 0 12px 40px rgba(123,158,255,0.28), 0 0 0 1px rgba(123,158,255,0.15);
     }
 
     .btn-secondary {
@@ -812,14 +852,16 @@
       border-radius: var(--radius-md);
       padding: 32px;
       margin-bottom: 16px;
-      transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+      transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
       cursor: none;
+      will-change: transform;
     }
 
     .value-prop-card:hover {
       border-color: var(--gold-border);
       background: var(--bg-card-hover);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35), 0 0 0 1px var(--gold-border), 0 0 32px rgba(123,158,255,0.07);
     }
 
     .vpc-icon {
@@ -888,23 +930,25 @@
       padding: 36px 32px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.3s ease, transform 0.3s ease;
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
       cursor: none;
+      will-change: transform;
     }
 
     .system-card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 2px;
+      height: 1px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.35s ease;
     }
 
     .system-card:hover {
       border-color: var(--gold-border);
       transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(123,158,255,0.06);
     }
 
     .system-card:hover::before { opacity: 1; }
@@ -1888,11 +1932,18 @@
 
     .stream-card {
       background: var(--bg-card);
+      border: 1px solid var(--border);
       padding: 44px 36px;
       position: relative;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       overflow: hidden;
       cursor: pointer;
+      will-change: transform;
+    }
+
+    .stream-card:hover {
+      border-color: var(--gold-border);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 24px rgba(123,158,255,0.06);
     }
 
     .stream-card:active { transform: scale(0.98); }
@@ -2257,7 +2308,7 @@
 <body>
 
   <!-- Global background effects -->
-  <canvas id="neural-vortex"></canvas>
+  <div id="neural-vortex"></div>
   <canvas id="particles"></canvas>
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
@@ -3093,123 +3144,7 @@
   </footer>
 
   <script>
-    // ============================================
-    // NEURAL VORTEX (WebGL)
-    // ============================================
-    (function() {
-      const canvasEl = document.getElementById('neural-vortex');
-      if (!canvasEl) return;
-      const gl = canvasEl.getContext('webgl') || canvasEl.getContext('experimental-webgl');
-      if (!gl) return;
-
-      const vsSource = `
-        precision mediump float;
-        attribute vec2 a_position;
-        varying vec2 vUv;
-        void main() {
-          vUv = .5 * (a_position + 1.);
-          gl_Position = vec4(a_position, 0.0, 1.0);
-        }
-      `;
-      const fsSource = `
-        precision mediump float;
-        varying vec2 vUv;
-        uniform float u_time;
-        uniform float u_ratio;
-        uniform vec2 u_pointer_position;
-        uniform float u_scroll_progress;
-        vec2 rotate(vec2 uv, float th) {
-          return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
-        }
-        float neuro_shape(vec2 uv, float t, float p) {
-          vec2 sine_acc = vec2(0.);
-          vec2 res = vec2(0.);
-          float scale = 8.;
-          for (int j = 0; j < 15; j++) {
-            uv = rotate(uv, 1.);
-            sine_acc = rotate(sine_acc, 1.);
-            vec2 layer = uv * scale + float(j) + sine_acc - t;
-            sine_acc += sin(layer) + 2.4 * p;
-            res += (.5 + .5 * cos(layer)) / scale;
-            scale *= (1.2);
-          }
-          return res.x + res.y;
-        }
-        void main() {
-          vec2 uv = .5 * vUv;
-          uv.x *= u_ratio;
-          vec2 pointer = vUv - u_pointer_position;
-          pointer.x *= u_ratio;
-          float p = clamp(length(pointer), 0., 1.);
-          p = .5 * pow(1. - p, 2.);
-          float t = .001 * u_time;
-          float noise = neuro_shape(uv, t, p);
-          noise = 1.2 * pow(noise, 3.);
-          noise += pow(noise, 10.);
-          noise = max(.0, noise - .5);
-          noise *= (1. - length(vUv - .5));
-          vec3 color = vec3(0.48, 0.12, 0.68);
-          color = mix(color, vec3(0.12, 0.55, 1.0), 0.32 + 0.16 * sin(2.0 * u_scroll_progress + 1.2));
-          color += vec3(0.18, 0.0, 0.65) * sin(2.0 * u_scroll_progress + 1.5);
-          color = color * noise;
-          gl_FragColor = vec4(color, noise * 0.85);
-        }
-      `;
-
-      function compileShader(gl, src, type) {
-        const s = gl.createShader(type);
-        gl.shaderSource(s, src);
-        gl.compileShader(s);
-        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { gl.deleteShader(s); return null; }
-        return s;
-      }
-
-      const vs = compileShader(gl, vsSource, gl.VERTEX_SHADER);
-      const fs = compileShader(gl, fsSource, gl.FRAGMENT_SHADER);
-      const prog = gl.createProgram();
-      gl.attachShader(prog, vs); gl.attachShader(prog, fs);
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
-      gl.useProgram(prog);
-
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
-      const pos = gl.getAttribLocation(prog, 'a_position');
-      gl.enableVertexAttribArray(pos);
-      gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
-
-      const uTime = gl.getUniformLocation(prog, 'u_time');
-      const uRatio = gl.getUniformLocation(prog, 'u_ratio');
-      const uPointer = gl.getUniformLocation(prog, 'u_pointer_position');
-      const uScroll = gl.getUniformLocation(prog, 'u_scroll_progress');
-
-      let px = 0.5, py = 0.5, tx = 0.5, ty = 0.5;
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio, 2);
-        canvasEl.width = window.innerWidth * dpr;
-        canvasEl.height = window.innerHeight * dpr;
-        gl.viewport(0, 0, canvasEl.width, canvasEl.height);
-        gl.uniform1f(uRatio, canvasEl.width / canvasEl.height);
-      }
-      resize();
-      window.addEventListener('resize', resize);
-      window.addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
-      window.addEventListener('touchmove', e => { if (e.touches[0]) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } });
-
-      (function render() {
-        px += (tx - px) * 0.2; py += (ty - py) * 0.2;
-        gl.uniform1f(uTime, performance.now());
-        gl.uniform2f(uPointer, px / window.innerWidth, 1 - py / window.innerHeight);
-        gl.uniform1f(uScroll, window.pageYOffset / (2 * window.innerHeight));
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        requestAnimationFrame(render);
-      })();
-    })();
+    // Neural vortex replaced with CSS animation — no JS needed.
 
     // ============================================
     // PARTICLE FIELD
@@ -3244,45 +3179,50 @@
 
       function init() {
         resize();
-        particles = Array.from({length: 55}, () => new Particle());
+        particles = Array.from({length: 32}, () => new Particle());
       }
 
+      const MAX_DIST = 95, MAX_DIST_SQ = 95 * 95;
       function draw() {
         ctx.clearRect(0, 0, W, H);
+        // Cache theme once per frame — not per particle pair
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const lineRGB = isLight ? '75,111,212' : '123,158,255';
+        const lineBase = isLight ? 0.16 : 0.055;
         // Draw connections
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const dx = particles[i].x - particles[j].x;
             const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 120) {
+            const dSq = dx*dx + dy*dy;
+            if (dSq < MAX_DIST_SQ) {
+              const dist = Math.sqrt(dSq);
               ctx.beginPath();
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
-              const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-              const lineOpacity = isLight ? 0.18 : 0.06;
-              ctx.strokeStyle = `rgba(${isLight ? '75,111,212' : '123,158,255'},${lineOpacity * (1 - dist/120)})`;
+              ctx.strokeStyle = `rgba(${lineRGB},${lineBase * (1 - dist / MAX_DIST)})`;
               ctx.lineWidth = 0.5;
               ctx.stroke();
             }
           }
         }
         // Draw dots
-        particles.forEach(p => {
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
           p.update();
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          const isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
-          const dotColor = isLightMode ? (p.color === '123,158,255' ? '75,111,212' : '123,63,204') : p.color;
-          ctx.fillStyle = `rgba(${dotColor},${isLightMode ? p.a * 2.5 : p.a})`;
+          const dotColor = isLight ? (p.color === '123,158,255' ? '75,111,212' : '123,63,204') : p.color;
+          ctx.fillStyle = `rgba(${dotColor},${isLight ? p.a * 2.5 : p.a})`;
           ctx.fill();
-        });
+        }
         requestAnimationFrame(draw);
       }
 
+      let resizeTimer;
       init();
       draw();
-      window.addEventListener('resize', () => { resize(); init(); });
+      window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); init(); }, 150); });
     })();
 
     // ============================================
@@ -3575,13 +3515,15 @@ void main(){
 
       function resize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=getWidth();if(!w)return;canvas.width=w*dpr;canvas.height=w*dpr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform1f(uRatio,1.);}
 
-      function render(){if(!isDragging)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
+      function render(){if(document.hidden)return;if(!isDragging)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
 
       function initGlobe(){if(running)return;if(!getWidth())return;running=true;resize();window.addEventListener('resize',resize);
         canvas.addEventListener('pointerdown',e=>{isDragging=true;pointerStart={x:e.clientX,y:e.clientY};canvas.style.cursor='grabbing';});
         window.addEventListener('pointermove',e=>{if(!isDragging||!pointerStart)return;dragPhi=(e.clientX-pointerStart.x)/200;dragTheta=(e.clientY-pointerStart.y)/600;});
         window.addEventListener('pointerup',()=>{if(!isDragging)return;phiOffset+=dragPhi;thetaOffset+=dragTheta;dragPhi=dragTheta=0;isDragging=false;pointerStart=null;canvas.style.cursor='grab';});
-        canvas.style.opacity='1';render();}
+        canvas.style.opacity='1';
+        document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running)render();});
+        render();}
 
       const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){io.disconnect();setTimeout(()=>{if(!running)initGlobe();},100);setTimeout(()=>{if(!running)initGlobe();},600);}},{threshold:.05});
       io.observe(canvas.closest('.globe-wrap')||canvas);
