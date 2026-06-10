@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lee Villarasa | Operations Architect</title>
   <meta name="description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure. Helping CEOs move faster, think clearer, and scale without friction." />
+  <meta name="author" content="Lee Villarasa" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="canonical" href="https://leevillarasa.xyz/" />
   <meta name="theme-color" content="#040412" />
 
@@ -16,19 +18,37 @@
   <meta property="og:title" content="Lee Villarasa | Operations Architect" />
   <meta property="og:description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure. Helping CEOs move faster, think clearer, and scale without friction." />
   <meta property="og:locale" content="en_US" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://leevillarasa.xyz/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Lee Villarasa — Operations Architect" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Lee Villarasa | Operations Architect" />
   <meta name="twitter:description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure." />
+  <meta name="twitter:image" content="https://leevillarasa.xyz/og-image.png" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Lee Villarasa",
-    "url": "https://leevillarasa.xyz/",
-    "jobTitle": "Operations Architect & Systems Builder",
-    "description": "Executive partner and systems builder who turns operational chaos into scalable infrastructure.",
-    "knowsAbout": ["Operations Architecture", "Executive Support", "AI Workflow Integration", "Process Automation", "Web Application Development"]
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://leevillarasa.xyz/#person",
+        "name": "Lee Villarasa",
+        "url": "https://leevillarasa.xyz/",
+        "image": "https://leevillarasa.xyz/og-image.png",
+        "jobTitle": "Operations Architect & Systems Builder",
+        "description": "Executive partner and systems builder who turns operational chaos into scalable infrastructure.",
+        "knowsAbout": ["Operations Architecture", "Executive Support", "AI Workflow Integration", "Process Automation", "Web Application Development"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://leevillarasa.xyz/#website",
+        "name": "Lee Villarasa",
+        "url": "https://leevillarasa.xyz/",
+        "publisher": { "@id": "https://leevillarasa.xyz/#person" }
+      }
+    ]
   }
   </script>
 
@@ -39,7 +59,8 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Only weights the CSS actually uses (300/400/500 + italics) — 600/700 were never referenced -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================
@@ -248,30 +269,42 @@
     /* ============================================
        CUSTOM CURSOR
     ============================================ */
+    /* Positioned via transform-only rAF loop — stays on the compositor */
     .cursor {
       position: fixed;
+      left: 0;
+      top: 0;
       width: 8px;
       height: 8px;
       background: var(--gold);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s ease;
+      transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
       mix-blend-mode: normal;
+      will-change: transform;
     }
 
     .cursor-ring {
       position: fixed;
+      left: 0;
+      top: 0;
       width: 36px;
       height: 36px;
       border: 1px solid rgba(200, 169, 110, 0.5);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9998;
-      transform: translate(-50%, -50%);
+      transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
       transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+      will-change: transform;
     }
+
+    /* Touch / coarse-pointer devices: native cursor, no fx (set by JS) */
+    html.no-fx-cursor body,
+    html.no-fx-cursor body * { cursor: revert !important; }
+    html.no-fx-cursor .cursor,
+    html.no-fx-cursor .cursor-ring { display: none; }
 
     .cursor-ring.hover {
       width: 56px;
@@ -3835,7 +3868,11 @@
     // ============================================
     (function() {
       const canvas = document.getElementById('particles');
-      if (REDUCED_MOTION) { canvas.style.display = 'none'; return; }
+      const saveData = navigator.connection && navigator.connection.saveData;
+      if (REDUCED_MOTION || saveData || window.matchMedia('(max-width: 768px)').matches) {
+        canvas.style.display = 'none';
+        return;
+      }
       const ctx = canvas.getContext('2d');
       let W, H, particles = [];
 
@@ -3868,7 +3905,13 @@
       }
 
       const MAX_DIST = 95, MAX_DIST_SQ = 95 * 95;
-      function draw() {
+      // 30fps is indistinguishable for slow-drifting dots and halves the work
+      const FRAME_MS = 1000 / 30;
+      let lastFrame = 0;
+      function draw(now) {
+        requestAnimationFrame(draw);
+        if (now - lastFrame < FRAME_MS) return;
+        lastFrame = now;
         ctx.clearRect(0, 0, W, H);
         // Cache theme once per frame — not per particle pair
         const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -3901,12 +3944,11 @@
           ctx.fillStyle = `rgba(${dotColor},${isLight ? p.a * 2.5 : p.a})`;
           ctx.fill();
         }
-        requestAnimationFrame(draw);
       }
 
       let resizeTimer;
       init();
-      draw();
+      requestAnimationFrame(draw);
       window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); init(); }, 150); });
     })();
 
@@ -3915,30 +3957,40 @@
     // ============================================
     const cursor = document.getElementById('cursor');
     const cursorRing = document.getElementById('cursorRing');
-    let mouseX = 0, mouseY = 0;
-    let ringX = 0, ringY = 0;
 
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursor.style.left = mouseX + 'px';
-      cursor.style.top = mouseY + 'px';
-    });
+    if (!window.matchMedia('(pointer: fine)').matches) {
+      // Touch / coarse pointers: native cursor, skip the fx loop entirely
+      document.documentElement.classList.add('no-fx-cursor');
+    } else {
+      // Single rAF for dot + ring; transform-only writes stay on the
+      // compositor. Loop idles once the ring has caught up to the mouse.
+      let mouseX = -100, mouseY = -100;
+      let ringX = -100, ringY = -100;
+      let cursorRaf = 0;
 
-    function animateRing() {
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      cursorRing.style.left = ringX + 'px';
-      cursorRing.style.top = ringY + 'px';
-      requestAnimationFrame(animateRing);
+      function cursorFrame() {
+        cursorRaf = 0;
+        cursor.style.transform = 'translate3d(' + mouseX + 'px,' + mouseY + 'px,0) translate(-50%,-50%)';
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        cursorRing.style.transform = 'translate3d(' + ringX + 'px,' + ringY + 'px,0) translate(-50%,-50%)';
+        if (Math.abs(mouseX - ringX) > 0.1 || Math.abs(mouseY - ringY) > 0.1) {
+          cursorRaf = requestAnimationFrame(cursorFrame);
+        }
+      }
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!cursorRaf) cursorRaf = requestAnimationFrame(cursorFrame);
+      }, { passive: true });
+
+      const hoverEls = document.querySelectorAll('a, button, .system-card, .value-prop-card, .industry-card, .tool-chip, .skill-item');
+      hoverEls.forEach(el => {
+        el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+      });
     }
-    animateRing();
-
-    const hoverEls = document.querySelectorAll('a, button, .system-card, .value-prop-card, .industry-card, .tool-chip, .skill-item');
-    hoverEls.forEach(el => {
-      el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-      el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
-    });
 
     // ============================================
     // NAVBAR SCROLL
@@ -3946,7 +3998,7 @@
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 40);
-    });
+    }, { passive: true });
 
     // ============================================
     // REVEAL ON SCROLL
@@ -4293,21 +4345,24 @@ void main(){
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
       gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(gl.getUniformLocation(prog,'u_map'),0);
 
-      let phi=0.6,isDragging=false,pointerStart=null,phiOffset=0,thetaOffset=0,dragPhi=0,dragTheta=0,running=false;
+      let phi=0.6,isDragging=false,pointerStart=null,phiOffset=0,thetaOffset=0,dragPhi=0,dragTheta=0,running=false,inView=false,rafId=0;
 
       function getWidth(){return canvas.offsetWidth||canvas.closest('.globe-canvas-container')?.offsetWidth||canvas.closest('.globe-wrap')?.offsetWidth||0;}
 
       function resize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=getWidth();if(!w)return;canvas.width=w*dpr;canvas.height=w*dpr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform1f(uRatio,1.);}
 
-      function render(){if(document.hidden)return;if(!isDragging&&!REDUCED_MOTION)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
+      function render(){rafId=0;if(document.hidden||!inView)return;if(!isDragging&&!REDUCED_MOTION)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);rafId=requestAnimationFrame(render);}
+      function wake(){if(running&&!rafId)rafId=requestAnimationFrame(render);}
 
       function initGlobe(){if(running)return;if(!getWidth())return;running=true;resize();window.addEventListener('resize',resize);
         canvas.addEventListener('pointerdown',e=>{isDragging=true;pointerStart={x:e.clientX,y:e.clientY};canvas.style.cursor='grabbing';});
         window.addEventListener('pointermove',e=>{if(!isDragging||!pointerStart)return;dragPhi=(e.clientX-pointerStart.x)/200;dragTheta=(e.clientY-pointerStart.y)/600;});
         window.addEventListener('pointerup',()=>{if(!isDragging)return;phiOffset+=dragPhi;thetaOffset+=dragTheta;dragPhi=dragTheta=0;isDragging=false;pointerStart=null;canvas.style.cursor='grab';});
         canvas.style.opacity='1';
-        document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running)render();});
-        render();}
+        document.addEventListener('visibilitychange',()=>{if(!document.hidden)wake();});
+        // Render only while the globe is on screen — pause when scrolled past
+        new IntersectionObserver(es=>{inView=es[0].isIntersecting;if(inView)wake();},{threshold:0}).observe(canvas);
+        wake();}
 
       const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){io.disconnect();setTimeout(()=>{if(!running)initGlobe();},100);setTimeout(()=>{if(!running)initGlobe();},600);}},{threshold:.05});
       io.observe(canvas.closest('.globe-wrap')||canvas);
