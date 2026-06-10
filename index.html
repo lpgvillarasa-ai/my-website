@@ -2739,7 +2739,7 @@
 
   <!-- ============ NAVIGATION ============ -->
   <nav id="navbar">
-    <a href="#" class="nav-logo">
+    <a href="#hero" class="nav-logo" aria-label="Back to top">
       <svg viewBox="0 0 268 44" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:auto;">
         <defs>
           <linearGradient id="lgNav" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
@@ -3999,6 +3999,13 @@
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
+
+    // Logo click: scroll home without leaving a "#" in the address bar
+    document.querySelector('.nav-logo').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    });
 
     // ============================================
     // REVEAL ON SCROLL
