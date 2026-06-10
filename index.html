@@ -2354,7 +2354,8 @@
 
     .work-card:hover::before { opacity: 1; }
 
-    .work-card[hidden] { display: none; }
+    /* #work scoping outranks the featured-wide display:grid override below */
+    #work .work-card[hidden] { display: none; }
 
     .work-tag {
       display: inline-flex;
@@ -2475,6 +2476,59 @@
       color: var(--accent-violet);
       font-style: italic;
       border-bottom: 1px dashed var(--gold-border);
+    }
+
+    /* Featured (highlighted) work cards — mirrors .case-card.featured */
+    .work-card.featured {
+      border-color: var(--gold-border);
+    }
+
+    .work-card.featured::before { opacity: 1; }
+
+    .work-tags {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .work-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .work-flag-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--gold);
+      animation: pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    /* Full-width flagship card */
+    .work-card.featured-wide { grid-column: 1 / -1; }
+
+    .work-main,
+    .work-side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    @media (min-width: 769px) {
+      .work-card.featured-wide {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        column-gap: 56px;
+      }
     }
 
     @media (max-width: 1024px) {
@@ -2945,27 +2999,77 @@
 
       <div class="work-grid">
 
-        <!-- 1. Stewardly AI — [confirm] Lee: confirm you want this product named & linked publicly. -->
-        <article class="work-card reveal" data-category="apps">
-          <span class="work-tag">Web App / SaaS</span>
-          <h3 class="work-title">Stewardly AI</h3>
-          <p class="work-problem"><span class="work-placeholder">[Confirm one line on what Stewardly solves — e.g. "Churches and organizations need a simpler way to manage giving and stewardship."]</span></p>
-          <p class="work-built">A SaaS web app with secure user accounts, subscription billing, and a custom-domain marketing site.</p>
+        <!-- 1. Stewardly AI — flagship, full-width — [confirm] Lee: confirm you want this product named & linked publicly. -->
+        <article class="work-card featured featured-wide reveal" data-category="apps">
+          <div class="work-main">
+            <div class="work-tags">
+              <span class="work-tag">Web App / SaaS</span>
+              <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
+            </div>
+            <h3 class="work-title">Stewardly AI</h3>
+            <p class="work-problem"><span class="work-placeholder">[Confirm one line on what Stewardly solves — e.g. "Churches and organizations need a simpler way to manage giving and stewardship."]</span></p>
+            <p class="work-built">A SaaS web app with secure user accounts, subscription billing, and a custom-domain marketing site.</p>
+          </div>
+          <div class="work-side">
+            <div class="work-stack">
+              <span class="work-chip">Lovable</span>
+              <span class="work-chip">Supabase</span>
+              <span class="work-chip">Vercel</span>
+              <span class="work-chip">PayPal / Stripe</span>
+            </div>
+            <div class="work-foot">
+              <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live product. <span class="work-placeholder">[confirm link: Stewardly URL]</span></p>
+              <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="STEWARDLY_URL" target="_blank" rel="noopener" aria-label="View Stewardly AI live">View live →</a> -->
+              <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. FaithFlow AI — flagship — [confirm] Lee: confirm description + link. -->
+        <article class="work-card featured reveal" data-category="apps">
+          <div class="work-tags">
+            <span class="work-tag">Web App / SaaS</span>
+            <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
+          </div>
+          <h3 class="work-title">FaithFlow AI</h3>
+          <p class="work-problem"><span class="work-placeholder">[Confirm one line on what FaithFlow solves — e.g. "An AI tool that helps faith communities create and manage content."]</span></p>
+          <p class="work-built">An AI-powered web app with user accounts and a custom-domain marketing site, with email capture connected for inquiries and sign-ups.</p>
           <div class="work-stack">
             <span class="work-chip">Lovable</span>
             <span class="work-chip">Supabase</span>
-            <span class="work-chip">Vercel</span>
-            <span class="work-chip">PayPal / Stripe</span>
+            <span class="work-chip">AI (GPT)</span>
+            <span class="work-chip">Custom domain</span>
           </div>
           <div class="work-foot">
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live product. <span class="work-placeholder">[confirm link: Stewardly URL]</span></p>
-            <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="STEWARDLY_URL" target="_blank" rel="noopener" aria-label="View Stewardly AI live">View live →</a> -->
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status — live / in development]</span></p>
+            <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="FAITHFLOW_URL" target="_blank" rel="noopener" aria-label="View FaithFlow AI live">View live →</a> -->
+            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
+          </div>
+        </article>
+
+        <!-- 8. Wedding Website — personal favorite, lead with the live link -->
+        <article class="work-card featured reveal reveal-delay-1" data-category="websites">
+          <div class="work-tags">
+            <span class="work-tag">Website</span>
+            <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Personal favorite</span>
+          </div>
+          <h3 class="work-title">Wedding Website</h3>
+          <p class="work-problem">We wanted an elegant, fast site where guests could find every detail and RSVP in one place.</p>
+          <p class="work-built">A polished, custom-designed wedding website with a refined layout, smooth interactions, and a real backend handling guest and RSVP data. It's the clearest showcase of my design taste and end-to-end delivery.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live and in use. <span class="work-placeholder">[add live URL — strong one to show off]</span></p>
+            <!-- Add the live URL here, then swap this span for: <a class="work-cta" href="WEDDING_URL" target="_blank" rel="noopener" aria-label="View the wedding website live">View live →</a> -->
             <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
           </div>
         </article>
 
         <!-- 2. Hospitality / Resort Website (client — anonymized) -->
-        <article class="work-card reveal reveal-delay-1" data-category="websites">
+        <article class="work-card reveal" data-category="websites">
           <span class="work-tag">Website</span>
           <h3 class="work-title">Hospitality / Resort Website</h3>
           <p class="work-problem">A resort needed a polished, conversion-focused web presence to drive bookings and inquiries.</p>
@@ -2981,7 +3085,7 @@
         </article>
 
         <!-- 3. Healthcare / Wellness Clinic Website (client — anonymized) -->
-        <article class="work-card reveal" data-category="websites">
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
           <span class="work-tag">Website</span>
           <h3 class="work-title">Healthcare / Wellness Clinic Website</h3>
           <p class="work-problem">A clinic needed a trustworthy, accessible site that explained services and made it easy for patients to get in touch.</p>
@@ -2997,7 +3101,7 @@
         </article>
 
         <!-- 4. Recruiting Tools (my own internal builds) -->
-        <article class="work-card reveal reveal-delay-1" data-category="apps">
+        <article class="work-card reveal" data-category="apps">
           <span class="work-tag">Internal Tool</span>
           <h3 class="work-title">Recruiting Tools</h3>
           <p class="work-problem">Hiring workflows are full of repetitive writing and screening tasks that eat hours.</p>
@@ -3011,25 +3115,6 @@
             <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built and in use. <span class="work-placeholder">[confirm]</span></p>
             <!-- If there's a public URL, swap for: <a class="work-cta" href="TOOL_URL" target="_blank" rel="noopener" aria-label="View the recruiting tools live">View live →</a> -->
             <a class="work-cta" href="#contact" aria-label="Details on the recruiting tools available on request — contact me">Details on request →</a>
-          </div>
-        </article>
-
-        <!-- 5. FaithFlow AI — [confirm] Lee: confirm description + link. -->
-        <article class="work-card reveal" data-category="apps">
-          <span class="work-tag">Web App / SaaS</span>
-          <h3 class="work-title">FaithFlow AI</h3>
-          <p class="work-problem"><span class="work-placeholder">[Confirm one line on what FaithFlow solves — e.g. "An AI tool that helps faith communities create and manage content."]</span></p>
-          <p class="work-built">An AI-powered web app with user accounts and a custom-domain marketing site, with email capture connected for inquiries and sign-ups.</p>
-          <div class="work-stack">
-            <span class="work-chip">Lovable</span>
-            <span class="work-chip">Supabase</span>
-            <span class="work-chip">AI (GPT)</span>
-            <span class="work-chip">Custom domain</span>
-          </div>
-          <div class="work-foot">
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status — live / in development]</span></p>
-            <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="FAITHFLOW_URL" target="_blank" rel="noopener" aria-label="View FaithFlow AI live">View live →</a> -->
-            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
           </div>
         </article>
 
@@ -3066,26 +3151,8 @@
           </div>
         </article>
 
-        <!-- 8. Wedding Website (personal favorite — lead with the live link) -->
-        <article class="work-card reveal reveal-delay-1" data-category="websites">
-          <span class="work-tag">Website</span>
-          <h3 class="work-title">Wedding Website</h3>
-          <p class="work-problem">We wanted an elegant, fast site where guests could find every detail and RSVP in one place.</p>
-          <p class="work-built">A polished, custom-designed wedding website with a refined layout, smooth interactions, and a real backend handling guest and RSVP data. It's the clearest showcase of my design taste and end-to-end delivery.</p>
-          <div class="work-stack">
-            <span class="work-chip">Vercel</span>
-            <span class="work-chip">Supabase</span>
-            <span class="work-chip">Custom domain</span>
-          </div>
-          <div class="work-foot">
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live and in use. <span class="work-placeholder">[add live URL — strong one to show off]</span></p>
-            <!-- Add the live URL here, then swap this span for: <a class="work-cta" href="WEDDING_URL" target="_blank" rel="noopener" aria-label="View the wedding website live">View live →</a> -->
-            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
-          </div>
-        </article>
-
         <!-- 9. Cultural / Hospitality Brand Site (client — anonymized; [confirm] delivered vs proposal) -->
-        <article class="work-card reveal" data-category="websites">
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
           <span class="work-tag">Website</span>
           <h3 class="work-title">Cultural / Hospitality Brand Site</h3>
           <p class="work-problem">A brand needed a distinctive web presence to introduce its identity and offering.</p>
