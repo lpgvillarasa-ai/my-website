@@ -3735,6 +3735,7 @@
           <span class="location-region">Asia</span>
           <div class="location-group-tags">
             <span class="location-tag"><span class="location-dot-sm"></span>Cebu, Philippines</span>
+            <span class="location-tag"><span class="location-dot-sm"></span>Vietnam</span>
           </div>
         </div>
       </div>
@@ -4139,7 +4140,7 @@
 varying vec2 v_uv;
 uniform float u_phi,u_theta,u_ratio,u_time;
 uniform sampler2D u_map;
-uniform vec4 u_markers[9];
+uniform vec4 u_markers[10];
 const float PI=3.14159265358979;
 mat3 rY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,s,0.,1.,0.,-s,0.,c);}
 mat3 rX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,-s,0.,s,c);}
@@ -4206,7 +4207,7 @@ void main(){
   /* --- markers --- */
   float pulse=0.5+0.5*sin(u_time*2.5);
   float mk=0.;
-  for(int i=0;i<9;i++){
+  for(int i=0;i<10;i++){
     float d=length(g3-u_markers[i].xyz);
     float sz=u_markers[i].w;
     mk+=smoothstep(sz*1.1,0.,d);
@@ -4237,7 +4238,7 @@ void main(){
       const uRatio=gl.getUniformLocation(prog,'u_ratio'),uTime=gl.getUniformLocation(prog,'u_time');
 
       // Marker lat/lon → XYZ on unit sphere
-      [[40.68,-73.94],[33.45,-112.07],[43.65,-79.38],[41.85,-87.65],[27.99,-81.76],[41.38,2.17],[43.73,7.42],[41.90,12.50],[10.32,123.90]]
+      [[40.68,-73.94],[33.45,-112.07],[43.65,-79.38],[41.85,-87.65],[27.99,-81.76],[41.38,2.17],[43.73,7.42],[41.90,12.50],[10.32,123.90],[10.82,106.63]]
         .forEach(([la,lo],i)=>{const lr=la*Math.PI/180,lo2=lo*Math.PI/180;gl.uniform4f(gl.getUniformLocation(prog,`u_markers[${i}]`),Math.cos(lr)*Math.cos(lo2),Math.sin(lr),Math.cos(lr)*Math.sin(lo2),.06);});
 
       // Build world map texture programmatically (no external file needed)
