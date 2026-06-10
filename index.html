@@ -2259,6 +2259,224 @@
       margin-top: 4px;
     }
 
+    /* ============================================
+       SELECTED WORK
+    ============================================ */
+    #work {
+      padding: 140px 0;
+    }
+
+    #work .section-header {
+      margin-bottom: 36px;
+    }
+
+    .work-intro {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin-top: 20px;
+    }
+
+    /* Filter tabs (revealed via JS — hidden when JS is off) */
+    .work-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .work-filter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      padding: 8px 16px;
+      border-radius: 100px;
+      cursor: none;
+      transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .work-filter:hover {
+      color: var(--text-primary);
+      border-color: var(--gold-border);
+    }
+
+    .work-filter.active {
+      color: var(--gold);
+      border-color: var(--gold-border);
+      background: var(--gold-dim);
+    }
+
+    .work-filter:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .work-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+      cursor: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .work-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .work-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-4px);
+    }
+
+    .work-card:hover::before { opacity: 1; }
+
+    .work-card[hidden] { display: none; }
+
+    .work-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      padding: 5px 10px;
+      border-radius: 3px;
+      width: fit-content;
+    }
+
+    .work-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .work-problem {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .work-built {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+
+    .work-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .work-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 4px 9px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .work-foot {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .work-result {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .work-result-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: var(--glow);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .work-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      cursor: none;
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+
+    .work-cta:hover { color: var(--gold-light); gap: 10px; }
+
+    .work-cta:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* Pending CTA: link not yet live (placeholder, non-interactive) */
+    .work-cta-pending {
+      color: var(--text-muted);
+      cursor: default;
+    }
+
+    /* Editable placeholder marker for [confirm] copy */
+    .work-placeholder {
+      color: var(--accent-violet);
+      font-style: italic;
+      border-bottom: 1px dashed var(--gold-border);
+    }
+
     @media (max-width: 1024px) {
       .about-grid,
       .results-layout,
@@ -2284,9 +2502,10 @@
       .hamburger { display: flex; }
       #hero { padding: var(--nav-h) 24px 0; }
       .section-inner { padding: 0 24px; }
-      #about, #stream, #cases, #results, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
+      #about, #stream, #cases, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
       .stream-grid { grid-template-columns: 1fr; }
       .cases-grid { grid-template-columns: 1fr; }
+      .work-grid { grid-template-columns: 1fr; }
       .case-card.featured { grid-column: span 1; }
       .process-steps { grid-template-columns: 1fr; }
       .industries-grid { grid-template-columns: 1fr; }
@@ -2363,6 +2582,7 @@
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#stream">STREAM Code</a></li>
+      <li><a href="#work">Work</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact" class="nav-cta">Work with me</a></li>
     </ul>
@@ -2703,6 +2923,183 @@
             <div class="industry-item"><span class="industry-dot"></span> Customer Success: AI-assisted support and engagement</div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SELECTED WORK ============ -->
+  <section id="work" aria-labelledby="work-heading">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag reveal">Things I've Built</div>
+        <h2 class="section-title reveal reveal-delay-1" id="work-heading">Selected <em>Work.</em></h2>
+        <p class="work-intro reveal reveal-delay-2">A selection of the websites and apps I've designed, built, and shipped — from client sites to my own products. Proof, not just a list of capabilities.</p>
+      </div>
+
+      <!-- Filter tabs: hidden by default; revealed by JS so the section degrades gracefully with JS off (all cards stay visible). -->
+      <div class="work-filters reveal reveal-delay-3" id="work-filters" role="group" aria-label="Filter projects by type" hidden>
+        <button type="button" class="work-filter active" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="work-filter" data-filter="apps" aria-pressed="false">Apps</button>
+        <button type="button" class="work-filter" data-filter="websites" aria-pressed="false">Websites</button>
+      </div>
+
+      <div class="work-grid">
+
+        <!-- 1. Stewardly AI — [confirm] Lee: confirm you want this product named & linked publicly. -->
+        <article class="work-card reveal" data-category="apps">
+          <span class="work-tag">Web App / SaaS</span>
+          <h3 class="work-title">Stewardly AI</h3>
+          <p class="work-problem"><span class="work-placeholder">[Confirm one line on what Stewardly solves — e.g. "Churches and organizations need a simpler way to manage giving and stewardship."]</span></p>
+          <p class="work-built">A SaaS web app with secure user accounts, subscription billing, and a custom-domain marketing site.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">PayPal / Stripe</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live product. <span class="work-placeholder">[confirm link: Stewardly URL]</span></p>
+            <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="STEWARDLY_URL" target="_blank" rel="noopener" aria-label="View Stewardly AI live">View live →</a> -->
+            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
+          </div>
+        </article>
+
+        <!-- 2. Hospitality / Resort Website (client — anonymized) -->
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Hospitality / Resort Website</h3>
+          <p class="work-problem">A resort needed a polished, conversion-focused web presence to drive bookings and inquiries.</p>
+          <p class="work-built">A clean, image-forward marketing website with clear booking and contact calls-to-action, deployed on a fast modern host with a custom domain.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live. <span class="work-placeholder">[confirm status]</span></p>
+            <a class="work-cta" href="#contact" aria-label="Details on the resort website available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 3. Healthcare / Wellness Clinic Website (client — anonymized) -->
+        <article class="work-card reveal" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Healthcare / Wellness Clinic Website</h3>
+          <p class="work-problem">A clinic needed a trustworthy, accessible site that explained services and made it easy for patients to get in touch.</p>
+          <p class="work-built">A modern, mobile-first clinic website with service pages, a clear contact pathway, and HIPAA-aware presentation of patient-facing content.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live. <span class="work-placeholder">[confirm status]</span></p>
+            <a class="work-cta" href="#contact" aria-label="Details on the clinic website available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 4. Recruiting Tools (my own internal builds) -->
+        <article class="work-card reveal reveal-delay-1" data-category="apps">
+          <span class="work-tag">Internal Tool</span>
+          <h3 class="work-title">Recruiting Tools</h3>
+          <p class="work-problem">Hiring workflows are full of repetitive writing and screening tasks that eat hours.</p>
+          <p class="work-built">A set of AI-assisted tools — a job-description generator and a resume-tailoring app — that turn a few inputs into polished, ready-to-use output. Built to remove the manual step from recurring hiring tasks.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">AI (GPT)</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built and in use. <span class="work-placeholder">[confirm]</span></p>
+            <!-- If there's a public URL, swap for: <a class="work-cta" href="TOOL_URL" target="_blank" rel="noopener" aria-label="View the recruiting tools live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on the recruiting tools available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 5. FaithFlow AI — [confirm] Lee: confirm description + link. -->
+        <article class="work-card reveal" data-category="apps">
+          <span class="work-tag">Web App / SaaS</span>
+          <h3 class="work-title">FaithFlow AI</h3>
+          <p class="work-problem"><span class="work-placeholder">[Confirm one line on what FaithFlow solves — e.g. "An AI tool that helps faith communities create and manage content."]</span></p>
+          <p class="work-built">An AI-powered web app with user accounts and a custom-domain marketing site, with email capture connected for inquiries and sign-ups.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">AI (GPT)</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status — live / in development]</span></p>
+            <!-- When the public URL is ready, swap this span for: <a class="work-cta" href="FAITHFLOW_URL" target="_blank" rel="noopener" aria-label="View FaithFlow AI live">View live →</a> -->
+            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
+          </div>
+        </article>
+
+        <!-- 6. forma — [confirm] Lee: confirm what it does, the build description, status & link. -->
+        <article class="work-card reveal reveal-delay-1" data-category="apps">
+          <span class="work-tag">Web App</span>
+          <h3 class="work-title">forma</h3>
+          <p class="work-problem"><span class="work-placeholder">[Confirm one line — what problem forma solves.]</span></p>
+          <p class="work-built"><span class="work-placeholder">[Confirm 2–3 sentences — e.g. "A forms and data-collection app with a secure backend. Turns structured input into clean, queryable records."]</span></p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status]</span></p>
+            <!-- If there's a public URL, swap for: <a class="work-cta" href="FORMA_URL" target="_blank" rel="noopener" aria-label="View forma live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on forma available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 7. HR & Payroll System -->
+        <article class="work-card reveal" data-category="apps">
+          <span class="work-tag">Web App / Internal Tool</span>
+          <h3 class="work-title">HR &amp; Payroll System</h3>
+          <p class="work-problem">Manual HR and payroll tracking is slow, error-prone, and hard to scale across a team.</p>
+          <p class="work-built">An HR and payroll management app with a secure database backend to centralize employee data and payroll workflows in one place.</p>
+          <div class="work-stack">
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Lovable</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status — internal tool / client build / demo]</span></p>
+            <a class="work-cta" href="#contact" aria-label="Details on the HR and payroll system available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 8. Wedding Website (personal favorite — lead with the live link) -->
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Wedding Website</h3>
+          <p class="work-problem">We wanted an elegant, fast site where guests could find every detail and RSVP in one place.</p>
+          <p class="work-built">A polished, custom-designed wedding website with a refined layout, smooth interactions, and a real backend handling guest and RSVP data. It's the clearest showcase of my design taste and end-to-end delivery.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live and in use. <span class="work-placeholder">[add live URL — strong one to show off]</span></p>
+            <!-- Add the live URL here, then swap this span for: <a class="work-cta" href="WEDDING_URL" target="_blank" rel="noopener" aria-label="View the wedding website live">View live →</a> -->
+            <span class="work-cta work-cta-pending">View live → <span class="work-placeholder">[add URL]</span></span>
+          </div>
+        </article>
+
+        <!-- 9. Cultural / Hospitality Brand Site (client — anonymized; [confirm] delivered vs proposal) -->
+        <article class="work-card reveal" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Cultural / Hospitality Brand Site</h3>
+          <p class="work-problem">A brand needed a distinctive web presence to introduce its identity and offering.</p>
+          <p class="work-built">A modern marketing website with clear brand storytelling and contact pathways.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span><span class="work-placeholder">[confirm status — delivered / proposal stage]</span></p>
+            <a class="work-cta" href="#contact" aria-label="Details on the cultural and hospitality brand site available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -3388,6 +3785,31 @@
         item.addEventListener('click', () => {
           navItems.forEach(i => i.classList.remove('active'));
           item.classList.add('active');
+        });
+      });
+    })();
+
+    // ============================================
+    // SELECTED WORK — FILTER TABS
+    // ============================================
+    (function() {
+      const bar = document.getElementById('work-filters');
+      if (!bar) return;
+      bar.hidden = false; // reveal controls only when JS is available
+      const buttons = bar.querySelectorAll('.work-filter');
+      const cards = document.querySelectorAll('#work .work-card');
+
+      bar.addEventListener('click', e => {
+        const btn = e.target.closest('.work-filter');
+        if (!btn) return;
+        const filter = btn.dataset.filter;
+        buttons.forEach(b => {
+          const isActive = b === btn;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        cards.forEach(card => {
+          card.hidden = !(filter === 'all' || card.dataset.category === filter);
         });
       });
     })();
