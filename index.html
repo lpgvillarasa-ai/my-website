@@ -4000,10 +4000,31 @@
       navbar.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
 
-    // Logo click: scroll home without leaving a "#" in the address bar
-    document.querySelector('.nav-logo').addEventListener('click', (e) => {
+    // In-page navigation: scroll to the target and keep the address bar
+    // clean (no "#…" left behind). One delegated handler covers the logo,
+    // nav, hero buttons, footer, work CTAs and skills tabs.
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      const id = link.getAttribute('href').slice(1);
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+      const toTop = (id === 'hero');
+      const behavior = REDUCED_MOTION ? 'auto' : 'smooth';
+      if (toTop) {
+        window.scrollTo({ top: 0, behavior });
+      } else {
+        target.scrollIntoView({ behavior, block: 'start' });
+      }
+      // Accessibility: move focus to the destination without an outline jump
+      if (!toTop) {
+        target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+      }
+      // Drop the hash so the URL stays "leevillarasa.xyz/"
       history.replaceState(null, '', window.location.pathname + window.location.search);
     });
 
