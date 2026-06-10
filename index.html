@@ -2572,6 +2572,62 @@
       flex-shrink: 0;
     }
 
+    /* Live-site preview: browser-style frame, clicks through to the site */
+    .work-preview {
+      display: block;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .work-preview[hidden] { display: none; }
+
+    .work-preview:hover,
+    .work-preview:focus-visible {
+      border-color: var(--gold-border);
+      transform: translateY(-2px);
+    }
+
+    .work-preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .work-preview-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .work-preview-domain {
+      margin-left: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .work-preview-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      object-position: top center;
+      background: var(--bg-secondary);
+    }
+
     /* Full-width flagship card */
     .work-card.featured-wide { grid-column: 1 / -1; }
 
@@ -3066,14 +3122,18 @@
         <article class="work-card featured featured-wide reveal" data-category="apps">
           <div class="work-main">
             <div class="work-tags">
-              <span class="work-tag">Web App / SaaS</span>
+              <span class="work-tag">iOS App / SaaS</span>
               <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
             </div>
             <h3 class="work-title">Stewardly AI</h3>
             <p class="work-problem">Churches and organizations need a simpler way to manage giving and stewardship.</p>
-            <p class="work-built">A SaaS web app with secure user accounts, subscription billing, and a custom-domain marketing site.</p>
+            <p class="work-built">An iOS app with secure user accounts and subscription billing, backed by a custom-domain marketing site.</p>
           </div>
           <div class="work-side">
+            <a class="work-preview" href="https://stewardlyai.com" target="_blank" rel="noopener" aria-label="Open stewardlyai.com — Stewardly AI site (opens in a new tab)">
+              <span class="work-preview-bar" aria-hidden="true"><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-domain">stewardlyai.com</span></span>
+              <img class="work-preview-img" src="https://s0.wp.com/mshots/v1/https%3A%2F%2Fstewardlyai.com?w=1200" alt="Screenshot of the Stewardly AI site" loading="lazy" width="1200" height="750" />
+            </a>
             <div class="work-stack">
               <span class="work-chip">Lovable</span>
               <span class="work-chip">Supabase</span>
@@ -3089,6 +3149,10 @@
 
         <!-- 5. FaithFlow AI — flagship — [confirm] Lee: confirm description + link. -->
         <article class="work-card featured reveal" data-category="apps">
+          <a class="work-preview" href="https://faithflowai.com" target="_blank" rel="noopener" aria-label="Open faithflowai.com — FaithFlow AI site (opens in a new tab)">
+            <span class="work-preview-bar" aria-hidden="true"><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-domain">faithflowai.com</span></span>
+            <img class="work-preview-img" src="https://s0.wp.com/mshots/v1/https%3A%2F%2Ffaithflowai.com?w=1200" alt="Screenshot of the FaithFlow AI site" loading="lazy" width="1200" height="750" />
+          </a>
           <div class="work-tags">
             <span class="work-tag">Web App / SaaS</span>
             <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
@@ -3110,6 +3174,10 @@
 
         <!-- 8. Wedding Website — personal favorite, lead with the live link -->
         <article class="work-card featured reveal reveal-delay-1" data-category="websites">
+          <a class="work-preview" href="https://leeandkyarah.com" target="_blank" rel="noopener" aria-label="Open leeandkyarah.com — the wedding website (opens in a new tab)">
+            <span class="work-preview-bar" aria-hidden="true"><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-dot"></span><span class="work-preview-domain">leeandkyarah.com</span></span>
+            <img class="work-preview-img" src="https://s0.wp.com/mshots/v1/https%3A%2F%2Fleeandkyarah.com?w=1200" alt="Screenshot of Lee and Kyarah's wedding website" loading="lazy" width="1200" height="750" />
+          </a>
           <div class="work-tags">
             <span class="work-tag">Website</span>
             <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Personal favorite</span>
@@ -3952,6 +4020,29 @@
         });
       });
     })();
+
+    // ============================================
+    // LIVE-SITE PREVIEWS
+    // The screenshot service serves a 400x300 placeholder while it
+    // generates the first capture — retry until the real shot arrives.
+    // If the service is unreachable, hide the preview frame entirely.
+    // ============================================
+    document.querySelectorAll('.work-preview-img').forEach(img => {
+      let tries = 0;
+      const baseSrc = img.src;
+      const check = () => {
+        if (img.naturalWidth === 400 && img.naturalHeight === 300 && tries < 5) {
+          tries++;
+          setTimeout(() => { img.src = baseSrc + '&r=' + tries; }, 4000);
+        }
+      };
+      img.addEventListener('load', check);
+      img.addEventListener('error', () => {
+        const frame = img.closest('.work-preview');
+        if (frame) frame.hidden = true;
+      });
+      if (img.complete && img.naturalWidth) check();
+    });
 
     // ============================================
     // CONTACT FORM
