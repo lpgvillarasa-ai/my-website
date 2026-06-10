@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page not found — Lee Villarasa</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #040412;
+      color: #E8ECFF;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      text-align: center;
+      padding: 24px;
+    }
+    .wrap { max-width: 560px; }
+    .code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #7B9EFF;
+      margin-bottom: 20px;
+    }
+    .code::before, .code::after {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: #7B9EFF;
+      vertical-align: middle;
+      margin: 0 10px;
+    }
+    h1 {
+      font-size: clamp(36px, 7vw, 56px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    h1 em { font-style: italic; color: #7B9EFF; }
+    p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #7880AA;
+      margin-bottom: 32px;
+    }
+    a.home {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #040412;
+      background: #7B9EFF;
+      padding: 14px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.25s ease, transform 0.2s ease;
+    }
+    a.home:hover { background: #A0BCFF; transform: translateY(-1px); }
+    a.home:focus-visible { outline: 2px solid #7B9EFF; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="code">Error 404</div>
+    <h1>This page isn't part of <em>the system.</em></h1>
+    <p>The page you're looking for doesn't exist or has moved. Everything that matters is back on the main page.</p>
+    <a class="home" href="/">Back to leevillarasa.xyz →</a>
+  </main>
+</body>
+</html>

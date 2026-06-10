@@ -6,9 +6,34 @@
   <title>Lee Villarasa — Operations Architect & Systems Builder</title>
   <meta name="description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure. Helping CEOs move faster, think clearer, and scale without friction." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="canonical" href="https://leevillarasa.xyz/" />
+  <meta name="theme-color" content="#040412" />
+
+  <!-- Social sharing -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://leevillarasa.xyz/" />
+  <meta property="og:site_name" content="Lee Villarasa" />
+  <meta property="og:title" content="Lee Villarasa — Operations Architect & Systems Builder" />
+  <meta property="og:description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure. Helping CEOs move faster, think clearer, and scale without friction." />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Lee Villarasa — Operations Architect & Systems Builder" />
+  <meta name="twitter:description" content="Executive partner and systems builder who turns operational chaos into scalable infrastructure." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Lee Villarasa",
+    "url": "https://leevillarasa.xyz/",
+    "jobTitle": "Operations Architect & Systems Builder",
+    "description": "Executive partner and systems builder who turns operational chaos into scalable infrastructure.",
+    "knowsAbout": ["Operations Architecture", "Executive Support", "AI Workflow Integration", "Process Automation", "Web Application Development"]
+  }
+  </script>
 
   <script>
-    (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+    (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add('js');})();
   </script>
 
   <!-- Fonts -->
@@ -162,6 +187,51 @@
       cursor: none;
     }
 
+    /* Without JS the custom cursor never renders — restore native cursors */
+    html:not(.js) body,
+    html:not(.js) body * { cursor: revert !important; }
+    html:not(.js) .cursor,
+    html:not(.js) .cursor-ring { display: none; }
+
+    /* Keyboard focus — native cursor is hidden, so focus must be unmissable */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: -100px;
+      left: 16px;
+      z-index: 200;
+      padding: 12px 20px;
+      background: var(--gold);
+      color: var(--bg-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus { top: 16px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
     /* Subtle global aurora — sits above particles, below content */
     body::after {
       content: '';
@@ -302,6 +372,8 @@
       gap: 5px;
       cursor: pointer;
       padding: 4px;
+      background: none;
+      border: 0;
     }
     .hamburger span {
       display: block;
@@ -1061,7 +1133,7 @@
 
     .results-text { }
 
-    .results-text h3 {
+    .results-text h2 {
       font-family: var(--font-display);
       font-size: clamp(28px, 3.5vw, 48px);
       font-weight: 300;
@@ -1070,7 +1142,7 @@
       margin-bottom: 24px;
     }
 
-    .results-text h3 em {
+    .results-text h2 em {
       font-style: italic;
       color: var(--gold);
     }
@@ -2259,6 +2331,265 @@
       margin-top: 4px;
     }
 
+    /* ============================================
+       SELECTED WORK
+    ============================================ */
+    #work {
+      padding: 140px 0;
+    }
+
+    #work .section-header {
+      margin-bottom: 36px;
+    }
+
+    .work-intro {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin-top: 20px;
+    }
+
+    /* Filter tabs (revealed via JS — hidden when JS is off) */
+    .work-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .work-filter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      padding: 8px 16px;
+      border-radius: 100px;
+      cursor: none;
+      transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .work-filter:hover {
+      color: var(--text-primary);
+      border-color: var(--gold-border);
+    }
+
+    .work-filter.active {
+      color: var(--gold);
+      border-color: var(--gold-border);
+      background: var(--gold-dim);
+    }
+
+    .work-filter:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .work-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+      cursor: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .work-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .work-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-4px);
+    }
+
+    .work-card:hover::before { opacity: 1; }
+
+    /* #work scoping outranks the featured-wide display:grid override below */
+    #work .work-card[hidden] { display: none; }
+
+    .work-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      padding: 5px 10px;
+      border-radius: 3px;
+      width: fit-content;
+    }
+
+    .work-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .work-problem {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .work-built {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+
+    .work-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .work-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 4px 9px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .work-foot {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .work-result {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .work-result-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: var(--glow);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .work-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      cursor: none;
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+
+    .work-cta:hover { color: var(--gold-light); gap: 10px; }
+
+    .work-cta:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* Featured (highlighted) work cards — mirrors .case-card.featured */
+    .work-card.featured {
+      border-color: var(--gold-border);
+    }
+
+    .work-card.featured::before { opacity: 1; }
+
+    .work-tags {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .work-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .work-flag-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--gold);
+      animation: pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    /* Full-width flagship card */
+    .work-card.featured-wide { grid-column: 1 / -1; }
+
+    .work-main,
+    .work-side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    @media (min-width: 769px) {
+      .work-card.featured-wide {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        column-gap: 56px;
+      }
+    }
+
     @media (max-width: 1024px) {
       .about-grid,
       .results-layout,
@@ -2284,9 +2615,10 @@
       .hamburger { display: flex; }
       #hero { padding: var(--nav-h) 24px 0; }
       .section-inner { padding: 0 24px; }
-      #about, #stream, #cases, #results, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
+      #about, #stream, #cases, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
       .stream-grid { grid-template-columns: 1fr; }
       .cases-grid { grid-template-columns: 1fr; }
+      .work-grid { grid-template-columns: 1fr; }
       .case-card.featured { grid-column: span 1; }
       .process-steps { grid-template-columns: 1fr; }
       .industries-grid { grid-template-columns: 1fr; }
@@ -2308,10 +2640,12 @@
 <body>
 
   <!-- Global background effects -->
-  <div id="neural-vortex"></div>
-  <canvas id="particles"></canvas>
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="neural-vortex" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
   <!-- ============ NAVIGATION ============ -->
   <nav id="navbar">
@@ -2360,9 +2694,10 @@
         <text x="56" y="40" font-family="'DM Sans', Arial, sans-serif" font-size="7" letter-spacing="2.5" fill="#7880AA">OPERATIONS ARCHITECT</text>
       </svg>
     </a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navMenu">
       <li><a href="#about">About</a></li>
       <li><a href="#stream">STREAM Code</a></li>
+      <li><a href="#work">Work</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact" class="nav-cta">Work with me</a></li>
     </ul>
@@ -2378,14 +2713,16 @@
         <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
       </svg>
     </button>
-    <div class="hamburger" id="hamburger">
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="navMenu">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   </nav>
+
+  <main id="main">
 
   <!-- ============ HERO ============ -->
   <section id="hero">
-    <div class="hero-grid"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
 
     <div class="hero-content">
       <div class="hero-eyebrow">Operations Architect &amp; Systems Builder</div>
@@ -2453,14 +2790,14 @@
       <span class="marquee-item"><span class="marquee-dot"></span>Decision Support</span>
       <span class="marquee-item"><span class="marquee-dot"></span>Operational Excellence</span>
       <span class="marquee-item"><span class="marquee-dot"></span>Cross-Industry Expertise</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Executive Operations</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Process Architecture</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>AI Workflow Integration</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Systems Design</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Automation Strategy</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Decision Support</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Operational Excellence</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Cross-Industry Expertise</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Executive Operations</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Process Architecture</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>AI Workflow Integration</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Systems Design</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Automation Strategy</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Decision Support</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Operational Excellence</span>
+      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Cross-Industry Expertise</span>
     </div>
   </div>
 
@@ -2691,7 +3028,7 @@
 
         <div class="results-text">
           <div class="section-tag reveal">Track record</div>
-          <h3 class="reveal reveal-delay-1">Built for <em>scale,</em> not just execution.</h3>
+          <h2 class="reveal reveal-delay-1">Built for <em>scale,</em> not just execution.</h2>
           <p class="reveal reveal-delay-2">From cutting insurance claims processing time in half, to doubling onboarding bookings overnight, to automating reports that used to take hours. Every result is documented and measurable.</p>
           <p class="reveal reveal-delay-3">Every engagement ends with documentation, trained teams, and systems that continue running long after the initial build.</p>
 
@@ -2703,6 +3040,201 @@
             <div class="industry-item"><span class="industry-dot"></span> Customer Success: AI-assisted support and engagement</div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SELECTED WORK ============ -->
+  <section id="work" aria-labelledby="work-heading">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag reveal">Things I've Built</div>
+        <h2 class="section-title reveal reveal-delay-1" id="work-heading">Selected <em>Work.</em></h2>
+        <p class="work-intro reveal reveal-delay-2">A selection of the websites and apps I've designed, built, and shipped — from client sites to my own products. Proof, not just a list of capabilities.</p>
+      </div>
+
+      <!-- Filter tabs: hidden by default; revealed by JS so the section degrades gracefully with JS off (all cards stay visible). -->
+      <div class="work-filters reveal reveal-delay-3" id="work-filters" role="group" aria-label="Filter projects by type" hidden>
+        <button type="button" class="work-filter active" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="work-filter" data-filter="apps" aria-pressed="false">Apps</button>
+        <button type="button" class="work-filter" data-filter="websites" aria-pressed="false">Websites</button>
+      </div>
+
+      <div class="work-grid">
+
+        <!-- 1. Stewardly AI — flagship, full-width — [confirm] Lee: confirm you want this product named & linked publicly. -->
+        <article class="work-card featured featured-wide reveal" data-category="apps">
+          <div class="work-main">
+            <div class="work-tags">
+              <span class="work-tag">Web App / SaaS</span>
+              <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
+            </div>
+            <h3 class="work-title">Stewardly AI</h3>
+            <p class="work-problem">Churches and organizations need a simpler way to manage giving and stewardship.</p>
+            <p class="work-built">A SaaS web app with secure user accounts, subscription billing, and a custom-domain marketing site.</p>
+          </div>
+          <div class="work-side">
+            <div class="work-stack">
+              <span class="work-chip">Lovable</span>
+              <span class="work-chip">Supabase</span>
+              <span class="work-chip">Vercel</span>
+              <span class="work-chip">PayPal / Stripe</span>
+            </div>
+            <div class="work-foot">
+              <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live product.</p>
+              <!-- Lee: when ready to link publicly, swap the line below for: <a class="work-cta" href="STEWARDLY_URL" target="_blank" rel="noopener" aria-label="View Stewardly AI live">View live →</a> -->
+              <a class="work-cta" href="#contact" aria-label="Details on Stewardly AI available on request — contact me">Details on request →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5. FaithFlow AI — flagship — [confirm] Lee: confirm description + link. -->
+        <article class="work-card featured reveal" data-category="apps">
+          <div class="work-tags">
+            <span class="work-tag">Web App / SaaS</span>
+            <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Flagship product</span>
+          </div>
+          <h3 class="work-title">FaithFlow AI</h3>
+          <p class="work-problem">Faith communities need a faster way to create consistent, on-message content.</p>
+          <p class="work-built">An AI-powered web app with user accounts and a custom-domain marketing site, with email capture connected for inquiries and sign-ups.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">AI (GPT)</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <!-- Lee: confirm status (live / in development) and update this line -->
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built end to end — accounts, AI engine, email capture wired in.</p>
+            <!-- Lee: when ready to link publicly, swap the line below for: <a class="work-cta" href="FAITHFLOW_URL" target="_blank" rel="noopener" aria-label="View FaithFlow AI live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on FaithFlow AI available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 8. Wedding Website — personal favorite, lead with the live link -->
+        <article class="work-card featured reveal reveal-delay-1" data-category="websites">
+          <div class="work-tags">
+            <span class="work-tag">Website</span>
+            <span class="work-flag"><span class="work-flag-dot" aria-hidden="true"></span>Personal favorite</span>
+          </div>
+          <h3 class="work-title">Wedding Website</h3>
+          <p class="work-problem">We wanted an elegant, fast site where guests could find every detail and RSVP in one place.</p>
+          <p class="work-built">A polished, custom-designed wedding website with a refined layout, smooth interactions, and a real backend handling guest and RSVP data. It's the clearest showcase of my design taste and end-to-end delivery.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live and in use.</p>
+            <!-- Lee: this is the strongest live link to show — swap the line below for: <a class="work-cta" href="WEDDING_URL" target="_blank" rel="noopener" aria-label="View the wedding website live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on the wedding website available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 2. Hospitality / Resort Website (client — anonymized) -->
+        <article class="work-card reveal" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Hospitality / Resort Website</h3>
+          <p class="work-problem">A resort needed a polished, conversion-focused web presence to drive bookings and inquiries.</p>
+          <p class="work-built">A clean, image-forward marketing website with clear booking and contact calls-to-action, deployed on a fast modern host with a custom domain.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live.</p>
+            <a class="work-cta" href="#contact" aria-label="Details on the resort website available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 3. Healthcare / Wellness Clinic Website (client — anonymized) -->
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Healthcare / Wellness Clinic Website</h3>
+          <p class="work-problem">A clinic needed a trustworthy, accessible site that explained services and made it easy for patients to get in touch.</p>
+          <p class="work-built">A modern, mobile-first clinic website with service pages, a clear contact pathway, and HIPAA-aware presentation of patient-facing content.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live.</p>
+            <a class="work-cta" href="#contact" aria-label="Details on the clinic website available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 4. Recruiting Tools (my own internal builds) -->
+        <article class="work-card reveal" data-category="apps">
+          <span class="work-tag">Internal Tool</span>
+          <h3 class="work-title">Recruiting Tools</h3>
+          <p class="work-problem">Hiring workflows are full of repetitive writing and screening tasks that eat hours.</p>
+          <p class="work-built">A set of AI-assisted tools — a job-description generator and a resume-tailoring app — that turn a few inputs into polished, ready-to-use output. Built to remove the manual step from recurring hiring tasks.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">AI (GPT)</span>
+          </div>
+          <div class="work-foot">
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built and in use.</p>
+            <!-- If there's a public URL, swap for: <a class="work-cta" href="TOOL_URL" target="_blank" rel="noopener" aria-label="View the recruiting tools live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on the recruiting tools available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 6. forma — [confirm] Lee: confirm what it does, the build description, status & link. -->
+        <article class="work-card reveal reveal-delay-1" data-category="apps">
+          <span class="work-tag">Web App</span>
+          <h3 class="work-title">forma</h3>
+          <!-- Lee: confirm this description matches what forma actually does -->
+          <p class="work-problem">Collecting structured data shouldn't require custom engineering every time.</p>
+          <p class="work-built">A forms and data-collection app with a secure backend. Structured input goes in; clean, queryable records come out.</p>
+          <div class="work-stack">
+            <span class="work-chip">Lovable</span>
+            <span class="work-chip">Supabase</span>
+          </div>
+          <div class="work-foot">
+            <!-- Lee: confirm status and update this line -->
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built on a secure Supabase backend.</p>
+            <!-- If there's a public URL, swap for: <a class="work-cta" href="FORMA_URL" target="_blank" rel="noopener" aria-label="View forma live">View live →</a> -->
+            <a class="work-cta" href="#contact" aria-label="Details on forma available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 7. HR & Payroll System -->
+        <article class="work-card reveal" data-category="apps">
+          <span class="work-tag">Web App / Internal Tool</span>
+          <h3 class="work-title">HR &amp; Payroll System</h3>
+          <p class="work-problem">Manual HR and payroll tracking is slow, error-prone, and hard to scale across a team.</p>
+          <p class="work-built">An HR and payroll management app with a secure database backend to centralize employee data and payroll workflows in one place.</p>
+          <div class="work-stack">
+            <span class="work-chip">Supabase</span>
+            <span class="work-chip">Lovable</span>
+          </div>
+          <div class="work-foot">
+            <!-- Lee: confirm status (internal tool / client build / demo) and update this line -->
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Employee data and payroll workflows, centralized in one system.</p>
+            <a class="work-cta" href="#contact" aria-label="Details on the HR and payroll system available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
+        <!-- 9. Cultural / Hospitality Brand Site (client — anonymized; [confirm] delivered vs proposal) -->
+        <article class="work-card reveal reveal-delay-1" data-category="websites">
+          <span class="work-tag">Website</span>
+          <h3 class="work-title">Cultural / Hospitality Brand Site</h3>
+          <p class="work-problem">A brand needed a distinctive web presence to introduce its identity and offering.</p>
+          <p class="work-built">A modern marketing website with clear brand storytelling and contact pathways.</p>
+          <div class="work-stack">
+            <span class="work-chip">Vercel</span>
+            <span class="work-chip">Custom domain</span>
+          </div>
+          <div class="work-foot">
+            <!-- Lee: confirm status (delivered / proposal stage) and update this line -->
+            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Brand identity translated into a working web presence.</p>
+            <a class="work-cta" href="#contact" aria-label="Details on the cultural and hospitality brand site available on request — contact me">Details on request →</a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -3111,7 +3643,7 @@
 
       <div class="globe-wrap reveal reveal-delay-3">
         <div class="globe-canvas-container">
-          <canvas id="globe-canvas"></canvas>
+          <canvas id="globe-canvas" role="img" aria-label="Interactive globe showing locations of clients served worldwide"></canvas>
         </div>
       </div>
 
@@ -3175,39 +3707,44 @@
           <div class="form-title">Start a conversation</div>
 
           <form action="https://formspree.io/f/mdawjvjp" method="POST" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="_subject" value="New inquiry from leevillarasa.xyz" />
+            <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <div class="form-group">
-              <label class="form-label">Your name</label>
-              <input type="text" name="name" class="form-input" placeholder="Jane Smith" required />
+              <label class="form-label" for="contact-name">Your name</label>
+              <input type="text" name="name" id="contact-name" class="form-input" placeholder="Jane Smith" autocomplete="name" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Email address</label>
-              <input type="email" name="email" class="form-input" placeholder="jane@company.com" required />
+              <label class="form-label" for="contact-email">Email address</label>
+              <input type="email" name="email" id="contact-email" class="form-input" placeholder="jane@company.com" autocomplete="email" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Company / Organization</label>
-              <input type="text" name="company" class="form-input" placeholder="Your company name" />
+              <label class="form-label" for="contact-company">Company / Organization</label>
+              <input type="text" name="company" id="contact-company" class="form-input" placeholder="Your company name" autocomplete="organization" />
             </div>
             <div class="form-group">
-              <label class="form-label">What do you need help with?</label>
-              <select name="service" class="form-select">
+              <label class="form-label" for="contact-service">What do you need help with?</label>
+              <select name="service" id="contact-service" class="form-select">
                 <option value="">Select a service</option>
                 <option value="ops">Operations Infrastructure Design</option>
                 <option value="exec">Executive Support &amp; Partnership</option>
                 <option value="ai">AI Workflow Integration</option>
                 <option value="project">Project Tracking System</option>
+                <option value="web">Website &amp; App Building</option>
                 <option value="other">Something else</option>
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Tell me about your situation</label>
-              <textarea name="message" class="form-textarea" placeholder="What's the biggest operational challenge you're facing right now?"></textarea>
+              <label class="form-label" for="contact-message">Tell me about your situation</label>
+              <textarea name="message" id="contact-message" class="form-textarea" placeholder="What's the biggest operational challenge you're facing right now?"></textarea>
             </div>
-            <button type="submit" class="form-submit" id="submitBtn">Send message →</button>
+            <button type="submit" class="form-submit" id="submitBtn" aria-live="polite">Send message →</button>
           </form>
         </div>
       </div>
     </div>
   </section>
+
+  </main>
 
   <!-- ============ FOOTER ============ -->
   <footer>
@@ -3225,11 +3762,14 @@
   <script>
     // Neural vortex replaced with CSS animation — no JS needed.
 
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // ============================================
     // PARTICLE FIELD
     // ============================================
     (function() {
       const canvas = document.getElementById('particles');
+      if (REDUCED_MOTION) { canvas.style.display = 'none'; return; }
       const ctx = canvas.getContext('2d');
       let W, H, particles = [];
 
@@ -3393,22 +3933,63 @@
     })();
 
     // ============================================
+    // SELECTED WORK — FILTER TABS
+    // ============================================
+    (function() {
+      const bar = document.getElementById('work-filters');
+      if (!bar) return;
+      bar.hidden = false; // reveal controls only when JS is available
+      const buttons = bar.querySelectorAll('.work-filter');
+      const cards = document.querySelectorAll('#work .work-card');
+
+      bar.addEventListener('click', e => {
+        const btn = e.target.closest('.work-filter');
+        if (!btn) return;
+        const filter = btn.dataset.filter;
+        buttons.forEach(b => {
+          const isActive = b === btn;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        cards.forEach(card => {
+          card.hidden = !(filter === 'all' || card.dataset.category === filter);
+        });
+      });
+    })();
+
+    // ============================================
     // CONTACT FORM
     // ============================================
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
+      const form = e.target;
       const btn = document.getElementById('submitBtn');
-      btn.textContent = 'Message sent ✓';
-      btn.style.background = '#2D6BE4';
-      btn.style.color = '#fff';
+      btn.textContent = 'Sending…';
       btn.disabled = true;
-      setTimeout(() => {
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) throw new Error('Form endpoint returned ' + res.status);
+        btn.textContent = 'Message sent ✓';
+        btn.style.background = '#2D6BE4';
+        btn.style.color = '#fff';
+        form.reset();
+        setTimeout(() => {
+          btn.textContent = 'Send message →';
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.disabled = false;
+        }, 4000);
+      } catch (err) {
+        // Network/endpoint failure: fall back to a native full-page submit
+        // (bypasses this handler, lands on the form provider's flow)
         btn.textContent = 'Send message →';
-        btn.style.background = '';
-        btn.style.color = '';
         btn.disabled = false;
-        e.target.reset();
-      }, 3000);
+        form.submit();
+      }
     }
 
     // ============================================
@@ -3418,6 +3999,7 @@
     const navLinks = document.querySelector('.nav-links');
     hamburger.addEventListener('click', () => {
       const open = navLinks.style.display === 'flex';
+      hamburger.setAttribute('aria-expanded', String(!open));
       if (open) {
         navLinks.style.display = 'none';
       } else {
@@ -3441,8 +4023,18 @@
       link.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
           navLinks.style.display = 'none';
+          hamburger.setAttribute('aria-expanded', 'false');
         }
       });
+    });
+
+    // Close mobile nav on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && navLinks.style.display === 'flex' && window.innerWidth <= 768) {
+        navLinks.style.display = 'none';
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.focus();
+      }
     });
 
     // ============================================
@@ -3618,7 +4210,7 @@ void main(){
 
       function resize(){const dpr=Math.min(window.devicePixelRatio||1,2),w=getWidth();if(!w)return;canvas.width=w*dpr;canvas.height=w*dpr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform1f(uRatio,1.);}
 
-      function render(){if(document.hidden)return;if(!isDragging)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
+      function render(){if(document.hidden)return;if(!isDragging&&!REDUCED_MOTION)phi+=.003;gl.uniform1f(uPhi,phi+phiOffset+dragPhi);gl.uniform1f(uTheta,.25+thetaOffset+dragTheta);gl.uniform1f(uTime,performance.now()/1e3);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);}
 
       function initGlobe(){if(running)return;if(!getWidth())return;running=true;resize();window.addEventListener('resize',resize);
         canvas.addEventListener('pointerdown',e=>{isDragging=true;pointerStart={x:e.clientX,y:e.clientY};canvas.style.cursor='grabbing';});
@@ -3651,6 +4243,7 @@ void main(){
     // COUNTER ANIMATION
     // ============================================
     function animateCounter(el, target, suffix) {
+      if (REDUCED_MOTION) { el.textContent = target + suffix; return; }
       let start = 0;
       const duration = 1800;
       const startTime = performance.now();
