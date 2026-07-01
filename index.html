@@ -2240,7 +2240,7 @@
     /* ============================================
        CASE STUDIES SECTION
     ============================================ */
-    #cases {
+    #casefiles {
       padding: 140px 0;
     }
 
@@ -2705,7 +2705,7 @@
       .hamburger { display: flex; }
       #hero { padding: var(--nav-h) 24px 0; }
       .section-inner { padding: 0 24px; }
-      #about, #stream, #cases, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
+      #about, #stream, #casefiles, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
       .stream-grid { grid-template-columns: 1fr; }
       .cases-grid { grid-template-columns: 1fr; }
       .work-grid { grid-template-columns: 1fr; }
@@ -2726,8 +2726,137 @@
       .cursor, .cursor-ring { display: none; }
     }
   </style>
+
+  <!-- ============================================================
+       PREMIUM UPGRADE LAYER
+       Scroll progress · hero polish · "Fix the Bottleneck" game
+       and the case files it unlocks. Additive, token-based —
+       nothing above is modified.
+  ============================================================ -->
+  <style>
+    /* ---- Scroll progress ---- */
+    .scroll-progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:200;
+      background:linear-gradient(90deg,var(--accent-blue),var(--accent-violet));
+      box-shadow:0 0 12px rgba(123,158,255,.5);transition:width .12s linear;pointer-events:none}
+
+    /* ---- Hero availability badge ---- */
+    .hero-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);
+      font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);
+      background:var(--bg-card);border:1px solid var(--border-strong);border-radius:100px;
+      padding:7px 15px 7px 12px;margin-bottom:22px;opacity:0;animation:fadeUp .8s ease .1s forwards}
+    .hero-badge b{color:var(--text-primary);font-weight:500}
+    .hero-badge .pip{position:relative;width:8px;height:8px;border-radius:50%;background:#34E5A8;flex-shrink:0}
+    .hero-badge .pip::after{content:'';position:absolute;inset:0;border-radius:50%;background:#34E5A8;
+      animation:pipPulse 2.4s ease-out infinite}
+    @keyframes pipPulse{0%{transform:scale(1);opacity:.75}70%,100%{transform:scale(3.2);opacity:0}}
+
+    /* ---- Hero italic word: gradient shimmer ---- */
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+      .hero-title em{
+        background:linear-gradient(100deg,var(--gold-light) 0%,var(--accent-violet) 48%,var(--gold-light) 100%);
+        background-size:220% auto;-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;
+        animation:heroShimmer 7s linear infinite}
+    }
+    @keyframes heroShimmer{to{background-position:220% center}}
+
+    /* ---- Shared: section sub-heading (had no rule) ---- */
+    .section-sub{max-width:620px;margin-top:18px;font-size:15px;font-weight:300;
+      line-height:1.7;color:var(--text-secondary)}
+
+    /* ============ GAME: FIX THE BOTTLENECK ============ */
+    .game-wrap{display:none;max-width:920px;margin:0 auto;position:relative;overflow:hidden;
+      background:linear-gradient(180deg,var(--bg-card),var(--bg-secondary));
+      border:1px solid var(--border-strong);border-radius:var(--radius-lg);
+      padding:22px;box-shadow:var(--shadow-card)}
+    .js .game-wrap{display:block}
+    .game-hud{display:flex;justify-content:space-between;align-items:center;gap:16px;
+      margin-bottom:14px;flex-wrap:wrap}
+    .game-status{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--text-secondary)}
+    .game-status span{color:#FF8A5B;font-weight:600;transition:color .4s ease}
+    .game-wrap.solved .game-status span{color:#34E5A8}
+    .game-meter{display:flex;align-items:center;gap:12px;flex:1;min-width:200px;max-width:360px}
+    .game-meter-track{flex:1;height:8px;border-radius:100px;background:rgba(255,255,255,.06);
+      overflow:hidden;border:1px solid var(--border)}
+    .game-meter-fill{height:100%;width:0;border-radius:100px;
+      background:linear-gradient(90deg,var(--accent-blue),var(--accent-violet));
+      transition:width .35s cubic-bezier(.16,1,.3,1),background .5s ease}
+    .game-wrap.solved .game-meter-fill{background:linear-gradient(90deg,#22C58A,#34E5A8)}
+    .game-meter-val{font-family:var(--font-mono);font-size:12px;color:var(--text-primary);white-space:nowrap}
+    .game-meter-val span{font-weight:600}
+    .game-stage{position:relative;width:100%;height:clamp(320px,44vw,460px);border-radius:var(--radius-md);
+      overflow:hidden;border:1px solid var(--border);
+      background:radial-gradient(ellipse at 50% 38%,rgba(123,158,255,.07),transparent 68%),var(--bg-primary)}
+    #game-canvas{position:absolute;inset:0;width:100%;height:100%;cursor:none;touch-action:none;display:block}
+    .game-hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;padding:0 16px;
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--text-secondary);
+      pointer-events:none;transition:opacity .45s ease}
+    .game-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;
+      margin-top:14px;flex-wrap:wrap}
+    .game-reset,.game-skip{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;
+      background:none;cursor:none;transition:color .25s ease,border-color .25s ease}
+    .game-reset{color:var(--text-secondary);border:1px solid var(--border-strong);
+      border-radius:100px;padding:8px 16px}
+    .game-reset:hover{color:var(--text-primary);border-color:var(--gold-border)}
+    .game-skip{color:var(--text-secondary);border:none;text-decoration:none;padding:8px 2px}
+    .game-skip:hover{color:var(--gold)}
+
+    /* Win overlay */
+    .game-win{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;gap:12px;padding:28px;
+      background:radial-gradient(ellipse at 50% 42%,rgba(9,12,32,.84),rgba(4,4,18,.95));
+      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+      opacity:0;visibility:hidden;transform:scale(1.04);pointer-events:none;
+      transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1),visibility 0s linear .5s}
+    .game-win.show{opacity:1;visibility:visible;transform:scale(1);pointer-events:auto;transition-delay:0s}
+    .game-win-badge{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;font-size:26px;color:#34E5A8;background:rgba(52,229,168,.12);
+      border:1px solid rgba(52,229,168,.5);box-shadow:0 0 44px rgba(52,229,168,.4)}
+    .game-win-title{font-family:var(--font-display);font-size:34px;font-weight:500;color:var(--text-primary);line-height:1.1}
+    .game-win-title em{font-style:italic;color:#34E5A8}
+    .game-win-sub{font-size:14px;line-height:1.7;color:var(--text-secondary);max-width:440px}
+    .game-win .btn-primary{margin-top:4px}
+    .game-win-close{position:absolute;top:12px;right:16px;background:none;border:none;
+      color:var(--text-muted);font-size:18px;cursor:none}
+    .game-win-close:hover{color:var(--text-primary)}
+
+    /* ============ REWARD: CASE FILES ============ */
+    .js #casefiles-reward.pre-locked{display:none}
+    #casefiles-reward{margin-top:48px}
+    #casefiles-reward.unlocked{animation:rewardIn .85s cubic-bezier(.16,1,.3,1) both}
+    @keyframes rewardIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+    .founder-banner{position:relative;overflow:hidden;border-radius:var(--radius-lg);
+      border:1px solid var(--gold-border);padding:34px 36px;margin-bottom:30px;
+      background:linear-gradient(120deg,rgba(123,158,255,.11),rgba(176,110,255,.06));
+      display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap}
+    .founder-banner::before{content:'';position:absolute;top:-40%;left:-8%;width:55%;height:180%;
+      background:radial-gradient(ellipse,rgba(123,158,255,.18),transparent 70%);pointer-events:none}
+    .founder-copy{position:relative;z-index:1}
+    .founder-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .founder-title{font-family:var(--font-display);font-size:clamp(24px,3.2vw,34px);
+      font-weight:500;line-height:1.15;color:var(--text-primary);max-width:560px}
+    .founder-title em{font-style:italic;color:var(--gold)}
+    .founder-sub{font-size:13.5px;line-height:1.7;color:var(--text-secondary);max-width:540px;margin-top:12px}
+    .founder-cta{position:relative;z-index:1;flex-shrink:0}
+    .casefiles-tag{display:flex;align-items:center;gap:14px;justify-content:center;
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--text-muted);margin-bottom:24px}
+    .casefiles-tag::before,.casefiles-tag::after{content:'';height:1px;flex:1;max-width:90px;background:var(--border-strong)}
+
+    @media(max-width:768px){
+      .game-wrap{padding:16px}
+      .founder-banner{padding:26px 22px}
+      .founder-cta{width:100%;justify-content:center}
+      .game-foot{justify-content:center;flex-direction:column-reverse;gap:12px}
+      .game-win-title{font-size:28px}
+    }
+  </style>
 </head>
 <body>
+
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- Global background effects -->
   <a class="skip-link" href="#main">Skip to content</a>
@@ -2815,6 +2944,7 @@
     <div class="hero-grid" aria-hidden="true"></div>
 
     <div class="hero-content">
+      <div class="hero-badge"><span class="pip" aria-hidden="true"></span><b>Available</b> · taking on new operations partners</div>
       <div class="hero-eyebrow">Operations Architect &amp; Systems Builder</div>
 
       <h1 class="hero-title">
@@ -3034,59 +3164,110 @@
     </div>
   </section>
 
-  <!-- CASE STUDIES REMOVED -->
-  <section id="cases" style="display:none">
+  <!-- ============ CASE FILES (interactive unlock) ============ -->
+  <section id="casefiles" aria-labelledby="casefiles-heading">
     <div class="section-inner">
-      <div class="cases-grid">
+      <div class="section-header">
+        <div class="section-tag reveal">Interactive · Proof of work</div>
+        <h2 class="section-title reveal reveal-delay-1" id="casefiles-heading">Untangle the <em>operation.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">This is the whole job in miniature. Drag the nodes until no two wires cross and the flow runs clean. Hit 100&#37; efficiency and four case files unlock below &mdash; or skip straight to them.</p>
+      </div>
 
-        <div class="case-card featured reveal">
-          <div class="case-industry">Insurance</div>
-          <div class="case-title">Claims Processing Cut in Half</div>
-          <div class="case-problem">Hundreds of daily claims, buried in manual keystrokes and bloated SOPs. Rebuilt the entire workflow from scratch.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half department-wide</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>2 days of work completed in 1. Awarded Productivity Hero</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years across hundreds of daily claims</div>
+      <!-- The game (JS only; hidden without JS so nothing breaks) -->
+      <div class="game-wrap reveal reveal-delay-2" id="game-wrap">
+        <div class="game-hud">
+          <div class="game-status">Operations: <span id="game-state">Unoptimized</span></div>
+          <div class="game-meter">
+            <div class="game-meter-track"><div class="game-meter-fill" id="game-fill"></div></div>
+            <div class="game-meter-val"><span id="game-pct">0</span>&#37; efficiency</div>
           </div>
         </div>
-
-        <div class="case-card reveal reveal-delay-1">
-          <div class="case-industry">Customer Success</div>
-          <div class="case-title">AI-Powered Support Response System</div>
-          <div class="case-problem">Agents typed the same answers hundreds of times a day. No consistency, no bandwidth, no system.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on all standard inquiries</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Screenshot in, GPT-drafted reply out instantly</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Team fully refocused on complex, high-value cases</div>
+        <div class="game-stage">
+          <canvas id="game-canvas" role="img" aria-label="Puzzle: drag the nodes so no connecting wires cross"></canvas>
+          <div class="game-hint" id="game-hint">Drag the glowing nodes so no two wires cross.</div>
+          <div class="game-win" id="game-win" aria-live="polite">
+            <button class="game-win-close" id="game-win-close" type="button" aria-label="Close">&#10005;</button>
+            <div class="game-win-badge" aria-hidden="true">&#10003;</div>
+            <div class="game-win-title">Flow <em>optimized.</em></div>
+            <div class="game-win-sub" id="game-win-sub">You just untangled an operation and hit 100&#37; efficiency. That's the entire job &mdash; chaos in, clean system out.</div>
+            <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary">Do this for my real bottleneck
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <button class="game-skip" id="game-win-open" type="button">See the case files &darr;</button>
           </div>
         </div>
+        <div class="game-foot">
+          <button class="game-reset" id="game-reset" type="button">&#8635; Shuffle</button>
+          <button class="game-skip" id="game-skip" type="button">Skip &amp; reveal the case files &rarr;</button>
+        </div>
+      </div>
 
-        <div class="case-card reveal">
-          <div class="case-industry">Team Management</div>
-          <div class="case-title">Onboarding Bookings Doubled</div>
-          <div class="case-problem">Scheduling mismatches meant the team was available when clients weren't. Bookings were bleeding out silently.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Call bookings doubled within two weeks</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Team hit fully booked schedules consistently</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP built and documented</div>
+      <!-- Reward: fully visible without JS; JS locks it behind the game -->
+      <div class="casefiles-reward pre-locked" id="casefiles-reward" aria-hidden="false">
+        <div class="founder-banner">
+          <div class="founder-copy">
+            <div class="founder-eyebrow">&#9670; Founder's offer</div>
+            <div class="founder-title">You cleared the board. Let's clear a <em>real</em> one.</div>
+            <div class="founder-sub">Book a discovery call and I'll take one genuine bottleneck in your operation and map out exactly how I'd untangle it &mdash; live, on the call, no charge. Same as the game, just with your numbers.</div>
           </div>
+          <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary founder-cta">Claim your teardown call
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
         </div>
 
-        <div class="case-card reveal reveal-delay-1">
-          <div class="case-industry">Operations / Reporting</div>
-          <div class="case-title">Automated Reporting &amp; Analytics</div>
-          <div class="case-problem">Reports took hours to build manually. By the time they were ready, the data was already outdated.</div>
-          <div class="case-divider"></div>
-          <div class="case-results">
-            <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics live across all teams</div>
-            <div class="case-result-item"><div class="case-result-check">✓</div>Built on Google Colab with full AI integration</div>
-          </div>
-        </div>
+        <div class="casefiles-tag">Case files &middot; 4 documented results</div>
 
+        <div class="cases-grid">
+
+          <div class="case-card featured">
+            <div class="case-industry">Insurance</div>
+            <div class="case-title">Claims Processing Cut in Half</div>
+            <div class="case-problem">Hundreds of daily claims, buried in manual keystrokes and bloated SOPs. Rebuilt the entire workflow from scratch.</div>
+            <div class="case-divider"></div>
+            <div class="case-results">
+              <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half department-wide</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>2 days of work completed in 1. Awarded Productivity Hero</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years across hundreds of daily claims</div>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="case-industry">Customer Success</div>
+            <div class="case-title">AI-Powered Support Response System</div>
+            <div class="case-problem">Agents typed the same answers hundreds of times a day. No consistency, no bandwidth, no system.</div>
+            <div class="case-divider"></div>
+            <div class="case-results">
+              <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on all standard inquiries</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Screenshot in, GPT-drafted reply out instantly</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Team fully refocused on complex, high-value cases</div>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="case-industry">Team Management</div>
+            <div class="case-title">Onboarding Bookings Doubled</div>
+            <div class="case-problem">Scheduling mismatches meant the team was available when clients weren't. Bookings were bleeding out silently.</div>
+            <div class="case-divider"></div>
+            <div class="case-results">
+              <div class="case-result-item"><div class="case-result-check">✓</div>Call bookings doubled within two weeks</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Team hit fully booked schedules consistently</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP built and documented</div>
+            </div>
+          </div>
+
+          <div class="case-card">
+            <div class="case-industry">Operations / Reporting</div>
+            <div class="case-title">Automated Reporting &amp; Analytics</div>
+            <div class="case-problem">Reports took hours to build manually. By the time they were ready, the data was already outdated.</div>
+            <div class="case-divider"></div>
+            <div class="case-results">
+              <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics live across all teams</div>
+              <div class="case-result-item"><div class="case-result-check">✓</div>Built on Google Colab with full AI integration</div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
@@ -3653,7 +3834,7 @@
               <!-- Netlify -->
               <div class="tool-chip reveal reveal-delay-1">
                 <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16.934 8.519a1.044 1.044 0 0 1 .303.23l2.349-1.045-2.192-2.171-.491 2.954zM12.06 6.567a1.02 1.02 0 0 1 .263.05l1.388-2.final M7.718 8.9l.88-5.285L6.38 5.832zM5.667 9.557a1.04 1.04 0 0 1 .182.696l2.7.812-.182-.696zm11.097 4.044a1.04 1.04 0 0 1-.303-.23l-2.349 1.044 2.192 2.172zm-4.874 1.952a1.02 1.02 0 0 1-.263-.05l-1.388 2.051 2.192.766zm-4.342-2.333-.88 5.285 2.218-2.217zM5.667 14.44a1.04 1.04 0 0 1-.182-.696l-2.7-.812.182.696z"/><path d="M13.56 5.432.948 11.855 2.51 13.43l10.61-4.73a1.04 1.04 0 0 1 .44-3.267zm.86 13.136 12.612-6.423-1.562-1.575-10.611 4.731a1.04 1.04 0 0 1-.44 3.267z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6.49 19.04h-.23L5.13 17.9v-.23l1.73-1.71h1.2l.15.15v1.2L6.5 19.04ZM5.13 6.31V6.1l1.13-1.13h.23L8.2 6.68v1.2l-.15.15h-1.2L5.13 6.31Zm9.96 9.09h-1.65l-.14-.13v-3.83c0-.68-.27-1.2-1.1-1.23-.42 0-.9 0-1.43.02l-.07.08v4.96l-.14.14H8.9l-.13-.14V8.73l.13-.14h3.7a2.6 2.6 0 0 1 2.61 2.6v4.08l-.13.14Zm-8.37-2.44H.14L0 12.82v-1.64l.14-.14h6.58l.14.14v1.64l-.14.14Zm17.14 0h-6.58l-.14-.14v-1.64l.14-.14h6.58l.14.14v1.64l-.14.14ZM11.05 6.55V1.64l.14-.14h1.65l.14.14v4.9l-.14.14h-1.65l-.14-.13Zm0 15.81v-4.9l.14-.14h1.65l.14.13v4.91l-.14.14h-1.65l-.14-.14Z"/></svg>
                 </div>Netlify
               </div>
               <!-- Gamma -->
@@ -4547,6 +4728,288 @@ void main(){
     focusClose.addEventListener('click', closeFocus);
     backdrop.addEventListener('click', e => { if (e.target === backdrop) closeFocus(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFocus(); });
+
+    // ============================================
+    // SCROLL PROGRESS BAR
+    // ============================================
+    (function () {
+      const bar = document.getElementById('scrollProgress');
+      if (!bar) return;
+      let ticking = false;
+      function update() {
+        ticking = false;
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        const p = max > 0 ? (window.scrollY || h.scrollTop) / max : 0;
+        bar.style.width = (Math.min(1, Math.max(0, p)) * 100).toFixed(2) + '%';
+      }
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+
+    // ============================================
+    // "FIX THE BOTTLENECK" — untangle puzzle
+    // A small guaranteed-planar graph is scrambled; the visitor drags
+    // nodes until no two wires cross (0 crossings = 100% efficiency),
+    // which unlocks the case files. Fully optional (Shuffle / Skip).
+    // ============================================
+    (function () {
+      const wrap   = document.getElementById('game-wrap');
+      const canvas = document.getElementById('game-canvas');
+      const reward = document.getElementById('casefiles-reward');
+      if (!wrap || !canvas || !reward) return;
+
+      const fillEl   = document.getElementById('game-fill');
+      const pctEl    = document.getElementById('game-pct');
+      const stateEl  = document.getElementById('game-state');
+      const hintEl   = document.getElementById('game-hint');
+      const winEl    = document.getElementById('game-win');
+      const winSub   = document.getElementById('game-win-sub');
+      const resetBtn = document.getElementById('game-reset');
+      const skipBtn  = document.getElementById('game-skip');
+      const winClose = document.getElementById('game-win-close');
+      const winOpen  = document.getElementById('game-win-open');
+
+      // JS is running → the reward is now genuinely gated
+      reward.setAttribute('aria-hidden', 'true');
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { unlock(true); return; }  // no canvas support → just show the files
+
+      const LABELS = ['Intake','Triage','Assign','Review','Approve','Sync','Automate','Report','Deliver','Audit'];
+      let dpr = 1, W = 0, H = 0;
+      let nodes = [], edges = [], initialCrossings = 1;
+      let dragging = null, dragDX = 0, dragDY = 0, interacted = false, solved = false, unlocked = false;
+      let startT = 0, animRAF = 0, inView = false, built = false;
+
+      const rand = n => Math.random() * n;
+      function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+      // orientation sign; proper segment intersection (shared endpoints handled by caller)
+      const ccw = (ax, ay, bx, by, cx, cy) => (cy - ay) * (bx - ax) - (by - ay) * (cx - ax);
+      function segInt(p1, p2, p3, p4) {
+        const d1 = ccw(p3.x, p3.y, p4.x, p4.y, p1.x, p1.y);
+        const d2 = ccw(p3.x, p3.y, p4.x, p4.y, p2.x, p2.y);
+        const d3 = ccw(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+        const d4 = ccw(p1.x, p1.y, p2.x, p2.y, p4.x, p4.y);
+        return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+      }
+      function edgesCross(e1, e2) {
+        const a = e1[0], b = e1[1], c = e2[0], d = e2[1];
+        if (a === c || a === d || b === c || b === d) return false;
+        return segInt(nodes[a], nodes[b], nodes[c], nodes[d]);
+      }
+      function computeCrossed() {
+        const crossed = new Array(edges.length).fill(false);
+        let count = 0;
+        for (let i = 0; i < edges.length; i++)
+          for (let j = i + 1; j < edges.length; j++)
+            if (edgesCross(edges[i], edges[j])) { crossed[i] = true; crossed[j] = true; count++; }
+        return { crossed, count };
+      }
+
+      function buildGraph() {
+        const N = W < 520 ? 6 : 7;
+        const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.34;
+        // A ring layout is crossing-free; greedy chords keep it that way,
+        // so this layout is always a valid solution → puzzle is solvable.
+        const solvedPos = [];
+        for (let i = 0; i < N; i++) { const a = -Math.PI / 2 + i * 2 * Math.PI / N; solvedPos.push({ x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R }); }
+        edges = [];
+        for (let i = 0; i < N; i++) edges.push([i, (i + 1) % N]);
+        const chords = [];
+        for (let i = 0; i < N; i++) for (let j = i + 2; j < N; j++) { if (i === 0 && j === N - 1) continue; chords.push([i, j]); }
+        shuffle(chords);
+        const want = N >= 7 ? 3 : 2; let added = 0;
+        for (const c of chords) {
+          if (added >= want) break;
+          let ok = true;
+          for (const e of edges) {
+            if (e[0] === c[0] || e[0] === c[1] || e[1] === c[0] || e[1] === c[1]) continue;
+            if (segInt(solvedPos[c[0]], solvedPos[c[1]], solvedPos[e[0]], solvedPos[e[1]])) { ok = false; break; }
+          }
+          if (ok) { edges.push(c); added++; }
+        }
+        const lbl = shuffle(LABELS.slice());
+        nodes = solvedPos.map((p, i) => ({ x: p.x, y: p.y, label: lbl[i % lbl.length] }));
+        scramble();
+      }
+
+      function scramble() {
+        const pad = W < 520 ? 34 : 46;
+        let tries = 0;
+        do {
+          for (const n of nodes) { n.x = pad + rand(W - 2 * pad); n.y = pad + rand(H - 2 * pad); }
+          initialCrossings = computeCrossed().count;
+          tries++;
+        } while (initialCrossings < 3 && tries < 50);
+        if (initialCrossings < 1) initialCrossings = 1;
+        solved = false; interacted = false; startT = 0;
+        wrap.classList.remove('solved');
+        if (winEl) winEl.classList.remove('show');
+        if (hintEl) hintEl.style.opacity = '';
+        refresh();
+      }
+
+      const nodeR = () => (W < 520 ? 13 : 15);
+
+      // recompute score + repaint
+      function refresh() {
+        const { count } = computeCrossed();
+        let pct;
+        if (count === 0 && interacted) { pct = 100; if (!solved) win(); }
+        else pct = Math.max(0, Math.min(99, Math.round(100 * (1 - count / initialCrossings))));
+        if (pctEl)  pctEl.textContent = pct;
+        if (fillEl) fillEl.style.width = pct + '%';
+        if (stateEl && !solved) stateEl.textContent = count === 0 ? 'Optimized' : 'Unoptimized';
+        render();
+      }
+
+      function render() {
+        if (!W) return;
+        const { crossed } = computeCrossed();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        const t = REDUCED_MOTION ? 0 : performance.now() / 1000;
+        const R = nodeR();
+        // wires
+        for (let i = 0; i < edges.length; i++) {
+          const na = nodes[edges[i][0]], nb = nodes[edges[i][1]];
+          const bad = crossed[i] && !solved;
+          const col = solved ? '52,229,168' : (bad ? '255,107,91' : '123,158,255');
+          ctx.strokeStyle = 'rgba(' + col + ',0.16)'; ctx.lineWidth = bad ? 7 : 6;
+          ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y); ctx.stroke();
+          ctx.strokeStyle = 'rgba(' + col + ',0.95)'; ctx.lineWidth = bad ? 2.4 : 1.6;
+          ctx.setLineDash([7, 9]); ctx.lineDashOffset = -((t * 26) % 16);
+          ctx.beginPath(); ctx.moveTo(na.x, na.y); ctx.lineTo(nb.x, nb.y); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        // nodes
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = '500 10px "JetBrains Mono", monospace';
+        for (const n of nodes) {
+          const isDrag = n === dragging;
+          const col = solved ? '52,229,168' : '123,158,255';
+          const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, R * 2.4);
+          glow.addColorStop(0, 'rgba(' + col + ',0.32)'); glow.addColorStop(1, 'rgba(' + col + ',0)');
+          ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(n.x, n.y, R * 2.4, 0, 7); ctx.fill();
+          ctx.fillStyle = isDrag ? 'rgba(' + col + ',1)' : '#0C0C24';
+          ctx.strokeStyle = 'rgba(' + col + ',0.9)'; ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.arc(n.x, n.y, R, 0, 7); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = isDrag ? '#04122a' : 'rgba(' + col + ',1)';
+          ctx.beginPath(); ctx.arc(n.x, n.y, R * 0.34, 0, 7); ctx.fill();
+          ctx.fillStyle = 'rgba(232,236,255,0.5)';
+          ctx.fillText(n.label.toUpperCase(), n.x, n.y + R + 11);
+        }
+      }
+
+      function animate() {
+        animRAF = 0;
+        if (!inView || REDUCED_MOTION) return;
+        render();
+        animRAF = requestAnimationFrame(animate);
+      }
+      function wake() { if (inView && !REDUCED_MOTION && !animRAF) animRAF = requestAnimationFrame(animate); }
+
+      function pt(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+      function hitNode(p) { const R = nodeR() + 9; for (let i = nodes.length - 1; i >= 0; i--) { const n = nodes[i], dx = n.x - p.x, dy = n.y - p.y; if (dx * dx + dy * dy <= R * R) return n; } return null; }
+
+      canvas.addEventListener('pointerdown', e => {
+        if (!built) return;
+        const p = pt(e), n = hitNode(p);
+        if (!n) return;
+        dragging = n; dragDX = n.x - p.x; dragDY = n.y - p.y;
+        interacted = true; if (!startT) startT = performance.now();
+        if (hintEl) hintEl.style.opacity = '0';
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        render();
+      });
+      canvas.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        const p = pt(e), R = nodeR();
+        dragging.x = Math.max(R, Math.min(W - R, p.x + dragDX));
+        dragging.y = Math.max(R, Math.min(H - R, p.y + dragDY));
+        refresh();
+      });
+      function endDrag() { if (!dragging) return; dragging = null; refresh(); }
+      canvas.addEventListener('pointerup', endDrag);
+      canvas.addEventListener('pointercancel', endDrag);
+
+      function win() {
+        solved = true;
+        wrap.classList.add('solved');
+        if (stateEl) stateEl.textContent = 'Optimized';
+        if (pctEl) pctEl.textContent = 100;
+        if (fillEl) fillEl.style.width = '100%';
+        const secs = startT ? Math.max(1, Math.round((performance.now() - startT) / 1000)) : 0;
+        if (winSub && secs) winSub.textContent = 'You untangled that in ' + secs + ' second' + (secs === 1 ? '' : 's') + ' and hit 100% efficiency. That’s the entire job — chaos in, clean system out.';
+        if (winEl) { winEl.classList.add('show'); if (winClose) winClose.focus({ preventScroll: true }); }
+        unlock(false);
+        render();
+      }
+
+      function unlock(skip) {
+        if (unlocked) return; unlocked = true;
+        reward.classList.remove('pre-locked');
+        reward.classList.add('unlocked');
+        reward.setAttribute('aria-hidden', 'false');
+        reward.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+        if (skip) {
+          if (hintEl) hintEl.style.opacity = '0';
+          setTimeout(() => reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }), 120);
+        }
+      }
+
+      if (resetBtn) resetBtn.addEventListener('click', () => { scramble(); wake(); });
+      if (skipBtn)  skipBtn.addEventListener('click', () => unlock(true));
+      function hideWin(focusTarget) {
+        winEl.classList.remove('show');
+        if (focusTarget && focusTarget.focus) focusTarget.focus({ preventScroll: true });
+      }
+      if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
+      if (winOpen)  winOpen.addEventListener('click', () => {
+        hideWin();
+        reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+        const cta = reward.querySelector('.founder-cta');
+        if (cta) cta.focus({ preventScroll: true });
+      });
+      // Escape closes the win overlay — the pre-existing global Escape handler only targets the STREAM modal
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn);
+      });
+
+      function sizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const oldW = W, oldH = H;
+        W = rect.width; H = rect.height;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        if (built && oldW > 0 && oldH > 0) {          // keep the puzzle, just rescale it
+          const sx = W / oldW, sy = H / oldH;
+          for (const n of nodes) { n.x *= sx; n.y *= sy; }
+        }
+      }
+
+      function init() {
+        if (built) return;
+        sizeCanvas();
+        if (W < 40) return;          // not laid out yet — retry on next intersection tick
+        built = true;
+        buildGraph();
+        wake();
+      }
+
+      // Build only once the section is on-screen (correct sizing), like the globe
+      const io = new IntersectionObserver(es => {
+        inView = es[0].isIntersecting;
+        if (inView) { if (!built) setTimeout(init, 60); wake(); }
+      }, { threshold: 0.08 });
+      io.observe(wrap);
+
+      let rt;
+      window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (built) { sizeCanvas(); refresh(); } }, 160); }, { passive: true });
+    })();
   </script>
 </body>
 </html>
