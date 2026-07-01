@@ -2907,6 +2907,12 @@
     .sort-bucket:hover { border-color:var(--gold-border); transform:translateY(-2px); background:var(--bg-card-hover); }
     .sb-key { font-family:var(--font-body); font-weight:500; font-size:15px; color:var(--text-primary); }
     .sb-sub { font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+    .sort-rule { font-family:var(--font-mono); font-size:10.5px; line-height:1.7; text-align:center; color:var(--text-muted); margin-bottom:14px; }
+    .sort-rule b { color:var(--text-secondary); font-weight:500; }
+    .sort-feedback { min-height:34px; text-align:center; font-size:12.5px; line-height:1.5; color:var(--text-secondary); margin-bottom:14px; padding:0 8px; }
+    .sort-feedback.ok { color:#34E5A8; }
+    .sort-feedback.no { color:#FF8A5B; }
+    .sort-bucket.reveal-correct { border-color:rgba(52,229,168,.7); box-shadow:0 0 0 1px rgba(52,229,168,.35), 0 0 24px rgba(52,229,168,.16); }
     @media(max-width:560px){ .sort-buckets { grid-template-columns:1fr; } .sort-card .sc-label { font-size:22px; } }
 
     /* GAME 3 — Connect the Network (reuses .game-stage / .game-hint / .game-win) */
@@ -3261,11 +3267,13 @@
           </div>
         </div>
         <div class="sortgame-stage" id="sort-stage">
+          <div class="sort-rule">One rule: <b>repetitive &amp; rule-based</b> &rarr; Automate &nbsp;&middot;&nbsp; <b>routine, needs a person</b> &rarr; Delegate &nbsp;&middot;&nbsp; <b>high-stakes judgment</b> &rarr; Keep</div>
           <div class="sort-card" id="sort-card" aria-live="polite"></div>
+          <div class="sort-feedback" id="sort-feedback" aria-live="polite"></div>
           <div class="sort-buckets">
-            <button type="button" class="sort-bucket" data-bucket="automate"><span class="sb-key">Automate</span><span class="sb-sub">runs itself</span></button>
-            <button type="button" class="sort-bucket" data-bucket="delegate"><span class="sb-key">Delegate</span><span class="sb-sub">someone else</span></button>
-            <button type="button" class="sort-bucket" data-bucket="keep"><span class="sb-key">Keep</span><span class="sb-sub">only you</span></button>
+            <button type="button" class="sort-bucket" data-bucket="automate"><span class="sb-key">Automate</span><span class="sb-sub">repetitive, rule-based</span></button>
+            <button type="button" class="sort-bucket" data-bucket="delegate"><span class="sb-key">Delegate</span><span class="sb-sub">routine, needs a person</span></button>
+            <button type="button" class="sort-bucket" data-bucket="keep"><span class="sb-key">Keep</span><span class="sb-sub">high-stakes judgment</span></button>
           </div>
           <div class="game-win" id="sort-win" aria-live="polite">
             <button class="game-win-close" id="sort-win-close" type="button" aria-label="Close">&#10005;</button>
@@ -4791,6 +4799,7 @@ void main(){
       const game = document.getElementById('sortgame');
       if (!game) return;
       const cardEl   = document.getElementById('sort-card');
+      const fbEl     = document.getElementById('sort-feedback');
       const fillEl   = document.getElementById('sort-fill');
       const pctEl    = document.getElementById('sort-pct');
       const stateEl  = document.getElementById('sort-state');
@@ -4801,17 +4810,19 @@ void main(){
       const winClose = document.getElementById('sort-win-close');
       const winOpen  = document.getElementById('sort-win-open');
 
+      const NAMES = { automate: 'Automate', delegate: 'Delegate', keep: 'Keep' };
+      // Each task maps to exactly ONE bucket by the stated rule — not opinion.
       const ITEMS = [
-        { label: 'Approving every invoice under $500', meta: 'Finance', answer: 'automate' },
-        { label: 'The weekly operations report',        meta: 'Reporting', answer: 'automate' },
-        { label: 'A 1:1 with your co-founder',          meta: 'Leadership', answer: 'keep' },
-        { label: 'Password-reset requests',             meta: 'IT / Support', answer: 'delegate' },
-        { label: 'The board deck narrative',            meta: 'Strategy', answer: 'keep' },
-        { label: 'Copy-pasting form entries to a sheet',meta: 'Data', answer: 'automate' },
-        { label: 'First-round candidate screening',     meta: 'Hiring', answer: 'delegate' },
-        { label: 'The final hiring decision',           meta: 'Hiring', answer: 'keep' },
+        { label: 'Copy-pasting form submissions into a spreadsheet',  meta: 'Data entry',   answer: 'automate', why: 'Same steps every time, zero judgment — a script does it.' },
+        { label: 'Choosing which candidate to hire',                  meta: 'Hiring',       answer: 'keep',     why: 'Irreversible and high-stakes — only the founder should own it.' },
+        { label: 'Answering routine “where’s my order?” emails', meta: 'Support', answer: 'delegate', why: 'Needs a person, but any trained rep can handle it.' },
+        { label: 'Emailing the same welcome message to every new signup', meta: 'Onboarding', answer: 'automate', why: 'Identical output, triggered by an event — automate it.' },
+        { label: 'Setting the quarterly company strategy',            meta: 'Strategy',     answer: 'keep',     why: 'Direction-setting judgment only you can make.' },
+        { label: 'Booking flights and hotels for a work trip',        meta: 'Admin',        answer: 'delegate', why: 'Time-consuming but fully hand-offable with your preferences.' },
+        { label: 'Compiling the weekly numbers into a report',        meta: 'Reporting',    answer: 'automate', why: 'Fixed inputs, fixed format — perfect for automation.' },
+        { label: 'The pitch to a lead investor',                      meta: 'Fundraising',  answer: 'keep',     why: 'Relationship and judgment that can’t be delegated.' },
       ];
-      let idx = 0, solved = false, finished = false;
+      let idx = 0, solved = false, finished = false, awaitingCorrect = false;
 
       function start() {
         idx = 0; solved = false;
@@ -4819,12 +4830,15 @@ void main(){
         if (winEl) winEl.classList.remove('show');
         render();
       }
+      function setFeedback(text, cls) { if (!fbEl) return; fbEl.textContent = text || ''; fbEl.className = 'sort-feedback' + (cls ? ' ' + cls : ''); }
+      function clearHighlights() { buckets.forEach(b => b.classList.remove('reveal-correct')); }
       function render() {
         const total = ITEMS.length;
         const pct = Math.round((idx / total) * 100);
         if (pctEl)  pctEl.textContent = idx >= total ? 100 : pct;
         if (fillEl) fillEl.style.width = (idx >= total ? 100 : pct) + '%';
         if (stateEl && !solved) stateEl.textContent = idx >= total ? 'Clear' : 'Cluttered';
+        awaitingCorrect = false; clearHighlights(); setFeedback('');
         if (idx >= total) { if (!solved) win(); return; }
         const it = ITEMS[idx];
         cardEl.innerHTML = '<div class="sc-meta">' + it.meta + '</div><div class="sc-label">' + it.label + '</div>';
@@ -4835,8 +4849,17 @@ void main(){
         const it = ITEMS[idx];
         if (bucket === it.answer) {
           cardEl.classList.remove('wrong'); cardEl.classList.add('correct');
+          clearHighlights();
+          setFeedback('✓ ' + it.why, 'ok');
           idx++;
-          setTimeout(render, 230);
+          setTimeout(render, 820);
+        } else if (!awaitingCorrect) {
+          // First miss: teach it. Reveal the correct bucket + the reason; the
+          // rule is fixed, so the "right" answer is explained, never arbitrary.
+          cardEl.classList.remove('correct'); void cardEl.offsetWidth; cardEl.classList.add('wrong');
+          awaitingCorrect = true;
+          setFeedback('Not quite — this one’s ' + NAMES[it.answer] + ': ' + it.why, 'no');
+          buckets.forEach(b => b.classList.toggle('reveal-correct', b.dataset.bucket === it.answer));
         } else {
           cardEl.classList.remove('correct'); void cardEl.offsetWidth; cardEl.classList.add('wrong');
         }
