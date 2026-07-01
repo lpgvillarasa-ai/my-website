@@ -2861,12 +2861,12 @@
     /* Progressive gating: gates/chapters hidden until unlocked (JS only; no-JS shows all) */
     .js .gate.locked, .js .chapter.locked { display: none; }
     /* Interactive game shells need JS — hide them entirely without it (content still shows) */
-    .sortgame, .connectgame { display: none; }
-    .js .sortgame, .js .connectgame { display: block; }
+    .sortgame, .firegame { display: none; }
+    .js .sortgame, .js .firegame { display: block; }
     .gate.unlocked, .chapter.unlocked { animation: chapterIn .85s cubic-bezier(.16,1,.3,1) both; }
     @keyframes chapterIn { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:none; } }
-    .gate { padding: 96px 0; position: relative; z-index: 2; }
-    @media(max-width:768px){ .gate { padding: 72px 0; } }
+    .gate { padding: 72px 0; position: relative; z-index: 2; }
+    @media(max-width:768px){ .gate { padding: 52px 0; } }
 
     /* Outline: journey map */
     #journey-map-section { padding: 30px 0 6px; }
@@ -2883,8 +2883,8 @@
     .reveal-all-link:hover { color: var(--gold-light); }
 
     /* Shared solved states for the new games (reuse .game-hud/.game-meter/.game-foot/.game-win) */
-    .sortgame.solved .game-meter-fill, .connectgame.solved .game-meter-fill { background:linear-gradient(90deg,#22C58A,#34E5A8); }
-    .sortgame.solved .game-status span, .connectgame.solved .game-status span { color:#34E5A8; }
+    .sortgame.solved .game-meter-fill, .firegame.solved .game-meter-fill { background:linear-gradient(90deg,#22C58A,#34E5A8) !important; }
+    .sortgame.solved .game-status span, .firegame.solved .game-status span { color:#34E5A8; }
 
     /* GAME 2 — Sort the Signal */
     .sortgame { max-width:720px; margin:0 auto; position:relative; overflow:hidden;
@@ -2915,11 +2915,63 @@
     .sort-bucket.reveal-correct { border-color:rgba(52,229,168,.7); box-shadow:0 0 0 1px rgba(52,229,168,.35), 0 0 24px rgba(52,229,168,.16); }
     @media(max-width:560px){ .sort-buckets { grid-template-columns:1fr; } .sort-card .sc-label { font-size:22px; } }
 
-    /* GAME 3 — Connect the Network (reuses .game-stage / .game-hint / .game-win) */
-    .connectgame { max-width:920px; margin:0 auto; position:relative; overflow:hidden;
+    /* GAME 3 — Contain the Fires */
+    .firegame { max-width:760px; margin:0 auto; position:relative; overflow:hidden;
       background:linear-gradient(180deg,var(--bg-card),var(--bg-secondary));
       border:1px solid var(--border-strong); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-card); }
-    #connect-canvas { position:absolute; inset:0; width:100%; height:100%; cursor:none; touch-action:none; display:block; }
+    .firegame-stage { position:relative; }
+    .fire-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .fire-tile { position:relative; display:flex; flex-direction:column; align-items:center; gap:7px;
+      padding:22px 10px 18px; border-radius:var(--radius-md); border:1px solid var(--border);
+      background:radial-gradient(ellipse at 50% 0%,rgba(123,158,255,.05),transparent 70%),var(--bg-primary);
+      cursor:none; transition:border-color .2s ease, background .25s ease, transform .12s ease; }
+    .fire-tile:active { transform:scale(.96); }
+    .ft-dot { width:9px; height:9px; border-radius:50%; background:#34E5A8; box-shadow:0 0 10px rgba(52,229,168,.55); transition:background .2s ease, box-shadow .2s ease; }
+    .ft-name { font-weight:500; font-size:14.5px; color:var(--text-primary); }
+    .ft-status { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); transition:color .2s ease; }
+    .fire-tile.burning { border-color:rgba(255,122,89,.75);
+      background:radial-gradient(ellipse at 50% 0%,rgba(255,122,89,.16),transparent 75%),var(--bg-primary);
+      animation:firePulse .9s ease-in-out infinite; }
+    .fire-tile.burning .ft-dot { background:var(--ember); box-shadow:0 0 16px rgba(255,122,89,.85); }
+    .fire-tile.burning .ft-status { color:var(--ember); font-weight:600; }
+    @keyframes firePulse { 0%,100% { box-shadow:0 0 0 rgba(255,122,89,0); } 50% { box-shadow:0 0 26px rgba(255,122,89,.32); } }
+    .fire-tile.contained { border-color:rgba(52,229,168,.7); box-shadow:0 0 22px rgba(52,229,168,.22); }
+    .fire-start { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:16px; border-radius:var(--radius-md); text-align:center; padding:20px;
+      background:rgba(6,7,22,.72); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
+      transition:opacity .4s ease, visibility 0s linear .4s; }
+    .fire-start.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    .fire-start-copy { font-size:14px; color:var(--text-secondary); max-width:320px; line-height:1.6; }
+    @media(max-width:560px){ .fire-tile { padding:16px 6px 13px; } .ft-name { font-size:12.5px; } }
+
+    /* ============ LIVELINESS LAYER ============ */
+    :root { --ember:#FF7A59; }
+    /* Aurora: slow drift on the existing fixed background layer (GPU transform only; auto-off with reduced motion) */
+    body::after { animation:auroraDrift 26s ease-in-out infinite alternate; will-change:transform; }
+    @keyframes auroraDrift {
+      0%   { transform:translate3d(0,0,0) scale(1); }
+      50%  { transform:translate3d(-2.5%,1.5%,0) scale(1.06); }
+      100% { transform:translate3d(2%,-2%,0) scale(1.1); }
+    }
+    /* Section-title italics get the same living gradient as the hero */
+    @supports ((-webkit-background-clip:text) or (background-clip:text)){
+      .section-title em {
+        background:linear-gradient(100deg,var(--gold-light) 0%,var(--accent-violet) 48%,var(--gold-light) 100%);
+        background-size:220% auto;-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;
+        animation:heroShimmer 8s linear infinite; }
+    }
+    /* Warmer, more energetic progress meters (blue → violet → ember) */
+    .game-meter-fill { background:linear-gradient(90deg,var(--accent-blue),var(--accent-violet),var(--ember)); }
+    /* Primary CTA: gentle breathing glow */
+    .btn-primary { animation:ctaBreathe 5.5s ease-in-out infinite; }
+    @keyframes ctaBreathe {
+      0%,100% { box-shadow:0 0 0 rgba(123,158,255,0); }
+      50%     { box-shadow:0 8px 30px rgba(123,158,255,.22); }
+    }
+    /* Journey map: completed rounds glow green */
+    .jm-item.done { border-color:rgba(52,229,168,.55); box-shadow:0 0 18px rgba(52,229,168,.12); }
+    .jm-item.done .jm-num { color:#34E5A8; }
   </style>
 </head>
 <body>
@@ -3407,36 +3459,41 @@
 
   </div><!-- /chapter 2 (The Proof) -->
 
-  <!-- ============ GAME 3 · CONNECT THE NETWORK (gate) ============ -->
+  <!-- ============ GAME 3 · CONTAIN THE FIRES (gate) ============ -->
   <div class="gate locked" id="gate3">
     <div class="section-inner">
       <div class="section-header">
-        <div class="section-tag reveal">Round 3 · Connect</div>
-        <h2 class="section-title reveal reveal-delay-1">Connect the <em>network.</em></h2>
-        <p class="section-sub reveal reveal-delay-2">Every dot is a team I've supported. Tap one city, then another, to link them &mdash; wire them all into a single network to unlock the work. Or skip ahead.</p>
+        <div class="section-tag reveal">Round 3 · Final round</div>
+        <h2 class="section-title reveal reveal-delay-1">Contain the <em>fires.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">Ops is a contact sport. Incidents will spark across the board &mdash; tap them out before they spread. Contain 12 and the shift is yours. Or skip ahead.</p>
       </div>
-      <div class="connectgame" id="connectgame">
+      <div class="firegame" id="firegame">
         <div class="game-hud">
-          <div class="game-status">Network: <span id="connect-state">Fragmented</span></div>
+          <div class="game-status">Systems: <span id="fire-state">Stable</span></div>
           <div class="game-meter">
-            <div class="game-meter-track"><div class="game-meter-fill" id="connect-fill"></div></div>
-            <div class="game-meter-val"><span id="connect-pct">0</span>&#37; linked</div>
+            <div class="game-meter-track"><div class="game-meter-fill" id="fire-fill"></div></div>
+            <div class="game-meter-val"><span id="fire-pct">0</span>&#37; contained</div>
           </div>
         </div>
-        <div class="game-stage">
-          <canvas id="connect-canvas" role="img" aria-label="Puzzle: tap two cities to connect them; link every city into one network"></canvas>
-          <div class="game-hint" id="connect-hint">Tap one city, then another, to draw a link.</div>
-          <div class="game-win" id="connect-win" aria-live="polite">
-            <button class="game-win-close" id="connect-win-close" type="button" aria-label="Close">&#10005;</button>
+        <div class="firegame-stage" id="fire-stage">
+          <div class="fire-grid" id="fire-grid" aria-label="Systems board: tap systems with incidents to contain them"></div>
+          <div class="fire-start" id="fire-start">
+            <p class="fire-start-copy">12 incidents are coming. Don't let them spread.</p>
+            <button class="btn-primary" id="fire-begin" type="button">Start the shift
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="game-win" id="fire-win" aria-live="polite">
+            <button class="game-win-close" id="fire-win-close" type="button" aria-label="Close">&#10005;</button>
             <div class="game-win-badge" aria-hidden="true">&#10003;</div>
-            <div class="game-win-title">Network <em>online.</em></div>
-            <div class="game-win-sub">One connected operation across every timezone &mdash; that's how I run distributed teams. Here's the work, and how to reach me.</div>
-            <button class="game-skip" id="connect-win-open" type="button">See the work &darr;</button>
+            <div class="game-win-title">Shift <em>survived.</em></div>
+            <div class="game-win-sub" id="fire-win-sub">Twelve incidents contained before anyone upstairs noticed. That's what &ldquo;operations handled&rdquo; actually means. Here's the work.</div>
+            <button class="game-skip" id="fire-win-open" type="button">See the work &darr;</button>
           </div>
         </div>
         <div class="game-foot">
-          <button class="game-reset" id="connect-reset" type="button">&#8635; Reset</button>
-          <button class="game-skip" id="connect-skip" type="button">Skip &amp; reveal the work &rarr;</button>
+          <button class="game-reset" id="fire-reset" type="button">&#8635; Restart shift</button>
+          <button class="game-skip" id="fire-skip" type="button">Skip &amp; reveal the work &rarr;</button>
         </div>
       </div>
     </div>
@@ -4817,9 +4874,7 @@ void main(){
         { label: 'Choosing which candidate to hire',                  meta: 'Hiring',       answer: 'keep',     why: 'Irreversible and high-stakes — only the founder should own it.' },
         { label: 'Answering routine “where’s my order?” emails', meta: 'Support', answer: 'delegate', why: 'Needs a person, but any trained rep can handle it.' },
         { label: 'Emailing the same welcome message to every new signup', meta: 'Onboarding', answer: 'automate', why: 'Identical output, triggered by an event — automate it.' },
-        { label: 'Setting the quarterly company strategy',            meta: 'Strategy',     answer: 'keep',     why: 'Direction-setting judgment only you can make.' },
         { label: 'Booking flights and hotels for a work trip',        meta: 'Admin',        answer: 'delegate', why: 'Time-consuming but fully hand-offable with your preferences.' },
-        { label: 'Compiling the weekly numbers into a report',        meta: 'Reporting',    answer: 'automate', why: 'Fixed inputs, fixed format — perfect for automation.' },
         { label: 'The pitch to a lead investor',                      meta: 'Fundraising',  answer: 'keep',     why: 'Relationship and judgment that can’t be delegated.' },
       ];
       let idx = 0, solved = false, finished = false, awaitingCorrect = false;
@@ -4852,7 +4907,7 @@ void main(){
           clearHighlights();
           setFeedback('✓ ' + it.why, 'ok');
           idx++;
-          setTimeout(render, 820);
+          setTimeout(render, 600);
         } else if (!awaitingCorrect) {
           // First miss: teach it. Reveal the correct bucket + the reason; the
           // rule is fixed, so the "right" answer is explained, never arbitrary.
@@ -4890,159 +4945,151 @@ void main(){
     })();
 
     // ============================================
-    // GAME 3 — "CONNECT THE NETWORK"
-    // Tap two cities to link them; wire every city into one connected
-    // network → unlock The Work. Skippable. Canvas, mouse + touch.
+    // GAME 3 — "CONTAIN THE FIRES"
+    // Incidents spark on random systems and SPREAD if ignored.
+    // Tap burning tiles to contain them; contain TARGET incidents
+    // to win → unlock The Work. Skippable. Pauses off-screen/hidden.
     // ============================================
     (function () {
-      const wrap = document.getElementById('connectgame');
-      const canvas = document.getElementById('connect-canvas');
-      if (!wrap || !canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) { if (window.Journey) window.Journey.advance(3, true); return; }
+      const game  = document.getElementById('firegame');
+      const grid  = document.getElementById('fire-grid');
+      if (!game || !grid) return;
 
-      const fillEl   = document.getElementById('connect-fill');
-      const pctEl    = document.getElementById('connect-pct');
-      const stateEl  = document.getElementById('connect-state');
-      const hintEl   = document.getElementById('connect-hint');
-      const winEl    = document.getElementById('connect-win');
-      const resetBtn = document.getElementById('connect-reset');
-      const skipBtn  = document.getElementById('connect-skip');
-      const winClose = document.getElementById('connect-win-close');
-      const winOpen  = document.getElementById('connect-win-open');
+      const fillEl   = document.getElementById('fire-fill');
+      const pctEl    = document.getElementById('fire-pct');
+      const stateEl  = document.getElementById('fire-state');
+      const startEl  = document.getElementById('fire-start');
+      const beginBtn = document.getElementById('fire-begin');
+      const winEl    = document.getElementById('fire-win');
+      const winSub   = document.getElementById('fire-win-sub');
+      const resetBtn = document.getElementById('fire-reset');
+      const skipBtn  = document.getElementById('fire-skip');
+      const winClose = document.getElementById('fire-win-close');
+      const winOpen  = document.getElementById('fire-win-open');
 
-      const CITIES = ['Brooklyn', 'Chicago', 'Toronto', 'Barcelona', 'Monaco', 'Rome', 'Cebu', 'Vietnam'];
-      let dpr = 1, W = 0, H = 0, nodes = [], links = [], selected = -1;
-      let solved = false, finished = false, built = false, inView = false, animRAF = 0, interacted = false;
+      const SYSTEMS = ['Billing','Support','Deploys','Inbox','Payroll','CRM','Reports','Hiring','Servers'];
+      const TARGET = 12, SPREAD_MS = 3400, CAP = 4;
+      let tiles = [], contained = 0, running = false, solved = false, finished = false;
+      let spawnTimer = 0, tickTimer = 0, startT = 0, pausedAt = 0, inView = false;
 
-      function components() {
-        const parent = nodes.map((_, i) => i);
-        const find = x => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
-        links.forEach(l => { const ra = find(l[0]), rb = find(l[1]); if (ra !== rb) parent[ra] = rb; });
-        const roots = new Set(nodes.map((_, i) => find(i)));
-        return roots.size;
+      // Build the systems board
+      SYSTEMS.forEach(name => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'fire-tile';
+        b.innerHTML = '<span class="ft-dot" aria-hidden="true"></span><span class="ft-name">' + name + '</span><span class="ft-status">OK</span>';
+        grid.appendChild(b);
+        const t = { el: b, burning: false, igniteAt: 0 };
+        b.addEventListener('click', () => contain(t));
+        tiles.push(t);
+      });
+
+      const burningCount = () => tiles.reduce((n, t) => n + (t.burning ? 1 : 0), 0);
+      const okTiles = () => tiles.filter(t => !t.burning);
+
+      function setTile(t, burning) {
+        t.burning = burning;
+        t.el.classList.toggle('burning', burning);
+        t.el.querySelector('.ft-status').textContent = burning ? '\u26A0 INCIDENT' : 'OK';
       }
-      function linkExists(a, b) { return links.some(l => (l[0] === a && l[1] === b) || (l[0] === b && l[1] === a)); }
-
-      function build() {
-        const N = W < 520 ? 6 : CITIES.length;
-        const pad = W < 520 ? 40 : 54;
-        nodes = [];
-        let tries = 0;
-        while (nodes.length < N && tries < 600) {
-          tries++;
-          const x = pad + Math.random() * (W - 2 * pad);
-          const y = pad + 14 + Math.random() * (H - 2 * pad - 20);
-          if (nodes.every(n => (n.x - x) * (n.x - x) + (n.y - y) * (n.y - y) > 78 * 78)) {
-            nodes.push({ x, y, label: CITIES[nodes.length] });
-          }
-        }
-        links = []; selected = -1; solved = false; interacted = false;
-        wrap.classList.remove('solved');
-        if (winEl) winEl.classList.remove('show');
-        if (hintEl) hintEl.style.opacity = '';
-        refresh();
+      function ignite() {
+        const pool = okTiles();
+        if (!pool.length) return;
+        const t = pool[(Math.random() * pool.length) | 0];
+        setTile(t, true);
+        t.igniteAt = performance.now();
+        hud();
       }
-
-      const nodeR = () => (W < 520 ? 13 : 16);
-
-      function refresh() {
-        const comp = nodes.length ? components() : 1;
-        const pct = nodes.length > 1 ? Math.round((nodes.length - comp) / (nodes.length - 1) * 100) : 100;
+      function contain(t) {
+        if (!running || !t.burning || solved) return;
+        setTile(t, false);
+        t.el.classList.add('contained');
+        setTimeout(() => t.el.classList.remove('contained'), 420);
+        contained++;
+        hud();
+        if (contained >= TARGET) win();
+      }
+      function hud() {
+        const pct = Math.min(100, Math.round(contained / TARGET * 100));
         if (pctEl)  pctEl.textContent = pct;
         if (fillEl) fillEl.style.width = pct + '%';
-        if (stateEl && !solved) stateEl.textContent = comp === 1 ? 'Online' : 'Fragmented';
-        if (comp === 1 && links.length && interacted && !solved) win();
-        render();
+        if (stateEl && !solved) stateEl.textContent = burningCount() ? 'Incident' : 'Stable';
       }
 
-      function render() {
-        if (!W) return;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, W, H);
-        const t = REDUCED_MOTION ? 0 : performance.now() / 1000;
-        const col = solved ? '52,229,168' : '123,158,255';
-        // links
-        for (const l of links) {
-          const a = nodes[l[0]], b = nodes[l[1]];
-          ctx.strokeStyle = 'rgba(' + col + ',0.18)'; ctx.lineWidth = 6;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          ctx.strokeStyle = 'rgba(' + col + ',0.9)'; ctx.lineWidth = 1.6;
-          ctx.setLineDash([7, 9]); ctx.lineDashOffset = -((t * 26) % 16);
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          ctx.setLineDash([]);
-        }
-        // nodes
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = '500 10px "JetBrains Mono", monospace';
-        const R = nodeR();
-        nodes.forEach((n, i) => {
-          const sel = i === selected;
-          const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, R * 2.4);
-          glow.addColorStop(0, 'rgba(' + col + ',0.32)'); glow.addColorStop(1, 'rgba(' + col + ',0)');
-          ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(n.x, n.y, R * 2.4, 0, 7); ctx.fill();
-          if (sel) { ctx.strokeStyle = 'rgba(160,188,255,0.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(n.x, n.y, R + 5, 0, 7); ctx.stroke(); }
-          ctx.fillStyle = sel ? 'rgba(' + col + ',1)' : '#0C0C24';
-          ctx.strokeStyle = 'rgba(' + col + ',0.9)'; ctx.lineWidth = 1.6;
-          ctx.beginPath(); ctx.arc(n.x, n.y, R, 0, 7); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = sel ? '#04122a' : 'rgba(' + col + ',1)';
-          ctx.beginPath(); ctx.arc(n.x, n.y, R * 0.34, 0, 7); ctx.fill();
-          ctx.fillStyle = 'rgba(232,236,255,0.55)';
-          ctx.fillText(n.label.toUpperCase(), n.x, n.y + R + 11);
+      function spawnLoop() {
+        if (!running) return;
+        // concurrency ramps 1 → CAP as the player contains more
+        const allowed = Math.min(CAP, 1 + Math.floor(contained / 3));
+        if (burningCount() < allowed) ignite();
+        const every = Math.max(820, 1400 - contained * 45);
+        spawnTimer = setTimeout(spawnLoop, every);
+      }
+      function tickLoop() {
+        if (!running) return;
+        const now = performance.now();
+        // Ignored incidents spread to another system
+        tiles.forEach(t => {
+          if (t.burning && now - t.igniteAt > SPREAD_MS && burningCount() < CAP) {
+            t.igniteAt = now;           // reset its clock, then spread
+            ignite();
+          }
         });
+        tickTimer = setTimeout(tickLoop, 250);
       }
-      function animate() { animRAF = 0; if (!inView || REDUCED_MOTION) return; render(); animRAF = requestAnimationFrame(animate); }
-      function wake() { if (inView && !REDUCED_MOTION && !animRAF) animRAF = requestAnimationFrame(animate); }
 
-      function pt(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
-      function hit(p) { const R = nodeR() + 10; for (let i = nodes.length - 1; i >= 0; i--) { const n = nodes[i], dx = n.x - p.x, dy = n.y - p.y; if (dx * dx + dy * dy <= R * R) return i; } return -1; }
+      function clearTimers() { clearTimeout(spawnTimer); clearTimeout(tickTimer); spawnTimer = tickTimer = 0; }
+      function pause() { if (!running || pausedAt) return; pausedAt = performance.now(); clearTimers(); }
+      function resume() {
+        if (!running || !pausedAt) return;
+        const delta = performance.now() - pausedAt;
+        tiles.forEach(t => { if (t.burning) t.igniteAt += delta; });
+        pausedAt = 0; spawnLoop(); tickLoop();
+      }
 
-      canvas.addEventListener('pointerdown', e => {
-        if (!built) return;
-        const i = hit(pt(e));
-        if (i < 0) { selected = -1; render(); return; }
-        if (hintEl) hintEl.style.opacity = '0';
-        if (selected < 0) { selected = i; }
-        else if (selected !== i) {
-          if (!linkExists(selected, i)) { links.push([selected, i]); interacted = true; }
-          selected = -1;
-        } else { selected = -1; }
-        refresh();
-      });
+      function start() {
+        clearTimers();
+        tiles.forEach(t => setTile(t, false));
+        contained = 0; solved = false; pausedAt = 0;
+        game.classList.remove('solved');
+        if (winEl) winEl.classList.remove('show');
+        if (startEl) startEl.classList.add('hidden');
+        if (stateEl) stateEl.textContent = 'Stable';
+        hud();
+        running = true;
+        startT = performance.now();
+        spawnLoop(); tickLoop();
+      }
+      function stop() { running = false; clearTimers(); }
 
       function win() {
         solved = true;
-        wrap.classList.add('solved');
-        if (stateEl) stateEl.textContent = 'Online';
+        stop();
+        tiles.forEach(t => setTile(t, false));
+        game.classList.add('solved');
+        if (stateEl) stateEl.textContent = 'Stable';
         if (pctEl) pctEl.textContent = 100;
         if (fillEl) fillEl.style.width = '100%';
+        const secs = startT ? Math.max(1, Math.round((performance.now() - startT) / 1000)) : 0;
+        if (winSub && secs) winSub.textContent = 'Twelve incidents contained in ' + secs + ' seconds — before anyone upstairs noticed. That\u2019s what \u201Coperations handled\u201D actually means. Here\u2019s the work.';
         if (winEl) { winEl.classList.add('show'); if (winClose) winClose.focus({ preventScroll: true }); }
         finish(false);
-        render();
       }
       function finish(skip) { if (finished) return; finished = true; if (window.Journey) window.Journey.advance(3, !!skip); }
       function hideWin(f) { winEl.classList.remove('show'); if (f && f.focus) f.focus({ preventScroll: true }); }
 
-      if (resetBtn) resetBtn.addEventListener('click', () => { build(); wake(); });
-      if (skipBtn)  skipBtn.addEventListener('click', () => finish(true));
+      if (beginBtn) beginBtn.addEventListener('click', start);
+      if (resetBtn) resetBtn.addEventListener('click', () => { if (startEl && !startEl.classList.contains('hidden')) return; start(); });
+      if (skipBtn)  skipBtn.addEventListener('click', () => { stop(); finish(true); });
       if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
       if (winOpen)  winOpen.addEventListener('click', () => { hideWin(); const ch = document.getElementById('ch3'); if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn); });
 
-      function sizeCanvas() {
-        const rect = canvas.getBoundingClientRect();
-        const oldW = W, oldH = H;
-        W = rect.width; H = rect.height;
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-        if (built && oldW > 0 && oldH > 0) { const sx = W / oldW, sy = H / oldH; for (const n of nodes) { n.x *= sx; n.y *= sy; } }
-      }
-      function init() { if (built) return; sizeCanvas(); if (W < 40) return; built = true; build(); wake(); }
-
-      const io = new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) { if (!built) setTimeout(init, 60); wake(); } }, { threshold: 0.08 });
-      io.observe(wrap);
-      let rt2;
-      window.addEventListener('resize', () => { clearTimeout(rt2); rt2 = setTimeout(() => { if (built) { sizeCanvas(); refresh(); } }, 160); }, { passive: true });
+      // Pause when the tab is hidden or the game scrolls out of view
+      document.addEventListener('visibilitychange', () => { document.hidden ? pause() : (inView && resume()); });
+      new IntersectionObserver(es => {
+        inView = es[0].isIntersecting;
+        inView ? resume() : pause();
+      }, { threshold: 0.15 }).observe(game);
     })();
   </script>
 </body>
