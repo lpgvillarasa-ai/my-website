@@ -2240,7 +2240,7 @@
     /* ============================================
        CASE STUDIES SECTION
     ============================================ */
-    #cases {
+    #casefiles {
       padding: 140px 0;
     }
 
@@ -2705,7 +2705,7 @@
       .hamburger { display: flex; }
       #hero { padding: var(--nav-h) 24px 0; }
       .section-inner { padding: 0 24px; }
-      #about, #stream, #cases, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
+      #about, #stream, #casefiles, #results, #work, #skills, #process, #industries, #global, #contact { padding: 80px 0; }
       .stream-grid { grid-template-columns: 1fr; }
       .cases-grid { grid-template-columns: 1fr; }
       .work-grid { grid-template-columns: 1fr; }
@@ -2790,7 +2790,7 @@
       background:radial-gradient(ellipse at 50% 38%,rgba(123,158,255,.07),transparent 68%),var(--bg-primary)}
     #game-canvas{position:absolute;inset:0;width:100%;height:100%;cursor:none;touch-action:none;display:block}
     .game-hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;padding:0 16px;
-      font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--text-muted);
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--text-secondary);
       pointer-events:none;transition:opacity .45s ease}
     .game-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;
       margin-top:14px;flex-wrap:wrap}
@@ -2799,7 +2799,7 @@
     .game-reset{color:var(--text-secondary);border:1px solid var(--border-strong);
       border-radius:100px;padding:8px 16px}
     .game-reset:hover{color:var(--text-primary);border-color:var(--gold-border)}
-    .game-skip{color:var(--text-muted);border:none;text-decoration:none;padding:8px 2px}
+    .game-skip{color:var(--text-secondary);border:none;text-decoration:none;padding:8px 2px}
     .game-skip:hover{color:var(--gold)}
 
     /* Win overlay */
@@ -2807,9 +2807,9 @@
       align-items:center;justify-content:center;text-align:center;gap:12px;padding:28px;
       background:radial-gradient(ellipse at 50% 42%,rgba(9,12,32,.84),rgba(4,4,18,.95));
       -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-      opacity:0;transform:scale(1.04);pointer-events:none;
-      transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1)}
-    .game-win.show{opacity:1;transform:scale(1);pointer-events:auto}
+      opacity:0;visibility:hidden;transform:scale(1.04);pointer-events:none;
+      transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1),visibility 0s linear .5s}
+    .game-win.show{opacity:1;visibility:visible;transform:scale(1);pointer-events:auto;transition-delay:0s}
     .game-win-badge{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;
       justify-content:center;font-size:26px;color:#34E5A8;background:rgba(52,229,168,.12);
       border:1px solid rgba(52,229,168,.5);box-shadow:0 0 44px rgba(52,229,168,.4)}
@@ -4944,7 +4944,7 @@ void main(){
         if (fillEl) fillEl.style.width = '100%';
         const secs = startT ? Math.max(1, Math.round((performance.now() - startT) / 1000)) : 0;
         if (winSub && secs) winSub.textContent = 'You untangled that in ' + secs + ' second' + (secs === 1 ? '' : 's') + ' and hit 100% efficiency. That’s the entire job — chaos in, clean system out.';
-        if (winEl) winEl.classList.add('show');
+        if (winEl) { winEl.classList.add('show'); if (winClose) winClose.focus({ preventScroll: true }); }
         unlock(false);
         render();
       }
@@ -4963,8 +4963,21 @@ void main(){
 
       if (resetBtn) resetBtn.addEventListener('click', () => { scramble(); wake(); });
       if (skipBtn)  skipBtn.addEventListener('click', () => unlock(true));
-      if (winClose) winClose.addEventListener('click', () => winEl.classList.remove('show'));
-      if (winOpen)  winOpen.addEventListener('click', () => { winEl.classList.remove('show'); reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); });
+      function hideWin(focusTarget) {
+        winEl.classList.remove('show');
+        if (focusTarget && focusTarget.focus) focusTarget.focus({ preventScroll: true });
+      }
+      if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
+      if (winOpen)  winOpen.addEventListener('click', () => {
+        hideWin();
+        reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+        const cta = reward.querySelector('.founder-cta');
+        if (cta) cta.focus({ preventScroll: true });
+      });
+      // Escape closes the win overlay — the pre-existing global Escape handler only targets the STREAM modal
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn);
+      });
 
       function sizeCanvas() {
         const rect = canvas.getBoundingClientRect();
