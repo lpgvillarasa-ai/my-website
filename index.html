@@ -69,20 +69,20 @@
     :root {
       --bg-primary: #040412;
       --bg-secondary: #07071C;
-      --bg-card: #0C0C24;
-      --bg-card-hover: #10102C;
+      --bg-card: #11112E;            /* lifted ~15% so layers visibly separate */
+      --bg-card-hover: #16163A;
       --gold: #7B9EFF;
       --gold-light: #A0BCFF;
       --gold-dim: rgba(123, 158, 255, 0.1);
       --gold-border: rgba(123, 158, 255, 0.18);
       --text-primary: #E8ECFF;
-      --text-secondary: #7880AA;
-      --text-muted: #3A3F60;
+      --text-secondary: #97A1C9;     /* brightened a step — paragraphs stop reading as fog */
+      --text-muted: #4C527A;
       --accent-blue: #7B9EFF;
       --accent-violet: #B06EFF;
       --white: #ffffff;
-      --border: rgba(255,255,255,0.05);
-      --border-strong: rgba(255,255,255,0.1);
+      --border: rgba(255,255,255,0.07);
+      --border-strong: rgba(255,255,255,0.14);
       --radius-sm: 6px;
       --radius-md: 12px;
       --radius-lg: 20px;
@@ -3016,6 +3016,29 @@
     /* Journey map: completed rounds glow green */
     .jm-item.done { border-color:rgba(52,229,168,.55); box-shadow:0 0 18px rgba(52,229,168,.12); }
     .jm-item.done .jm-num { color:#34E5A8; }
+
+    /* ============ WARM ACCENT PROMOTION ============
+       One ember heartbeat per screen: labels, numerals, and key marks go
+       warm; interactive affordances (links, buttons) stay in the blue
+       family so hover/click cues remain unambiguous. */
+    .section-tag, .hero-eyebrow, .founder-eyebrow { color: var(--ember); }
+    .section-tag::before, .hero-eyebrow::before { background: var(--ember); }
+    .jm-num { color: var(--ember); }
+    .evolution-num { color: var(--ember); }
+    .result-big span { color: var(--ember); }
+    .wm-num em { color: var(--ember); }
+    .stream-badge-dot { background: var(--ember); }
+    .jm-item:hover { border-color: rgba(255,122,89,.45); }
+    .location-tag:hover { border-color: rgba(255,122,89,.45); color: var(--text-primary); }
+
+    /* ============ TONAL BREAK — THE PROOF ============
+       One lighter indigo band mid-journey so the scroll reads as moving
+       through spaces, not one long tunnel. */
+    :root { --band: rgba(26,26,64,.55); }
+    [data-theme="light"] { --band: rgba(75,111,212,.07); }
+    #casefiles {
+      background: linear-gradient(180deg, transparent, var(--band) 9%, var(--band) 91%, transparent);
+    }
   </style>
 </head>
 <body>
