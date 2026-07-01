@@ -2828,8 +2828,17 @@
     .game-reset{color:var(--text-secondary);border:1px solid var(--border-strong);
       border-radius:100px;padding:8px 16px}
     .game-reset:hover{color:var(--text-primary);border-color:var(--gold-border)}
-    .game-skip{color:var(--text-secondary);border:none;text-decoration:none;padding:8px 2px}
-    .game-skip:hover{color:var(--gold)}
+    /* Skip / continue: real buttons, not footnotes — they carry the journey forward */
+    .game-skip{color:var(--gold);font-weight:600;border:1px solid var(--gold-border);
+      border-radius:100px;padding:9px 18px;background:var(--gold-dim);text-decoration:none;
+      transition:color .25s ease,border-color .25s ease,box-shadow .25s ease,transform .2s ease}
+    .game-skip:hover{color:var(--gold-light);border-color:var(--gold);transform:translateX(2px);
+      box-shadow:0 0 20px rgba(123,158,255,.22)}
+    /* Inside a win overlay it's THE next step — make it read like one */
+    .game-win .game-skip{margin-top:8px;font-size:13px;padding:13px 26px;color:var(--text-primary);
+      background:rgba(255,255,255,.05);border-color:var(--border-strong);animation:skipNudge 2.2s ease-in-out infinite}
+    .game-win .game-skip:hover{color:var(--gold-light);border-color:var(--gold);transform:none;animation:none}
+    @keyframes skipNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 
     /* Win overlay */
     .game-win{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
