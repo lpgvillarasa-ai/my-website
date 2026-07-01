@@ -2941,11 +2941,13 @@
       background:rgba(6,7,22,.72); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
       transition:opacity .4s ease, visibility 0s linear .4s; }
     .fire-start.hidden { opacity:0; visibility:hidden; pointer-events:none; }
-    .fire-start-copy { font-size:14px; color:var(--text-secondary); max-width:320px; line-height:1.6; }
+    /* Overlay bg is hardcoded dark in both themes → text must be hardcoded light too */
+    .fire-start-copy { font-size:14px; color:rgba(232,236,255,.82); max-width:320px; line-height:1.6; }
     @media(max-width:560px){ .fire-tile { padding:16px 6px 13px; } .ft-name { font-size:12.5px; } }
 
     /* ============ LIVELINESS LAYER ============ */
     :root { --ember:#FF7A59; }
+    [data-theme="light"] { --ember:#C7431F; }   /* darker ember: keeps AA contrast on light tiles */
     /* Aurora: slow drift on the existing fixed background layer (GPU transform only; auto-off with reduced motion) */
     body::after { animation:auroraDrift 26s ease-in-out infinite alternate; will-change:transform; }
     @keyframes auroraDrift {
@@ -2963,8 +2965,11 @@
     }
     /* Warmer, more energetic progress meters (blue → violet → ember) */
     .game-meter-fill { background:linear-gradient(90deg,var(--accent-blue),var(--accent-violet),var(--ember)); }
-    /* Primary CTA: gentle breathing glow */
+    /* Primary CTA: gentle breathing glow (paused on hover so the stronger
+       hover shadow from the base rules can apply — running animations
+       otherwise override normal declarations) */
     .btn-primary { animation:ctaBreathe 5.5s ease-in-out infinite; }
+    .btn-primary:hover { animation:none; }
     @keyframes ctaBreathe {
       0%,100% { box-shadow:0 0 0 rgba(123,158,255,0); }
       50%     { box-shadow:0 8px 30px rgba(123,158,255,.22); }
@@ -5016,13 +5021,14 @@ void main(){
         if (stateEl && !solved) stateEl.textContent = burningCount() ? 'Incident' : 'Stable';
       }
 
+      let nextSpawnAt = 0, spawnRemaining = 0;
+      function scheduleSpawn(ms) { nextSpawnAt = performance.now() + ms; spawnTimer = setTimeout(spawnLoop, ms); }
       function spawnLoop() {
         if (!running) return;
         // concurrency ramps 1 → CAP as the player contains more
         const allowed = Math.min(CAP, 1 + Math.floor(contained / 3));
         if (burningCount() < allowed) ignite();
-        const every = Math.max(820, 1400 - contained * 45);
-        spawnTimer = setTimeout(spawnLoop, every);
+        scheduleSpawn(Math.max(820, 1400 - contained * 45));
       }
       function tickLoop() {
         if (!running) return;
@@ -5038,12 +5044,21 @@ void main(){
       }
 
       function clearTimers() { clearTimeout(spawnTimer); clearTimeout(tickTimer); spawnTimer = tickTimer = 0; }
-      function pause() { if (!running || pausedAt) return; pausedAt = performance.now(); clearTimers(); }
+      function pause() {
+        if (!running || pausedAt) return;
+        pausedAt = performance.now();
+        spawnRemaining = Math.max(250, nextSpawnAt - pausedAt);   // resume where the cadence left off
+        clearTimers();
+      }
       function resume() {
         if (!running || !pausedAt) return;
         const delta = performance.now() - pausedAt;
         tiles.forEach(t => { if (t.burning) t.igniteAt += delta; });
-        pausedAt = 0; spawnLoop(); tickLoop();
+        pausedAt = 0;
+        // Re-arm on timers (never synchronously) so pause/resume oscillation
+        // can't burst-spawn incidents faster than the designed cadence.
+        scheduleSpawn(spawnRemaining || 900);
+        tickTimer = setTimeout(tickLoop, 250);
       }
 
       function start() {
@@ -5079,7 +5094,13 @@ void main(){
 
       if (beginBtn) beginBtn.addEventListener('click', start);
       if (resetBtn) resetBtn.addEventListener('click', () => { if (startEl && !startEl.classList.contains('hidden')) return; start(); });
-      if (skipBtn)  skipBtn.addEventListener('click', () => { stop(); finish(true); });
+      if (skipBtn)  skipBtn.addEventListener('click', () => {
+        stop();
+        // Leave the board quiescent, not frozen mid-alarm (mirror win()'s cleanup)
+        tiles.forEach(t => setTile(t, false));
+        if (stateEl) stateEl.textContent = 'Stable';
+        finish(true);
+      });
       if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
       if (winOpen)  winOpen.addEventListener('click', () => { hideWin(); const ch = document.getElementById('ch3'); if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn); });
