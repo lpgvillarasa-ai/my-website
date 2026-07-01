@@ -2853,6 +2853,68 @@
       .game-win-title{font-size:28px}
     }
   </style>
+
+  <!-- ============================================================
+       JOURNEY LAYER — 3-act progressive reveal + games 2 & 3
+  ============================================================ -->
+  <style>
+    /* Progressive gating: gates/chapters hidden until unlocked (JS only; no-JS shows all) */
+    .js .gate.locked, .js .chapter.locked { display: none; }
+    /* Interactive game shells need JS — hide them entirely without it (content still shows) */
+    .sortgame, .connectgame { display: none; }
+    .js .sortgame, .js .connectgame { display: block; }
+    .gate.unlocked, .chapter.unlocked { animation: chapterIn .85s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes chapterIn { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:none; } }
+    .gate { padding: 96px 0; position: relative; z-index: 2; }
+    @media(max-width:768px){ .gate { padding: 72px 0; } }
+
+    /* Outline: journey map */
+    #journey-map-section { padding: 30px 0 6px; }
+    .journey-map { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+    .jm-item { display:flex; align-items:center; gap:10px; padding:11px 20px; border-radius:100px;
+      border:1px solid var(--border-strong); background:var(--bg-card); transition:border-color .35s ease; }
+    .jm-item.done { border-color: var(--gold-border); }
+    .jm-num { font-family:var(--font-mono); font-size:11px; color:var(--gold); }
+    .jm-label { font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-secondary); }
+    .jm-item.done .jm-label { color: var(--text-primary); }
+    .journey-hint { text-align:center; margin-top:18px; font-size:13px; color:var(--text-secondary); }
+    .reveal-all-link { background:none; border:none; cursor:none; color:var(--gold); font-family:inherit;
+      font-size:13px; text-decoration:underline; text-underline-offset:3px; margin-left:6px; }
+    .reveal-all-link:hover { color: var(--gold-light); }
+
+    /* Shared solved states for the new games (reuse .game-hud/.game-meter/.game-foot/.game-win) */
+    .sortgame.solved .game-meter-fill, .connectgame.solved .game-meter-fill { background:linear-gradient(90deg,#22C58A,#34E5A8); }
+    .sortgame.solved .game-status span, .connectgame.solved .game-status span { color:#34E5A8; }
+
+    /* GAME 2 — Sort the Signal */
+    .sortgame { max-width:720px; margin:0 auto; position:relative; overflow:hidden;
+      background:linear-gradient(180deg,var(--bg-card),var(--bg-secondary));
+      border:1px solid var(--border-strong); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-card); }
+    .sortgame-stage { position:relative; }
+    .sort-card { min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; gap:10px; padding:30px 24px; margin-bottom:16px; border-radius:var(--radius-md);
+      border:1px solid var(--border); background:radial-gradient(ellipse at 50% 30%,rgba(123,158,255,.06),transparent 70%),var(--bg-primary); }
+    .sort-card .sc-meta { font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+    .sort-card .sc-label { font-family:var(--font-display); font-size:26px; font-weight:500; color:var(--text-primary); line-height:1.2; }
+    .sort-card.correct { border-color:rgba(52,229,168,.55); animation:sortPop .4s ease; }
+    .sort-card.wrong { border-color:rgba(255,107,91,.6); animation:sortShake .4s ease; }
+    @keyframes sortPop { 0%{transform:scale(1);}50%{transform:scale(1.03);}100%{transform:scale(1);} }
+    @keyframes sortShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);} }
+    .sort-buckets { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .sort-bucket { display:flex; flex-direction:column; align-items:center; gap:4px; padding:16px 10px; cursor:none;
+      border-radius:var(--radius-md); border:1px solid var(--border-strong); background:var(--bg-card);
+      transition:border-color .2s ease, transform .15s ease, background .2s ease; }
+    .sort-bucket:hover { border-color:var(--gold-border); transform:translateY(-2px); background:var(--bg-card-hover); }
+    .sb-key { font-family:var(--font-body); font-weight:500; font-size:15px; color:var(--text-primary); }
+    .sb-sub { font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+    @media(max-width:560px){ .sort-buckets { grid-template-columns:1fr; } .sort-card .sc-label { font-size:22px; } }
+
+    /* GAME 3 — Connect the Network (reuses .game-stage / .game-hint / .game-win) */
+    .connectgame { max-width:920px; margin:0 auto; position:relative; overflow:hidden;
+      background:linear-gradient(180deg,var(--bg-card),var(--bg-secondary));
+      border:1px solid var(--border-strong); border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-card); }
+    #connect-canvas { position:absolute; inset:0; width:100%; height:100%; cursor:none; touch-action:none; display:block; }
+  </style>
 </head>
 <body>
 
@@ -2964,8 +3026,8 @@
           Let's work together
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-        <a href="#stream" class="btn-secondary">
-          See the STREAM Code
+        <a href="#gate1" class="btn-secondary">
+          Start the walk-through
           <span class="btn-arrow">→</span>
         </a>
       </div>
@@ -2976,50 +3038,66 @@
       <div class="hero-float-ring"></div>
     </div>
 
-    <!-- Stats -->
-    <div class="hero-stats">
-      <div class="stat-item reveal">
-        <div class="stat-number">20<em>+</em></div>
-        <div class="stat-label">Workflows transformed</div>
-      </div>
-      <div class="stat-item reveal reveal-delay-1">
-        <div class="stat-number">9<em>+</em></div>
-        <div class="stat-label">Industries served</div>
-      </div>
-      <div class="stat-item reveal reveal-delay-2">
-        <div class="stat-number">CEO<em>-level</em></div>
-        <div class="stat-label">Support provided</div>
-      </div>
-    </div>
-
     <div class="hero-scroll">
       <div class="scroll-line"></div>
       <div class="scroll-text">Scroll</div>
     </div>
   </section>
 
-  <!-- ============ MARQUEE ============ -->
-  <div class="marquee-strip">
-    <div class="marquee-inner">
-      <!-- Repeated twice for seamless loop -->
-      <span class="marquee-item"><span class="marquee-dot"></span>Executive Operations</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Process Architecture</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>AI Workflow Integration</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Systems Design</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Automation Strategy</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Decision Support</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Operational Excellence</span>
-      <span class="marquee-item"><span class="marquee-dot"></span>Cross-Industry Expertise</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Executive Operations</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Process Architecture</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>AI Workflow Integration</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Systems Design</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Automation Strategy</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Decision Support</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Operational Excellence</span>
-      <span class="marquee-item" aria-hidden="true"><span class="marquee-dot"></span>Cross-Industry Expertise</span>
+  <!-- ============ JOURNEY MAP (outline) ============ -->
+  <section id="journey-map-section" aria-label="Site outline">
+    <div class="section-inner">
+      <div class="journey-map" id="journey-map">
+        <div class="jm-item" data-step="1"><span class="jm-num">01</span><span class="jm-label">The Method</span></div>
+        <div class="jm-item" data-step="2"><span class="jm-num">02</span><span class="jm-label">The Proof</span></div>
+        <div class="jm-item" data-step="3"><span class="jm-num">03</span><span class="jm-label">The Work</span></div>
+      </div>
+      <p class="journey-hint">Three quick challenges reveal the story — beat one to open the next.
+        <button type="button" class="reveal-all-link" id="reveal-all">Prefer not to play? Reveal everything &rarr;</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ GAME 1 · UNTANGLE (gate) ============ -->
+  <div class="gate" id="gate1">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag reveal">Round 1 · Untangle</div>
+        <h2 class="section-title reveal reveal-delay-1">Untangle the <em>operation.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">This is the whole job in miniature. Drag the nodes until no two wires cross and the flow runs clean. Hit 100&#37; efficiency to reveal how I actually work &mdash; or skip ahead.</p>
+      </div>
+      <div class="game-wrap reveal reveal-delay-2" id="game-wrap">
+        <div class="game-hud">
+          <div class="game-status">Operations: <span id="game-state">Unoptimized</span></div>
+          <div class="game-meter">
+            <div class="game-meter-track"><div class="game-meter-fill" id="game-fill"></div></div>
+            <div class="game-meter-val"><span id="game-pct">0</span>&#37; efficiency</div>
+          </div>
+        </div>
+        <div class="game-stage">
+          <canvas id="game-canvas" role="img" aria-label="Puzzle: drag the nodes so no connecting wires cross"></canvas>
+          <div class="game-hint" id="game-hint">Drag the glowing nodes so no two wires cross.</div>
+          <div class="game-win" id="game-win" aria-live="polite">
+            <button class="game-win-close" id="game-win-close" type="button" aria-label="Close">&#10005;</button>
+            <div class="game-win-badge" aria-hidden="true">&#10003;</div>
+            <div class="game-win-title">Flow <em>optimized.</em></div>
+            <div class="game-win-sub" id="game-win-sub">You just untangled an operation and hit 100&#37; efficiency. That's the entire job &mdash; chaos in, clean system out.</div>
+            <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary">Do this for my real bottleneck
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <button class="game-skip" id="game-win-open" type="button">See how I work &darr;</button>
+          </div>
+        </div>
+        <div class="game-foot">
+          <button class="game-reset" id="game-reset" type="button">&#8635; Shuffle</button>
+          <button class="game-skip" id="game-skip" type="button">Skip &amp; reveal the method &rarr;</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- ============ CHAPTER 1 · THE METHOD (gated) ============ -->
+  <div class="chapter locked" id="ch1" data-chapter="1">
 
   <!-- ============ ABOUT ============ -->
   <section id="about">
@@ -3164,110 +3242,122 @@
     </div>
   </section>
 
-  <!-- ============ CASE FILES (interactive unlock) ============ -->
-  <section id="casefiles" aria-labelledby="casefiles-heading">
+  </div><!-- /chapter 1 (The Method) -->
+
+  <!-- ============ GAME 2 · SORT THE SIGNAL (gate) ============ -->
+  <div class="gate locked" id="gate2">
     <div class="section-inner">
       <div class="section-header">
-        <div class="section-tag reveal">Interactive · Proof of work</div>
-        <h2 class="section-title reveal reveal-delay-1" id="casefiles-heading">Untangle the <em>operation.</em></h2>
-        <p class="section-sub reveal reveal-delay-2">This is the whole job in miniature. Drag the nodes until no two wires cross and the flow runs clean. Hit 100&#37; efficiency and four case files unlock below &mdash; or skip straight to them.</p>
+        <div class="section-tag reveal">Round 2 · Triage</div>
+        <h2 class="section-title reveal reveal-delay-1">Sort the <em>signal.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">A founder's day is mostly noise. Tag each task the way I would &mdash; Automate, Delegate, or Keep &mdash; and clear the queue to unlock the proof. Or skip ahead.</p>
       </div>
-
-      <!-- The game (JS only; hidden without JS so nothing breaks) -->
-      <div class="game-wrap reveal reveal-delay-2" id="game-wrap">
+      <div class="sortgame" id="sortgame">
         <div class="game-hud">
-          <div class="game-status">Operations: <span id="game-state">Unoptimized</span></div>
+          <div class="game-status">Inbox: <span id="sort-state">Cluttered</span></div>
           <div class="game-meter">
-            <div class="game-meter-track"><div class="game-meter-fill" id="game-fill"></div></div>
-            <div class="game-meter-val"><span id="game-pct">0</span>&#37; efficiency</div>
+            <div class="game-meter-track"><div class="game-meter-fill" id="sort-fill"></div></div>
+            <div class="game-meter-val"><span id="sort-pct">0</span>&#37; cleared</div>
           </div>
         </div>
-        <div class="game-stage">
-          <canvas id="game-canvas" role="img" aria-label="Puzzle: drag the nodes so no connecting wires cross"></canvas>
-          <div class="game-hint" id="game-hint">Drag the glowing nodes so no two wires cross.</div>
-          <div class="game-win" id="game-win" aria-live="polite">
-            <button class="game-win-close" id="game-win-close" type="button" aria-label="Close">&#10005;</button>
+        <div class="sortgame-stage" id="sort-stage">
+          <div class="sort-card" id="sort-card" aria-live="polite"></div>
+          <div class="sort-buckets">
+            <button type="button" class="sort-bucket" data-bucket="automate"><span class="sb-key">Automate</span><span class="sb-sub">runs itself</span></button>
+            <button type="button" class="sort-bucket" data-bucket="delegate"><span class="sb-key">Delegate</span><span class="sb-sub">someone else</span></button>
+            <button type="button" class="sort-bucket" data-bucket="keep"><span class="sb-key">Keep</span><span class="sb-sub">only you</span></button>
+          </div>
+          <div class="game-win" id="sort-win" aria-live="polite">
+            <button class="game-win-close" id="sort-win-close" type="button" aria-label="Close">&#10005;</button>
             <div class="game-win-badge" aria-hidden="true">&#10003;</div>
-            <div class="game-win-title">Flow <em>optimized.</em></div>
-            <div class="game-win-sub" id="game-win-sub">You just untangled an operation and hit 100&#37; efficiency. That's the entire job &mdash; chaos in, clean system out.</div>
-            <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary">Do this for my real bottleneck
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <button class="game-skip" id="game-win-open" type="button">See the case files &darr;</button>
+            <div class="game-win-title">Queue <em>cleared.</em></div>
+            <div class="game-win-sub">That instinct &mdash; what to automate, hand off, or protect &mdash; is what I install into an operation. Here's the proof it works.</div>
+            <button class="game-skip" id="sort-win-open" type="button">See the results &darr;</button>
           </div>
         </div>
         <div class="game-foot">
-          <button class="game-reset" id="game-reset" type="button">&#8635; Shuffle</button>
-          <button class="game-skip" id="game-skip" type="button">Skip &amp; reveal the case files &rarr;</button>
+          <button class="game-reset" id="sort-reset" type="button">&#8635; Restart</button>
+          <button class="game-skip" id="sort-skip" type="button">Skip &amp; reveal the proof &rarr;</button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Reward: fully visible without JS; JS locks it behind the game -->
-      <div class="casefiles-reward pre-locked" id="casefiles-reward" aria-hidden="false">
-        <div class="founder-banner">
-          <div class="founder-copy">
-            <div class="founder-eyebrow">&#9670; Founder's offer</div>
-            <div class="founder-title">You cleared the board. Let's clear a <em>real</em> one.</div>
-            <div class="founder-sub">Book a discovery call and I'll take one genuine bottleneck in your operation and map out exactly how I'd untangle it &mdash; live, on the call, no charge. Same as the game, just with your numbers.</div>
+  <!-- ============ CHAPTER 2 · THE PROOF (gated) ============ -->
+  <div class="chapter locked" id="ch2" data-chapter="2">
+
+  <!-- ============ THE PROOF (case files) ============ -->
+  <section id="casefiles" aria-labelledby="casefiles-heading">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag reveal">Proof of work</div>
+        <h2 class="section-title reveal reveal-delay-1" id="casefiles-heading">Documented <em>results.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">Four operations, rebuilt. Every number below is measured, not estimated.</p>
+      </div>
+
+      <div class="founder-banner">
+        <div class="founder-copy">
+          <div class="founder-eyebrow">&#9670; Founder's offer</div>
+          <div class="founder-title">You cleared the board. Let's clear a <em>real</em> one.</div>
+          <div class="founder-sub">Book a discovery call and I'll take one genuine bottleneck in your operation and map out exactly how I'd untangle it &mdash; live, on the call, no charge. Same as the games, just with your numbers.</div>
+        </div>
+        <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary founder-cta">Claim your teardown call
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="casefiles-tag">Case files &middot; 4 documented results</div>
+
+      <div class="cases-grid">
+
+        <div class="case-card featured">
+          <div class="case-industry">Insurance</div>
+          <div class="case-title">Claims Processing Cut in Half</div>
+          <div class="case-problem">Hundreds of daily claims, buried in manual keystrokes and bloated SOPs. Rebuilt the entire workflow from scratch.</div>
+          <div class="case-divider"></div>
+          <div class="case-results">
+            <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half department-wide</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>2 days of work completed in 1. Awarded Productivity Hero</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years across hundreds of daily claims</div>
           </div>
-          <a href="https://calendly.com/lpg-villarasa/30min" target="_blank" rel="noopener" class="btn-primary founder-cta">Claim your teardown call
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
         </div>
 
-        <div class="casefiles-tag">Case files &middot; 4 documented results</div>
-
-        <div class="cases-grid">
-
-          <div class="case-card featured">
-            <div class="case-industry">Insurance</div>
-            <div class="case-title">Claims Processing Cut in Half</div>
-            <div class="case-problem">Hundreds of daily claims, buried in manual keystrokes and bloated SOPs. Rebuilt the entire workflow from scratch.</div>
-            <div class="case-divider"></div>
-            <div class="case-results">
-              <div class="case-result-item"><div class="case-result-check">✓</div>Processing time cut in half department-wide</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>2 days of work completed in 1. Awarded Productivity Hero</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Only 5 errors in 3 years across hundreds of daily claims</div>
-            </div>
+        <div class="case-card">
+          <div class="case-industry">Customer Success</div>
+          <div class="case-title">AI-Powered Support Response System</div>
+          <div class="case-problem">Agents typed the same answers hundreds of times a day. No consistency, no bandwidth, no system.</div>
+          <div class="case-divider"></div>
+          <div class="case-results">
+            <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on all standard inquiries</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Screenshot in, GPT-drafted reply out instantly</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Team fully refocused on complex, high-value cases</div>
           </div>
-
-          <div class="case-card">
-            <div class="case-industry">Customer Success</div>
-            <div class="case-title">AI-Powered Support Response System</div>
-            <div class="case-problem">Agents typed the same answers hundreds of times a day. No consistency, no bandwidth, no system.</div>
-            <div class="case-divider"></div>
-            <div class="case-results">
-              <div class="case-result-item"><div class="case-result-check">✓</div>100% accuracy rate on all standard inquiries</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Screenshot in, GPT-drafted reply out instantly</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Team fully refocused on complex, high-value cases</div>
-            </div>
-          </div>
-
-          <div class="case-card">
-            <div class="case-industry">Team Management</div>
-            <div class="case-title">Onboarding Bookings Doubled</div>
-            <div class="case-problem">Scheduling mismatches meant the team was available when clients weren't. Bookings were bleeding out silently.</div>
-            <div class="case-divider"></div>
-            <div class="case-results">
-              <div class="case-result-item"><div class="case-result-check">✓</div>Call bookings doubled within two weeks</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Team hit fully booked schedules consistently</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP built and documented</div>
-            </div>
-          </div>
-
-          <div class="case-card">
-            <div class="case-industry">Operations / Reporting</div>
-            <div class="case-title">Automated Reporting &amp; Analytics</div>
-            <div class="case-problem">Reports took hours to build manually. By the time they were ready, the data was already outdated.</div>
-            <div class="case-divider"></div>
-            <div class="case-results">
-              <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics live across all teams</div>
-              <div class="case-result-item"><div class="case-result-check">✓</div>Built on Google Colab with full AI integration</div>
-            </div>
-          </div>
-
         </div>
+
+        <div class="case-card">
+          <div class="case-industry">Team Management</div>
+          <div class="case-title">Onboarding Bookings Doubled</div>
+          <div class="case-problem">Scheduling mismatches meant the team was available when clients weren't. Bookings were bleeding out silently.</div>
+          <div class="case-divider"></div>
+          <div class="case-results">
+            <div class="case-result-item"><div class="case-result-check">✓</div>Call bookings doubled within two weeks</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Team hit fully booked schedules consistently</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Data-driven scheduling SOP built and documented</div>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="case-industry">Operations / Reporting</div>
+          <div class="case-title">Automated Reporting &amp; Analytics</div>
+          <div class="case-problem">Reports took hours to build manually. By the time they were ready, the data was already outdated.</div>
+          <div class="case-divider"></div>
+          <div class="case-results">
+            <div class="case-result-item"><div class="case-result-check">✓</div>Reports generated in minutes, not hours</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Real-time analytics live across all teams</div>
+            <div class="case-result-item"><div class="case-result-check">✓</div>Built on Google Colab with full AI integration</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -3302,18 +3392,50 @@
           <h2 class="reveal reveal-delay-1">Built for <em>scale,</em> not just execution.</h2>
           <p class="reveal reveal-delay-2">From cutting insurance claims processing time in half, to doubling onboarding bookings overnight, to automating reports that used to take hours. Every result is documented and measurable.</p>
           <p class="reveal reveal-delay-3">Every engagement ends with documentation, trained teams, and systems that continue running long after the initial build.</p>
-
-          <div class="results-industries reveal reveal-delay-4">
-            <div class="industry-item"><span class="industry-dot"></span> Tech &amp; SaaS. Product and customer success ops</div>
-            <div class="industry-item"><span class="industry-dot"></span> Healthcare &amp; Dental: HIPAA-compliant clinical workflows</div>
-            <div class="industry-item"><span class="industry-dot"></span> Insurance. Claims automation and processing systems</div>
-            <div class="industry-item"><span class="industry-dot"></span> Recruiting &amp; HR. Hiring pipeline and team management</div>
-            <div class="industry-item"><span class="industry-dot"></span> Customer Success: AI-assisted support and engagement</div>
-          </div>
         </div>
       </div>
     </div>
   </section>
+
+  </div><!-- /chapter 2 (The Proof) -->
+
+  <!-- ============ GAME 3 · CONNECT THE NETWORK (gate) ============ -->
+  <div class="gate locked" id="gate3">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag reveal">Round 3 · Connect</div>
+        <h2 class="section-title reveal reveal-delay-1">Connect the <em>network.</em></h2>
+        <p class="section-sub reveal reveal-delay-2">Every dot is a team I've supported. Tap one city, then another, to link them &mdash; wire them all into a single network to unlock the work. Or skip ahead.</p>
+      </div>
+      <div class="connectgame" id="connectgame">
+        <div class="game-hud">
+          <div class="game-status">Network: <span id="connect-state">Fragmented</span></div>
+          <div class="game-meter">
+            <div class="game-meter-track"><div class="game-meter-fill" id="connect-fill"></div></div>
+            <div class="game-meter-val"><span id="connect-pct">0</span>&#37; linked</div>
+          </div>
+        </div>
+        <div class="game-stage">
+          <canvas id="connect-canvas" role="img" aria-label="Puzzle: tap two cities to connect them; link every city into one network"></canvas>
+          <div class="game-hint" id="connect-hint">Tap one city, then another, to draw a link.</div>
+          <div class="game-win" id="connect-win" aria-live="polite">
+            <button class="game-win-close" id="connect-win-close" type="button" aria-label="Close">&#10005;</button>
+            <div class="game-win-badge" aria-hidden="true">&#10003;</div>
+            <div class="game-win-title">Network <em>online.</em></div>
+            <div class="game-win-sub">One connected operation across every timezone &mdash; that's how I run distributed teams. Here's the work, and how to reach me.</div>
+            <button class="game-skip" id="connect-win-open" type="button">See the work &darr;</button>
+          </div>
+        </div>
+        <div class="game-foot">
+          <button class="game-reset" id="connect-reset" type="button">&#8635; Reset</button>
+          <button class="game-skip" id="connect-skip" type="button">Skip &amp; reveal the work &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CHAPTER 3 · THE WORK (gated) ============ -->
+  <div class="chapter locked" id="ch3" data-chapter="3">
 
   <!-- ============ SELECTED WORK ============ -->
   <section id="work" aria-labelledby="work-heading">
@@ -3411,38 +3533,6 @@
           </div>
         </article>
 
-        <!-- 2. Hospitality / Resort Website (client — anonymized) -->
-        <article class="work-card reveal" data-category="websites">
-          <span class="work-tag">Website</span>
-          <h3 class="work-title">Hospitality / Resort Website</h3>
-          <p class="work-problem">A resort needed a polished, conversion-focused web presence to drive bookings and inquiries.</p>
-          <p class="work-built">A clean, image-forward marketing website with clear booking and contact calls-to-action, deployed on a fast modern host with a custom domain.</p>
-          <div class="work-stack">
-            <span class="work-chip">Vercel</span>
-            <span class="work-chip">Custom domain</span>
-          </div>
-          <div class="work-foot">
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live.</p>
-            <a class="work-cta" href="#contact" aria-label="Details on the resort website available on request — contact me">Details on request →</a>
-          </div>
-        </article>
-
-        <!-- 3. Healthcare / Wellness Clinic Website (client — anonymized) -->
-        <article class="work-card reveal reveal-delay-1" data-category="websites">
-          <span class="work-tag">Website</span>
-          <h3 class="work-title">Healthcare / Wellness Clinic Website</h3>
-          <p class="work-problem">A clinic needed a trustworthy, accessible site that explained services and made it easy for patients to get in touch.</p>
-          <p class="work-built">A modern, mobile-first clinic website with service pages, a clear contact pathway, and HIPAA-aware presentation of patient-facing content.</p>
-          <div class="work-stack">
-            <span class="work-chip">Vercel</span>
-            <span class="work-chip">Custom domain</span>
-          </div>
-          <div class="work-foot">
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Live.</p>
-            <a class="work-cta" href="#contact" aria-label="Details on the clinic website available on request — contact me">Details on request →</a>
-          </div>
-        </article>
-
         <!-- 4. Recruiting Tools (my own internal builds) -->
         <article class="work-card reveal" data-category="apps">
           <span class="work-tag">Internal Tool</span>
@@ -3458,25 +3548,6 @@
             <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built and in use.</p>
             <!-- If there's a public URL, swap for: <a class="work-cta" href="TOOL_URL" target="_blank" rel="noopener" aria-label="View the recruiting tools live">View live →</a> -->
             <a class="work-cta" href="#contact" aria-label="Details on the recruiting tools available on request — contact me">Details on request →</a>
-          </div>
-        </article>
-
-        <!-- 6. forma — [confirm] Lee: confirm what it does, the build description, status & link. -->
-        <article class="work-card reveal reveal-delay-1" data-category="apps">
-          <span class="work-tag">Web App</span>
-          <h3 class="work-title">forma</h3>
-          <!-- Lee: confirm this description matches what forma actually does -->
-          <p class="work-problem">Collecting structured data shouldn't require custom engineering every time.</p>
-          <p class="work-built">A forms and data-collection app with a secure backend. Structured input goes in; clean, queryable records come out.</p>
-          <div class="work-stack">
-            <span class="work-chip">Lovable</span>
-            <span class="work-chip">Supabase</span>
-          </div>
-          <div class="work-foot">
-            <!-- Lee: confirm status and update this line -->
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Built on a secure Supabase backend.</p>
-            <!-- If there's a public URL, swap for: <a class="work-cta" href="FORMA_URL" target="_blank" rel="noopener" aria-label="View forma live">View live →</a> -->
-            <a class="work-cta" href="#contact" aria-label="Details on forma available on request — contact me">Details on request →</a>
           </div>
         </article>
 
@@ -3497,372 +3568,42 @@
           </div>
         </article>
 
-        <!-- 9. Cultural / Hospitality Brand Site (client — anonymized; [confirm] delivered vs proposal) -->
-        <article class="work-card reveal reveal-delay-1" data-category="websites">
-          <span class="work-tag">Website</span>
-          <h3 class="work-title">Cultural / Hospitality Brand Site</h3>
-          <p class="work-problem">A brand needed a distinctive web presence to introduce its identity and offering.</p>
-          <p class="work-built">A modern marketing website with clear brand storytelling and contact pathways.</p>
-          <div class="work-stack">
-            <span class="work-chip">Vercel</span>
-            <span class="work-chip">Custom domain</span>
-          </div>
-          <div class="work-foot">
-            <!-- Lee: confirm status (delivered / proposal stage) and update this line -->
-            <p class="work-result"><span class="work-result-dot" aria-hidden="true"></span>Brand identity translated into a working web presence.</p>
-            <a class="work-cta" href="#contact" aria-label="Details on the cultural and hospitality brand site available on request — contact me">Details on request →</a>
-          </div>
-        </article>
-
       </div>
     </div>
   </section>
 
   <!-- ============ SKILLS ============ -->
+  <!-- ============ SKILLS (condensed) ============ -->
   <section id="skills">
     <div class="section-inner">
       <div class="section-header">
         <div class="section-tag reveal">Capabilities</div>
         <h2 class="section-title reveal reveal-delay-1">Full-stack<br/><em>operational excellence.</em></h2>
       </div>
-
-      <div class="skills-layout">
-        <div class="skills-nav reveal">
-          <a href="#exec-skills" class="skill-nav-item active">
-            <span>01</span> Executive Support
-          </a>
-          <a href="#ops-skills" class="skill-nav-item">
-            <span>02</span> Operations
-          </a>
-          <a href="#tech-skills" class="skill-nav-item">
-            <span>03</span> Technology
-          </a>
-          <a href="#data-skills" class="skill-nav-item">
-            <span>04</span> Data &amp; Reporting
-          </a>
-          <a href="#web-skills" class="skill-nav-item">
-            <span>05</span> Website &amp; App Building
-          </a>
-          <a href="#tools-section" class="skill-nav-item">
-            <span>06</span> Tools &amp; Platforms
-          </a>
+      <div class="industries-grid">
+        <div class="industry-card reveal">
+          <div class="ic-title">Executive Support</div>
+          <div class="ic-desc">Calendar &amp; priority management, communication filtering, decision-ready reporting, and high-trust confidential handling.</div>
         </div>
-
-        <div class="skills-content">
-          <div class="skill-group" id="exec-skills">
-            <div class="skill-group-title reveal">Executive Support</div>
-            <div class="skill-list">
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Calendar &amp; Priority Management</div>
-                  <div class="skill-item-desc">Complex, multi-timezone scheduling</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Executive Communication Filtering</div>
-                  <div class="skill-item-desc">Structure, clarity, decision-readiness</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Decision Support &amp; Reporting</div>
-                  <div class="skill-item-desc">Summaries, analyses, action briefs</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">High-Trust Confidential Handling</div>
-                  <div class="skill-item-desc">Sensitive business &amp; personal ops</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="skill-group" id="ops-skills">
-            <div class="skill-group-title reveal">Operations Management</div>
-            <div class="skill-list">
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">End-to-End Operations Coordination</div>
-                  <div class="skill-item-desc">Multi-department, cross-functional</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Process Documentation &amp; SOPs</div>
-                  <div class="skill-item-desc">Scalable, transferable frameworks</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Vendor &amp; Stakeholder Coordination</div>
-                  <div class="skill-item-desc">Cross-team accountability</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">KPI Tracking &amp; Reporting</div>
-                  <div class="skill-item-desc">Metrics that drive decisions</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="skill-group" id="tech-skills">
-            <div class="skill-group-title reveal">Technology &amp; Automation</div>
-            <div class="skill-list">
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">AI Workflow Integration</div>
-                  <div class="skill-item-desc">GPT, Gemini, prompt engineering</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Task &amp; Process Automation</div>
-                  <div class="skill-item-desc">GoHighLevel, Podio, Zapier</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">System Architecture &amp; Design</div>
-                  <div class="skill-item-desc">Notion-based operational ecosystems</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Tool Integration &amp; Linking</div>
-                  <div class="skill-item-desc">Connected tech stacks that talk to each other</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="skill-group" id="data-skills">
-            <div class="skill-group-title reveal">Data &amp; Analysis</div>
-            <div class="skill-list">
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Data Validation &amp; Error Detection</div>
-                  <div class="skill-item-desc">High-accuracy quality control</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Executive Reporting Frameworks</div>
-                  <div class="skill-item-desc">EOD, EOW, decision-ready formats</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Google Sheets &amp; Spreadsheet Systems</div>
-                  <div class="skill-item-desc">Tracking, dashboards, formulas</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Pattern Recognition in Operations</div>
-                  <div class="skill-item-desc">Identifying root causes &amp; inefficiencies</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tools -->
-          <div class="skill-group" id="web-skills">
-            <div class="skill-group-title reveal">Website &amp; App Building</div>
-            <div class="skill-list">
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Website Design &amp; Deployment</div>
-                  <div class="skill-item-desc">Vercel, Netlify, GitHub Pages</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">AI-Assisted Development</div>
-                  <div class="skill-item-desc">Claude Code, OpenAI Codex, Cowork</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-1">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Workflow &amp; App Automation</div>
-                  <div class="skill-item-desc">Zapier, Make, GoHighLevel pipelines</div>
-                </div>
-              </div>
-              <div class="skill-item reveal reveal-delay-2">
-                <div class="skill-item-dot"></div>
-                <div>
-                  <div class="skill-item-name">Presentation &amp; Content Building</div>
-                  <div class="skill-item-desc">Gamma, Notion, Canva decks</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="skill-group" id="tools-section">
-            <div class="skill-group-title reveal">Tools &amp; Platforms</div>
-            <div class="tools-grid">
-              <!-- Notion -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>
-                </div>Notion
-              </div>
-              <!-- Asana -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M11.994 0C5.366.006 0 5.373 0 12c0 6.628 5.366 11.994 11.994 11.994 6.628 0 11.994-5.366 11.994-11.994S18.622.006 11.994 0zm6.16 14.17a3.135 3.135 0 1 1-3.135-3.135 3.133 3.133 0 0 1 3.135 3.135zm-9.158 0a3.135 3.135 0 1 1-3.135-3.135 3.133 3.133 0 0 1 3.135 3.135zM11.994 8.12a3.136 3.136 0 1 1 0-6.272 3.136 3.136 0 0 1 0 6.272z"/></svg>
-                </div>Asana
-              </div>
-              <!-- Akiflow -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                </div>Akiflow
-              </div>
-              <!-- Google Workspace -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
-                </div>Google Workspace
-              </div>
-              <!-- Slack -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
-                </div>Slack
-              </div>
-              <!-- OpenAI / GPT -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387 2.019-1.168a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.41-.663zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z"/></svg>
-                </div>GPT / Gemini
-              </div>
-              <!-- GoHighLevel -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                </div>GoHighLevel
-              </div>
-              <!-- Podio -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 16c-3.314 0-6.318-1.657-8.142-4.419C5.504 13.943 8.589 13 12 13s6.496.943 8.142 2.581C18.318 18.343 15.314 20 12 20z"/></svg>
-                </div>Podio
-              </div>
-              <!-- Zapier -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M14.85 11.998c0-.44-.02-.87-.06-1.29h-2.79v2.44h1.6a1.37 1.37 0 0 1-.59 1.09v.9h.96c.56-.52.88-1.28.88-2.14zM12 15.47c.8 0 1.47-.27 1.96-.72l-.96-.9c-.27.18-.61.28-.99.28-1.32 0-1.95-.9-1.95-1.91 0-.7.29-1.28.76-1.66V9.7c-1.43.38-2.49 1.68-2.49 3.19 0 1.89 1.33 3.34 2.67 3.58zm0-9a6 6 0 1 0 0 12A6 6 0 0 0 12 6.47zm0 10.8a4.8 4.8 0 1 1 0-9.6 4.8 4.8 0 0 1 0 9.6z"/></svg>
-                </div>Zapier
-              </div>
-              <!-- Mixpanel -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 3h18v2H3V3zm0 8h12v2H3v-2zm0 8h18v2H3v-2z"/></svg>
-                </div>Mixpanel
-              </div>
-              <!-- Intercom -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v4l4-4h11a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm-2 12H5v-2h14v2zm0-4H5V8h14v2zm0-4H5V4h14v2z"/></svg>
-                </div>Intercom
-              </div>
-              <!-- Calendly -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-                </div>Calendly
-              </div>
-              <!-- Canva -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm0-3.692c4.585 0 8.308-3.723 8.308-8.308S16.585 3.692 12 3.692 3.692 7.415 3.692 12 7.415 20.308 12 20.308zm-.923-5.538c-.862 0-1.538-.692-1.538-1.539V9.23c0-.846.676-1.538 1.538-1.538h1.846c.862 0 1.539.692 1.539 1.538v4c0 .847-.677 1.54-1.539 1.54H11.077z"/></svg>
-                </div>Canva
-              </div>
-              <!-- CapCut -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M11 2H2v9l9.5 9.5 9-9L11 2zm-3.5 7A1.5 1.5 0 1 1 9 7.5 1.5 1.5 0 0 1 7.5 9z"/></svg>
-                </div>CapCut
-              </div>
-              <!-- Deel / Wise -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-                </div>Deel / Wise
-              </div>
-              <!-- PureDome VPN -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                </div>PureDome VPN
-              </div>
-              <!-- GitHub -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                </div>GitHub
-              </div>
-              <!-- Vercel -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
-                </div>Vercel
-              </div>
-              <!-- Netlify -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6.49 19.04h-.23L5.13 17.9v-.23l1.73-1.71h1.2l.15.15v1.2L6.5 19.04ZM5.13 6.31V6.1l1.13-1.13h.23L8.2 6.68v1.2l-.15.15h-1.2L5.13 6.31Zm9.96 9.09h-1.65l-.14-.13v-3.83c0-.68-.27-1.2-1.1-1.23-.42 0-.9 0-1.43.02l-.07.08v4.96l-.14.14H8.9l-.13-.14V8.73l.13-.14h3.7a2.6 2.6 0 0 1 2.61 2.6v4.08l-.13.14Zm-8.37-2.44H.14L0 12.82v-1.64l.14-.14h6.58l.14.14v1.64l-.14.14Zm17.14 0h-6.58l-.14-.14v-1.64l.14-.14h6.58l.14.14v1.64l-.14.14ZM11.05 6.55V1.64l.14-.14h1.65l.14.14v4.9l-.14.14h-1.65l-.14-.13Zm0 15.81v-4.9l.14-.14h1.65l.14.13v4.91l-.14.14h-1.65l-.14-.14Z"/></svg>
-                </div>Netlify
-              </div>
-              <!-- Gamma -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7.5 3.75-7.5 3.75-7.5-3.75L12 4.18zM4 8.82l7 3.5V19.5l-7-3.5V8.82zm9 10.68v-7.18l7-3.5v7.18l-7 3.5z"/></svg>
-                </div>Gamma
-              </div>
-              <!-- Claude Code -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z"/></svg>
-                </div>Claude Code
-              </div>
-              <!-- Codex -->
-              <div class="tool-chip reveal reveal-delay-2">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
-                </div>Codex
-              </div>
-              <!-- Cowork -->
-              <div class="tool-chip reveal reveal-delay-1">
-                <div class="tool-chip-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-                </div>Cowork
-              </div>
-            </div>
-          </div>
+        <div class="industry-card reveal reveal-delay-1">
+          <div class="ic-title">Operations Management</div>
+          <div class="ic-desc">End-to-end coordination, SOPs &amp; process documentation, vendor &amp; stakeholder wrangling, and KPI tracking.</div>
+        </div>
+        <div class="industry-card reveal reveal-delay-2">
+          <div class="ic-title">Technology &amp; Automation</div>
+          <div class="ic-desc">AI workflow integration (GPT, Gemini), Zapier / GoHighLevel / Podio automations, and Notion-based operating systems.</div>
+        </div>
+        <div class="industry-card reveal">
+          <div class="ic-title">Data &amp; Analysis</div>
+          <div class="ic-desc">Validation &amp; error detection, executive reporting frameworks, spreadsheet systems, and root-cause pattern spotting.</div>
+        </div>
+        <div class="industry-card reveal reveal-delay-1">
+          <div class="ic-title">Website &amp; App Building</div>
+          <div class="ic-desc">Full sites and web / iOS apps shipped end-to-end with Supabase, Vercel, Lovable, and Claude Code.</div>
+        </div>
+        <div class="industry-card reveal reveal-delay-2">
+          <div class="ic-title">Tools &amp; Platforms</div>
+          <div class="ic-desc">Notion, Supabase, Vercel, GitHub, Netlify, Zapier, GoHighLevel, Open Dental, and the rest of a connected stack.</div>
         </div>
       </div>
     </div>
@@ -3871,44 +3612,21 @@
   <!-- ============ PROCESS ============ -->
 
   <!-- ============ INDUSTRIES ============ -->
+  <!-- ============ INDUSTRIES (compact strip) ============ -->
   <section id="industries">
     <div class="section-inner">
       <div class="section-header">
         <div class="section-tag reveal">Cross-industry</div>
         <h2 class="section-title reveal reveal-delay-1">Built for any<br/><em>operating environment.</em></h2>
       </div>
-
-      <div class="industries-grid">
-        <div class="industry-card reveal">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
-          <div class="ic-title">Tech &amp; SaaS</div>
-          <div class="ic-desc">Operations management for fast-moving software companies. Built systems at Akiflow supporting global product and customer success operations.</div>
-        </div>
-        <div class="industry-card reveal reveal-delay-1">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
-          <div class="ic-title">Healthcare &amp; Dental</div>
-          <div class="ic-desc">HIPAA-compliant workflows, Open Dental practice management, patient operations, and compliance documentation systems.</div>
-        </div>
-        <div class="industry-card reveal reveal-delay-2">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-          <div class="ic-title">Insurance &amp; Claims</div>
-          <div class="ic-desc">Built claims tracking systems, coverage verification workflows, and pre-estimate processing with high volume throughput and accuracy.</div>
-        </div>
-        <div class="industry-card reveal">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
-          <div class="ic-title">Solar &amp; Construction</div>
-          <div class="ic-desc">Managed 200+ solar permit applications through AHJ coordination, engineered drawing tracking, and cross-jurisdiction compliance workflows.</div>
-        </div>
-        <div class="industry-card reveal reveal-delay-1">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <div class="ic-title">Identity &amp; Compliance</div>
-          <div class="ic-desc">Operational support for identity verification platforms (Sumsub). Regulatory compliance workflows and cross-border operations management.</div>
-        </div>
-        <div class="industry-card reveal reveal-delay-2">
-          <span class="ic-emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-          <div class="ic-title">Remote &amp; Global Teams</div>
-          <div class="ic-desc">Deep experience managing distributed, async, multi-timezone teams across the US, Philippines, and international markets.</div>
-        </div>
+      <div class="location-group-tags reveal reveal-delay-2" style="justify-content:center;max-width:820px;margin:0 auto;">
+        <span class="location-tag"><span class="location-dot-sm"></span>Tech &amp; SaaS</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Healthcare &amp; Dental</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Insurance &amp; Claims</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Solar &amp; Construction</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Identity &amp; Compliance</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Recruiting &amp; HR</span>
+        <span class="location-tag"><span class="location-dot-sm"></span>Remote &amp; Global Teams</span>
       </div>
     </div>
   </section>
@@ -3955,6 +3673,8 @@
       </div>
     </div>
   </section>
+
+  </div><!-- /chapter 3 (The Work) -->
 
   <!-- ============ CONTACT ============ -->
   <section id="contact">
@@ -4757,8 +4477,7 @@ void main(){
     (function () {
       const wrap   = document.getElementById('game-wrap');
       const canvas = document.getElementById('game-canvas');
-      const reward = document.getElementById('casefiles-reward');
-      if (!wrap || !canvas || !reward) return;
+      if (!wrap || !canvas) return;
 
       const fillEl   = document.getElementById('game-fill');
       const pctEl    = document.getElementById('game-pct');
@@ -4771,11 +4490,8 @@ void main(){
       const winClose = document.getElementById('game-win-close');
       const winOpen  = document.getElementById('game-win-open');
 
-      // JS is running → the reward is now genuinely gated
-      reward.setAttribute('aria-hidden', 'true');
-
       const ctx = canvas.getContext('2d');
-      if (!ctx) { unlock(true); return; }  // no canvas support → just show the files
+      if (!ctx) { unlock(true); return; }  // no canvas support → just advance the journey
 
       const LABELS = ['Intake','Triage','Assign','Review','Approve','Sync','Automate','Report','Deliver','Audit'];
       let dpr = 1, W = 0, H = 0;
@@ -4951,14 +4667,8 @@ void main(){
 
       function unlock(skip) {
         if (unlocked) return; unlocked = true;
-        reward.classList.remove('pre-locked');
-        reward.classList.add('unlocked');
-        reward.setAttribute('aria-hidden', 'false');
-        reward.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-        if (skip) {
-          if (hintEl) hintEl.style.opacity = '0';
-          setTimeout(() => reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }), 120);
-        }
+        if (skip && hintEl) hintEl.style.opacity = '0';
+        if (window.Journey) window.Journey.advance(1, !!skip);
       }
 
       if (resetBtn) resetBtn.addEventListener('click', () => { scramble(); wake(); });
@@ -4970,9 +4680,8 @@ void main(){
       if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
       if (winOpen)  winOpen.addEventListener('click', () => {
         hideWin();
-        reward.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
-        const cta = reward.querySelector('.founder-cta');
-        if (cta) cta.focus({ preventScroll: true });
+        const ch = document.getElementById('ch1');
+        if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
       });
       // Escape closes the win overlay — the pre-existing global Escape handler only targets the STREAM modal
       document.addEventListener('keydown', e => {
@@ -5009,6 +4718,308 @@ void main(){
 
       let rt;
       window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (built) { sizeCanvas(); refresh(); } }, 160); }, { passive: true });
+    })();
+
+    // ============================================
+    // JOURNEY CONTROLLER — 3-act progressive reveal
+    // Each game (gate) reveals its chapter + the next gate. Fully
+    // skippable; a "reveal everything" button opens all at once.
+    // No-JS shows everything (nothing is display:none without .js).
+    // ============================================
+    window.Journey = (function () {
+      const steps = [
+        { gate: 'gate1', chapter: 'ch1' },
+        { gate: 'gate2', chapter: 'ch2' },
+        { gate: 'gate3', chapter: 'ch3' },
+      ];
+      const done = [false, false, false];
+      function reveal(el) {
+        if (!el || el.classList.contains('unlocked')) return;
+        el.classList.remove('locked');
+        el.classList.add('unlocked');
+        el.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+      }
+      function markMap(n) {
+        const item = document.querySelector('.jm-item[data-step="' + n + '"]');
+        if (item) item.classList.add('done');
+      }
+      function advance(n, scroll) {
+        if (done[n - 1]) return;
+        done[n - 1] = true;
+        const step = steps[n - 1];
+        if (!step) return;
+        reveal(document.getElementById(step.chapter));
+        markMap(n);
+        const next = steps[n];
+        if (next) reveal(document.getElementById(next.gate));
+        if (scroll) {
+          const ch = document.getElementById(step.chapter);
+          if (ch) setTimeout(() => ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }), 140);
+        }
+      }
+      function revealAll() {
+        steps.forEach((s, i) => { reveal(document.getElementById(s.gate)); reveal(document.getElementById(s.chapter)); markMap(i + 1); done[i] = true; });
+      }
+      return { advance, revealAll };
+    })();
+
+    (function () {
+      const ra = document.getElementById('reveal-all');
+      if (ra) ra.addEventListener('click', () => {
+        window.Journey.revealAll();
+        const ch = document.getElementById('ch1');
+        if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+      });
+      // Nav / footer links pointing into a still-gated section: reveal the
+      // whole journey first (capture phase) so the subsequent scroll lands.
+      document.addEventListener('click', e => {
+        const link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+        const id = link.getAttribute('href').slice(1);
+        if (!id) return;
+        const t = document.getElementById(id);
+        if (t && t.closest('.locked')) window.Journey.revealAll();
+      }, true);
+    })();
+
+    // ============================================
+    // GAME 2 — "SORT THE SIGNAL" (triage)
+    // Tag each task the way Lee would (Automate / Delegate / Keep).
+    // Clear the queue → unlock The Proof. Skippable.
+    // ============================================
+    (function () {
+      const game = document.getElementById('sortgame');
+      if (!game) return;
+      const cardEl   = document.getElementById('sort-card');
+      const fillEl   = document.getElementById('sort-fill');
+      const pctEl    = document.getElementById('sort-pct');
+      const stateEl  = document.getElementById('sort-state');
+      const winEl    = document.getElementById('sort-win');
+      const buckets  = Array.from(game.querySelectorAll('.sort-bucket'));
+      const resetBtn = document.getElementById('sort-reset');
+      const skipBtn  = document.getElementById('sort-skip');
+      const winClose = document.getElementById('sort-win-close');
+      const winOpen  = document.getElementById('sort-win-open');
+
+      const ITEMS = [
+        { label: 'Approving every invoice under $500', meta: 'Finance', answer: 'automate' },
+        { label: 'The weekly operations report',        meta: 'Reporting', answer: 'automate' },
+        { label: 'A 1:1 with your co-founder',          meta: 'Leadership', answer: 'keep' },
+        { label: 'Password-reset requests',             meta: 'IT / Support', answer: 'delegate' },
+        { label: 'The board deck narrative',            meta: 'Strategy', answer: 'keep' },
+        { label: 'Copy-pasting form entries to a sheet',meta: 'Data', answer: 'automate' },
+        { label: 'First-round candidate screening',     meta: 'Hiring', answer: 'delegate' },
+        { label: 'The final hiring decision',           meta: 'Hiring', answer: 'keep' },
+      ];
+      let idx = 0, solved = false, finished = false;
+
+      function start() {
+        idx = 0; solved = false;
+        game.classList.remove('solved');
+        if (winEl) winEl.classList.remove('show');
+        render();
+      }
+      function render() {
+        const total = ITEMS.length;
+        const pct = Math.round((idx / total) * 100);
+        if (pctEl)  pctEl.textContent = idx >= total ? 100 : pct;
+        if (fillEl) fillEl.style.width = (idx >= total ? 100 : pct) + '%';
+        if (stateEl && !solved) stateEl.textContent = idx >= total ? 'Clear' : 'Cluttered';
+        if (idx >= total) { if (!solved) win(); return; }
+        const it = ITEMS[idx];
+        cardEl.innerHTML = '<div class="sc-meta">' + it.meta + '</div><div class="sc-label">' + it.label + '</div>';
+        cardEl.classList.remove('correct', 'wrong');
+      }
+      function choose(bucket) {
+        if (solved || idx >= ITEMS.length) return;
+        const it = ITEMS[idx];
+        if (bucket === it.answer) {
+          cardEl.classList.remove('wrong'); cardEl.classList.add('correct');
+          idx++;
+          setTimeout(render, 230);
+        } else {
+          cardEl.classList.remove('correct'); void cardEl.offsetWidth; cardEl.classList.add('wrong');
+        }
+      }
+      buckets.forEach(b => b.addEventListener('click', () => choose(b.dataset.bucket)));
+
+      function win() {
+        solved = true;
+        game.classList.add('solved');
+        if (stateEl) stateEl.textContent = 'Clear';
+        if (fillEl) fillEl.style.width = '100%';
+        if (pctEl) pctEl.textContent = 100;
+        if (winEl) { winEl.classList.add('show'); if (winClose) winClose.focus({ preventScroll: true }); }
+        finish(false);
+      }
+      function finish(skip) {
+        if (finished) return; finished = true;
+        if (window.Journey) window.Journey.advance(2, !!skip);
+      }
+      function hideWin(f) { winEl.classList.remove('show'); if (f && f.focus) f.focus({ preventScroll: true }); }
+
+      if (resetBtn) resetBtn.addEventListener('click', start);
+      if (skipBtn)  skipBtn.addEventListener('click', () => finish(true));
+      if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
+      if (winOpen)  winOpen.addEventListener('click', () => { hideWin(); const ch = document.getElementById('ch2'); if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn); });
+      start();
+    })();
+
+    // ============================================
+    // GAME 3 — "CONNECT THE NETWORK"
+    // Tap two cities to link them; wire every city into one connected
+    // network → unlock The Work. Skippable. Canvas, mouse + touch.
+    // ============================================
+    (function () {
+      const wrap = document.getElementById('connectgame');
+      const canvas = document.getElementById('connect-canvas');
+      if (!wrap || !canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { if (window.Journey) window.Journey.advance(3, true); return; }
+
+      const fillEl   = document.getElementById('connect-fill');
+      const pctEl    = document.getElementById('connect-pct');
+      const stateEl  = document.getElementById('connect-state');
+      const hintEl   = document.getElementById('connect-hint');
+      const winEl    = document.getElementById('connect-win');
+      const resetBtn = document.getElementById('connect-reset');
+      const skipBtn  = document.getElementById('connect-skip');
+      const winClose = document.getElementById('connect-win-close');
+      const winOpen  = document.getElementById('connect-win-open');
+
+      const CITIES = ['Brooklyn', 'Chicago', 'Toronto', 'Barcelona', 'Monaco', 'Rome', 'Cebu', 'Vietnam'];
+      let dpr = 1, W = 0, H = 0, nodes = [], links = [], selected = -1;
+      let solved = false, finished = false, built = false, inView = false, animRAF = 0, interacted = false;
+
+      function components() {
+        const parent = nodes.map((_, i) => i);
+        const find = x => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+        links.forEach(l => { const ra = find(l[0]), rb = find(l[1]); if (ra !== rb) parent[ra] = rb; });
+        const roots = new Set(nodes.map((_, i) => find(i)));
+        return roots.size;
+      }
+      function linkExists(a, b) { return links.some(l => (l[0] === a && l[1] === b) || (l[0] === b && l[1] === a)); }
+
+      function build() {
+        const N = W < 520 ? 6 : CITIES.length;
+        const pad = W < 520 ? 40 : 54;
+        nodes = [];
+        let tries = 0;
+        while (nodes.length < N && tries < 600) {
+          tries++;
+          const x = pad + Math.random() * (W - 2 * pad);
+          const y = pad + 14 + Math.random() * (H - 2 * pad - 20);
+          if (nodes.every(n => (n.x - x) * (n.x - x) + (n.y - y) * (n.y - y) > 78 * 78)) {
+            nodes.push({ x, y, label: CITIES[nodes.length] });
+          }
+        }
+        links = []; selected = -1; solved = false; interacted = false;
+        wrap.classList.remove('solved');
+        if (winEl) winEl.classList.remove('show');
+        if (hintEl) hintEl.style.opacity = '';
+        refresh();
+      }
+
+      const nodeR = () => (W < 520 ? 13 : 16);
+
+      function refresh() {
+        const comp = nodes.length ? components() : 1;
+        const pct = nodes.length > 1 ? Math.round((nodes.length - comp) / (nodes.length - 1) * 100) : 100;
+        if (pctEl)  pctEl.textContent = pct;
+        if (fillEl) fillEl.style.width = pct + '%';
+        if (stateEl && !solved) stateEl.textContent = comp === 1 ? 'Online' : 'Fragmented';
+        if (comp === 1 && links.length && interacted && !solved) win();
+        render();
+      }
+
+      function render() {
+        if (!W) return;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        const t = REDUCED_MOTION ? 0 : performance.now() / 1000;
+        const col = solved ? '52,229,168' : '123,158,255';
+        // links
+        for (const l of links) {
+          const a = nodes[l[0]], b = nodes[l[1]];
+          ctx.strokeStyle = 'rgba(' + col + ',0.18)'; ctx.lineWidth = 6;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          ctx.strokeStyle = 'rgba(' + col + ',0.9)'; ctx.lineWidth = 1.6;
+          ctx.setLineDash([7, 9]); ctx.lineDashOffset = -((t * 26) % 16);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        // nodes
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = '500 10px "JetBrains Mono", monospace';
+        const R = nodeR();
+        nodes.forEach((n, i) => {
+          const sel = i === selected;
+          const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, R * 2.4);
+          glow.addColorStop(0, 'rgba(' + col + ',0.32)'); glow.addColorStop(1, 'rgba(' + col + ',0)');
+          ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(n.x, n.y, R * 2.4, 0, 7); ctx.fill();
+          if (sel) { ctx.strokeStyle = 'rgba(160,188,255,0.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(n.x, n.y, R + 5, 0, 7); ctx.stroke(); }
+          ctx.fillStyle = sel ? 'rgba(' + col + ',1)' : '#0C0C24';
+          ctx.strokeStyle = 'rgba(' + col + ',0.9)'; ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.arc(n.x, n.y, R, 0, 7); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = sel ? '#04122a' : 'rgba(' + col + ',1)';
+          ctx.beginPath(); ctx.arc(n.x, n.y, R * 0.34, 0, 7); ctx.fill();
+          ctx.fillStyle = 'rgba(232,236,255,0.55)';
+          ctx.fillText(n.label.toUpperCase(), n.x, n.y + R + 11);
+        });
+      }
+      function animate() { animRAF = 0; if (!inView || REDUCED_MOTION) return; render(); animRAF = requestAnimationFrame(animate); }
+      function wake() { if (inView && !REDUCED_MOTION && !animRAF) animRAF = requestAnimationFrame(animate); }
+
+      function pt(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+      function hit(p) { const R = nodeR() + 10; for (let i = nodes.length - 1; i >= 0; i--) { const n = nodes[i], dx = n.x - p.x, dy = n.y - p.y; if (dx * dx + dy * dy <= R * R) return i; } return -1; }
+
+      canvas.addEventListener('pointerdown', e => {
+        if (!built) return;
+        const i = hit(pt(e));
+        if (i < 0) { selected = -1; render(); return; }
+        if (hintEl) hintEl.style.opacity = '0';
+        if (selected < 0) { selected = i; }
+        else if (selected !== i) {
+          if (!linkExists(selected, i)) { links.push([selected, i]); interacted = true; }
+          selected = -1;
+        } else { selected = -1; }
+        refresh();
+      });
+
+      function win() {
+        solved = true;
+        wrap.classList.add('solved');
+        if (stateEl) stateEl.textContent = 'Online';
+        if (pctEl) pctEl.textContent = 100;
+        if (fillEl) fillEl.style.width = '100%';
+        if (winEl) { winEl.classList.add('show'); if (winClose) winClose.focus({ preventScroll: true }); }
+        finish(false);
+        render();
+      }
+      function finish(skip) { if (finished) return; finished = true; if (window.Journey) window.Journey.advance(3, !!skip); }
+      function hideWin(f) { winEl.classList.remove('show'); if (f && f.focus) f.focus({ preventScroll: true }); }
+
+      if (resetBtn) resetBtn.addEventListener('click', () => { build(); wake(); });
+      if (skipBtn)  skipBtn.addEventListener('click', () => finish(true));
+      if (winClose) winClose.addEventListener('click', () => hideWin(resetBtn));
+      if (winOpen)  winOpen.addEventListener('click', () => { hideWin(); const ch = document.getElementById('ch3'); if (ch) ch.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' }); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && winEl.classList.contains('show')) hideWin(resetBtn); });
+
+      function sizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const oldW = W, oldH = H;
+        W = rect.width; H = rect.height;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        if (built && oldW > 0 && oldH > 0) { const sx = W / oldW, sy = H / oldH; for (const n of nodes) { n.x *= sx; n.y *= sy; } }
+      }
+      function init() { if (built) return; sizeCanvas(); if (W < 40) return; built = true; build(); wake(); }
+
+      const io = new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) { if (!built) setTimeout(init, 60); wake(); } }, { threshold: 0.08 });
+      io.observe(wrap);
+      let rt2;
+      window.addEventListener('resize', () => { clearTimeout(rt2); rt2 = setTimeout(() => { if (built) { sizeCanvas(); refresh(); } }, 160); }, { passive: true });
     })();
   </script>
 </body>
